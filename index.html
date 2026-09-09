@@ -441,8 +441,52 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   transform:rotate(90deg);pointer-events:none;
 }
 
+
+/* CareerOS page routing + administrator */
+body[data-page] [data-page]{display:none}
+body[data-page="home"] [data-page="home"],body[data-page="about"] [data-page="about"],body[data-page="journey"] [data-page="journey"],body[data-page="education"] [data-page="education"],body[data-page="ai"] [data-page="ai"],body[data-page="coaching"] [data-page="coaching"],body[data-page="academy"] [data-page="academy"],body[data-page="resources"] [data-page="resources"]{display:block}
+body[data-page="home"] .site-footer,body[data-page="about"] .site-footer,body[data-page="journey"] .site-footer,body[data-page="education"] .site-footer,body[data-page="ai"] .site-footer,body[data-page="coaching"] .site-footer,body[data-page="academy"] .site-footer,body[data-page="resources"] .site-footer{display:block}
+.admin-fab{position:fixed;right:18px;bottom:18px;width:48px;height:48px;border-radius:50%;border:1px solid var(--gold);background:var(--navy);color:var(--gold2);font-size:1.25rem;z-index:3500;cursor:pointer;box-shadow:0 12px 30px rgba(7,26,47,.25)}
+.admin-panel{position:fixed;inset:0;z-index:5000;background:#f4f6f8;display:none;overflow:auto}
+.admin-panel.open{display:block}
+.admin-shell{min-height:100%;display:grid;grid-template-columns:250px 1fr}
+.admin-side{background:var(--navy);color:#fff;padding:25px 18px;position:sticky;top:0;height:100vh}
+.admin-side h2{color:#fff;font-size:1.2rem;margin-bottom:5px}.admin-side p{color:#9fb0c2;font-size:.7rem;margin-bottom:25px}
+.admin-nav button{width:100%;text-align:left;border:0;background:transparent;color:#c8d3de;padding:12px;border-radius:7px;cursor:pointer;font-size:.75rem;font-weight:700}.admin-nav button:hover,.admin-nav button.active{background:rgba(201,160,74,.15);color:var(--gold2)}
+.admin-main{padding:30px;max-width:1400px;width:100%}.admin-top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:25px}.admin-top h1{font-size:2rem;color:var(--navy)}
+.admin-close{border:1px solid #ccd5df;background:#fff;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:800;color:var(--navy)}
+.admin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}.admin-stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px}.admin-stat b{display:block;font-size:1.6rem;color:var(--navy)}.admin-stat span{font-size:.68rem;color:var(--muted)}
+.admin-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;margin-bottom:18px}.admin-card h3{color:var(--navy);margin-bottom:14px}.admin-form{display:grid;grid-template-columns:1fr 1fr;gap:12px}.admin-form .full{grid-column:1/-1}.admin-form input,.admin-form select,.admin-form textarea{width:100%;padding:11px;border:1px solid #ccd5df;border-radius:7px}.admin-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}.admin-table{width:100%;border-collapse:collapse;font-size:.72rem}.admin-table th,.admin-table td{padding:11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.admin-table th{color:var(--navy);background:#f6f8fa}.admin-badge{display:inline-block;padding:4px 7px;border-radius:99px;background:#edf7f1;color:var(--green);font-size:.6rem;font-weight:800}.danger{background:#a52b2b!important;color:#fff!important}.image-preview{width:130px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--line);margin-top:8px}.theme-options{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.theme-option{padding:16px;border:2px solid var(--line);border-radius:10px;cursor:pointer}.theme-option.selected{border-color:var(--gold)}.theme-swatch{height:35px;border-radius:6px;margin-bottom:8px}.login-box{width:min(430px,calc(100% - 30px));background:#fff;border-radius:18px;padding:30px;box-shadow:0 30px 100px rgba(0,0,0,.3)}.login-overlay{position:fixed;inset:0;z-index:6000;background:rgba(3,12,23,.78);display:none;place-items:center}.login-overlay.open{display:grid}.login-box h2{font-size:1.8rem;margin-bottom:7px}.login-box p{font-size:.75rem;color:var(--muted);margin-bottom:18px}.login-field{display:grid;gap:6px;margin-bottom:12px}.login-field label{font-size:.65rem;font-weight:800;text-transform:uppercase;color:var(--navy)}.login-field input{padding:12px;border:1px solid #ccd5df;border-radius:8px}.admin-note{font-size:.68rem;color:var(--muted);padding:10px 0}
+body.theme-blue{--navy:#063b66;--navy2:#0b527f;--navy3:#176b99;--gold:#4da3d9;--gold2:#a8dcf5;--cream:#f7fbff;--soft:#edf6fb;--green:#26705b}
+body.theme-sage{--navy:#25483f;--navy2:#376458;--navy3:#4e7d6d;--gold:#8da58e;--gold2:#c7d6c5;--cream:#f7f8f3;--soft:#eef2eb;--green:#39705b}
+body.theme-slate{--navy:#27384d;--navy2:#344c66;--navy3:#496580;--gold:#bca46a;--gold2:#e0cf9a;--cream:#f7f8fa;--soft:#edf0f4;--green:#39705b}
+@media(max-width:900px){.admin-shell{grid-template-columns:1fr}.admin-side{position:relative;height:auto}.admin-grid{grid-template-columns:1fr 1fr}.theme-options{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.admin-main{padding:18px}.admin-form{grid-template-columns:1fr}.admin-form .full{grid-column:auto}.admin-grid{grid-template-columns:1fr}.admin-top{align-items:flex-start}.admin-side{padding:18px}.admin-nav{display:grid;grid-template-columns:1fr 1fr;gap:5px}}
 </style>
-</head>
+
+<style id="careeros-final-overrides">
+:root{--theme-card:#fff;--theme-bg:#f8f5ed}
+body{background:var(--theme-bg)!important;color:#26313d;transition:background .25s ease,color .25s ease}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 10% 10%,rgba(255,255,255,.75),transparent 35%),radial-gradient(circle at 90% 85%,rgba(255,255,255,.55),transparent 38%)}
+.nav{background:rgba(255,255,255,.94)!important;backdrop-filter:blur(14px)}
+.nav-inner{grid-template-columns:auto 1fr auto!important}.nav-links{justify-content:flex-end!important;gap:16px!important}.nav-links li{white-space:nowrap}
+.member-actions{display:inline-flex!important;align-items:center;gap:7px;margin-left:7px;order:2}.member-btn{height:44px;min-width:78px;padding:0 14px!important;border:1px solid var(--navy)!important;border-radius:6px!important;font:800 .72rem Manrope,Arial,sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;background:#fff;color:var(--navy)}.member-btn.primary{background:var(--gold)!important;border-color:var(--gold)!important;color:var(--navy)!important}.dashboard-btn{background:var(--soft)!important}.logout-btn{background:#fff!important}.nav-cta{order:1!important;height:44px;display:inline-flex!important;align-items:center;justify-content:center}
+.hero-title{max-width:760px!important;overflow-wrap:normal!important;word-break:normal!important}.hero-title span{display:block!important}.photo-label{left:24px!important;right:24px!important;width:auto!important;max-width:calc(100% - 48px)!important;box-sizing:border-box!important;overflow:visible!important}.photo-label .quote{overflow-wrap:anywhere!important;word-break:normal!important}.photo-label small{white-space:normal!important}
+.admin-panel{background:var(--theme-bg)!important}.admin-side{background:linear-gradient(180deg,var(--navy),var(--navy2))!important}.admin-card,.admin-stat,.login-box,.booking-summary,.dash-card{background:var(--theme-card)!important}.admin-stat b,h1,h2,h3,h4,.admin-card h3{color:var(--navy)}
+.theme-options-8{grid-template-columns:repeat(4,1fr)!important}.theme-option{background:var(--theme-card)!important;min-height:112px;text-align:left}.theme-option small{display:block;color:var(--muted);margin-top:5px}.theme-option.selected{border-color:var(--gold)!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--gold) 20%,transparent)}
+.admin-grid-wide{grid-template-columns:repeat(4,1fr)!important}.section-toolbar{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.section-toolbar input,.section-toolbar select{max-width:280px;padding:10px;border:1px solid var(--line);border-radius:8px}.insight-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.insight-grid>div{background:var(--soft);border-radius:12px;padding:15px}.insight-grid b,.insight-grid span{display:block}.insight-grid span{margin-top:8px;color:var(--muted);font-size:.78rem}.bar-list>div{position:relative;padding:10px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:15px}.bar-list i{position:absolute;left:0;bottom:0;height:3px;background:var(--gold);display:block}.filter-row{display:flex;gap:8px;flex-wrap:wrap}.filter-row input,.filter-row select{padding:10px;border:1px solid var(--line);border-radius:8px}.program-admin-row{display:grid;grid-template-columns:1.2fr .6fr .8fr .8fr 1.5fr .6fr auto;gap:8px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line)}.program-admin-row input,.program-admin-row textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:7px}.weekday-grid{display:flex;flex-wrap:wrap;gap:10px}.weekday-grid label{background:var(--soft);padding:8px 10px;border-radius:8px}.rule-list>div,.tracking-user,.member-list>div,.user-detail-list>div{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.rule-list span,.rule-list small,.tracking-user span,.member-list small,.user-detail-list small{display:block;color:var(--muted)}.messages-admin{display:grid;grid-template-columns:290px 1fr;gap:0;min-height:650px;padding:0;overflow:hidden}.message-users{border-right:1px solid var(--line);padding:10px}.message-users button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:13px;border-radius:9px;cursor:pointer}.message-users button:hover{background:var(--soft)}.message-users b,.message-users small{display:block}.message-users small{color:var(--muted);margin-top:3px}.message-users span{float:right;background:var(--gold);padding:3px 7px;border-radius:99px;font-size:.65rem}.message-conversation{padding:22px;display:flex;flex-direction:column}.conversation-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.chat-box{flex:1;overflow:auto;min-height:280px;max-height:470px;padding:12px;background:var(--soft);border-radius:12px;margin:14px 0}.chat-msg{max-width:78%;padding:10px 12px;border-radius:12px;margin:8px 0;background:#fff}.chat-msg.mine{margin-left:auto;background:var(--navy);color:#fff}.chat-msg small{opacity:.65}.chat-msg p{margin:5px 0 0;white-space:pre-wrap}.message-conversation textarea,.admin-card>textarea{width:100%;min-height:100px;padding:12px;border:1px solid var(--line);border-radius:9px}.auth-register-link{border:0;background:none;color:var(--navy);text-decoration:underline;font-weight:800;cursor:pointer;margin-top:12px}.booking-step{display:flex;gap:12px;align-items:flex-start;margin:8px 0 12px}.booking-step>span{width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:.65rem;font-weight:900}.booking-step b,.booking-step small{display:block}.booking-step small{color:var(--muted);margin-top:3px}.calendar-nav{display:grid;grid-template-columns:40px 1fr 40px;gap:8px;margin-bottom:8px}.calendar-nav button{border:1px solid var(--line);background:var(--soft);border-radius:8px;font-size:1.2rem;cursor:pointer}.calendar-nav input{width:100%;padding:11px;border:1px solid var(--line);border-radius:8px}.summary-price{font-size:1.7rem;font-weight:900;color:var(--gold);margin:10px 0}.summary-note{font-size:.7rem;color:var(--muted);padding:10px 0;border-top:1px solid var(--line);margin-top:10px}.mini-card{padding:15px!important;margin-top:15px!important}.member-stat-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}.portfolio-item{padding:14px 0;border-bottom:1px solid var(--line)}.portfolio-item small{display:block;color:var(--muted)}
+body.theme-midnight{color:#e7ebf0!important}body.theme-midnight .nav{background:#101827!important}body.theme-midnight .nav-links a,body.theme-midnight .brand-name{color:#e7ebf0!important}body.theme-midnight .brand-sub{color:#aab3bf!important}body.theme-midnight .admin-card,body.theme-midnight .admin-stat,body.theme-midnight .booking-summary,body.theme-midnight .dash-card,body.theme-midnight .modal-card,body.theme-midnight .login-box{background:#182235!important;color:#e7ebf0}body.theme-midnight .admin-table th{background:#202d42;color:#e7ebf0}body.theme-midnight .admin-table td,body.theme-midnight .admin-card p,body.theme-midnight .admin-note{color:#bdc7d3}body.theme-midnight input,body.theme-midnight select,body.theme-midnight textarea{background:#111a2a;color:#e7ebf0;border-color:#405064}
+@media(max-width:1050px){.nav-links{gap:10px!important}.nav-links a{font-size:.68rem}.member-btn,.nav-cta{height:40px!important;padding:0 10px!important}.insight-grid,.admin-grid-wide{grid-template-columns:repeat(2,1fr)!important}.program-admin-row{grid-template-columns:1fr 1fr}.program-admin-row textarea{grid-column:1/-1}.theme-options-8{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:760px){.nav-inner{grid-template-columns:auto auto!important}.nav-links{grid-column:1/-1}.member-actions{margin-left:0}.messages-admin{grid-template-columns:1fr}.message-users{border-right:0;border-bottom:1px solid var(--line);max-height:220px;overflow:auto}.rule-list>div,.tracking-user,.member-list>div,.user-detail-list>div{grid-template-columns:1fr}.insight-grid,.admin-grid-wide{grid-template-columns:1fr!important}.theme-options-8{grid-template-columns:1fr!important}.photo-label{left:14px!important;right:14px!important;max-width:calc(100% - 28px)!important}.hero-title{font-size:clamp(2.8rem,13vw,4.8rem)!important}}
+</style>
+
+<style id="careeros-public-ai-styles">
+.ai-hub-public{display:grid;grid-template-columns:310px 1fr;border-radius:20px;overflow:hidden;box-shadow:0 25px 70px rgba(0,0,0,.16);background:#fff}.ai-public-menu{background:linear-gradient(180deg,var(--navy),var(--navy2));padding:24px;color:#fff}.ai-public-menu h3{color:#fff;margin-bottom:14px}.ai-public-menu button{display:block;width:100%;text-align:left;border:0;background:transparent;color:#d7e1ea;padding:14px;border-radius:10px;cursor:pointer}.ai-public-menu button b,.ai-public-menu button small{display:block}.ai-public-menu button small{opacity:.7;margin-top:4px}.ai-public-menu button.active{background:rgba(255,255,255,.12);color:#fff}.ai-public-work{padding:28px;color:var(--navy);min-height:620px}.ai-public-work>textarea{width:100%;min-height:125px;padding:14px;border:1px solid var(--line);border-radius:12px}.ai-public-work .admin-note{color:var(--muted)}
+@media(max-width:900px){.ai-hub-public{grid-template-columns:1fr}.ai-public-menu{max-height:330px;overflow:auto}}
+</style>
+<style id="careeros-payment-styles">
+.payment-panel{margin-top:18px;padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--soft)}.payment-panel h4{margin:0 0 6px;color:var(--navy)}.payment-help{font-size:.68rem;color:var(--muted);line-height:1.5;margin-bottom:12px}.payment-methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.payment-method{border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--theme-card);cursor:pointer;display:flex;gap:10px;align-items:flex-start}.payment-method input{margin-top:3px}.payment-method b{display:block;color:var(--navy);font-size:.72rem}.payment-method small{display:block;color:var(--muted);font-size:.6rem;margin-top:3px}.bank-details{margin-top:12px;padding:13px;border-radius:11px;background:var(--theme-card);border:1px dashed var(--line);display:none}.bank-details.open{display:block}.bank-details-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.68rem}.bank-details-grid b{color:var(--navy)}.proof-name{font-size:.62rem;color:var(--muted);margin-top:5px}.payment-assist{margin-top:10px;padding:10px 12px;border-radius:9px;background:rgba(201,160,74,.12);font-size:.64rem;color:var(--navy)}.admin-bank-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.admin-bank-grid .full{grid-column:1/-1}.attachment-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;background:var(--soft);font-size:.6rem;color:var(--navy);margin-top:6px}.booking-payment-badge{display:inline-block;padding:4px 7px;border-radius:999px;font-size:.58rem;font-weight:900;background:var(--soft);color:var(--navy)}@media(max-width:720px){.payment-methods,.admin-bank-grid,.bank-details-grid{grid-template-columns:1fr}}
+</style></head>
 
 <body>
 
@@ -468,18 +512,20 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
     </button>
 
     <ul class="nav-links" id="navLinks">
-      <li><a href="#home">Home</a></li>
-      <li><a href="#about">About Tebogo</a></li>
-      <li><a href="#journey">Journey</a></li>
-      <li><a href="#education">Education</a></li>
-      <li><a href="#ai">AI Career Hub</a></li>
-      <li><a href="#coaching">Coaching</a></li>
+      <li><a href="#home" data-route="home">Home</a></li>
+      <li><a href="#about" data-route="about">About Tebogo</a></li>
+      <li><a href="#journey" data-route="journey">Journey</a></li>
+      <li><a href="#education" data-route="education">Education</a></li>
+      <li><a href="#ai" data-route="ai">AI Career Hub</a></li>
+      <li><a href="#coaching" data-route="coaching">Coaching</a></li>
+      <li><a href="#academy" data-route="academy">Academy</a></li>
+      <li><a href="#resources" data-route="resources">Resources</a></li>
       <li><a href="#contact" class="nav-cta">Book a Session</a></li>
     </ul>
   </div>
 </nav>
 
-<header class="hero" id="home">
+<header class="hero" id="home" data-page="home">
   <div class="hero-watermark">CAREER</div>
 
   <div class="container hero-grid">
@@ -525,7 +571,7 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </header>
 
-<section class="credibility">
+<section class="credibility" data-page="home">
   <div class="container cred-grid">
     <div class="cred-item reveal"><b>MBA · Cum Laude</b><span>Johannesburg Business School</span></div>
     <div class="cred-item reveal"><b>Logistics</b><span>Academic & operational foundation</span></div>
@@ -534,7 +580,7 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<section class="section" id="about">
+<section class="section" id="about" data-page="about">
   <div class="container">
     <div class="section-head reveal">
       <div class="eyebrow">About Tebogo</div>
@@ -583,7 +629,7 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<section class="section soft" id="journey">
+<section class="section soft" id="journey" data-page="journey">
   <div class="container">
     <div class="section-head reveal">
       <div class="eyebrow">Career Journey</div>
@@ -652,7 +698,7 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<section class="section" id="education">
+<section class="section" id="education" data-page="education">
   <div class="container">
     <div class="section-head reveal">
       <div class="eyebrow">Education & Credentials</div>
@@ -709,7 +755,7 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<section class="section soft">
+<section class="section soft" data-page="about">
   <div class="container">
     <div class="section-head center reveal">
       <div class="eyebrow">Core Strengths</div>
@@ -731,7 +777,7 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<section class="section">
+<section class="section" data-page="academy">
   <div class="container">
     <div class="section-head center reveal">
       <div class="eyebrow">Who CareerOS Supports</div>
@@ -747,7 +793,7 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<section class="section navy">
+<section class="section navy" data-page="coaching">
   <div class="container">
     <div class="section-head center reveal">
       <div class="eyebrow">The CareerOS Method</div>
@@ -766,29 +812,34 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<section class="section navy" id="ai" style="padding-top:0">
+<section class="section navy" id="ai" data-page="ai" style="padding-top:35px">
   <div class="container">
     <div class="section-head reveal">
       <div class="eyebrow">AI Career Hub</div>
-      <h2>Intelligent tools for <span style="color:var(--gold2)">real career problems.</span></h2>
-      <p>AI supports practice and preparation between sessions. Human experience provides judgement and accountability.</p>
+      <h2>Intelligent career support, <span style="color:var(--gold2)">built around a real purpose.</span></h2>
+      <p>Choose a specialist tool instead of a generic chatbot. Use focused guidance for practice, planning and day-to-day development, with human coaching available when judgement or accountability matters.</p>
     </div>
-
-    <div class="ai-grid">
-      <article class="ai-card reveal"><b>01 · NAVIGATE</b><h3>Career Navigator</h3><p>Build career roadmaps, clarify options and identify skill or exposure gaps.</p><span class="output">OUTPUT · CAREER PLAN + NEXT ACTIONS</span></article>
-      <article class="ai-card reveal"><b>02 · PRACTISE</b><h3>Interview Coach</h3><p>Run realistic mock interviews based on role level and job description.</p><span class="output">OUTPUT · SCORECARD + ANSWER GUIDANCE</span></article>
-      <article class="ai-card reveal"><b>03 · POSITION</b><h3>CV Architect</h3><p>Review CV structure, evidence, achievements and alignment to target roles.</p><span class="output">OUTPUT · IMPROVEMENT PLAN</span></article>
-      <article class="ai-card reveal"><b>04 · BRAND</b><h3>Personal Brand Coach</h3><p>Support LinkedIn positioning, bio, elevator pitch and thought-leadership themes.</p><span class="output">OUTPUT · BRAND STATEMENT</span></article>
-      <article class="ai-card reveal"><b>05 · PRESENT</b><h3>Presentation Coach</h3><p>Improve storyline, executive messaging, structure and rehearsal.</p><span class="output">OUTPUT · PRESENTATION FEEDBACK</span></article>
-      <article class="ai-card reveal"><b>06 · STUDY</b><h3>Academic Success Coach</h3><p>Support study planning, postgraduate readiness, time management and routines.</p><span class="output">OUTPUT · STUDY PLAN + PRIORITIES</span></article>
-      <article class="ai-card reveal"><b>07 · LEAD</b><h3>Leadership Coach</h3><p>Practise delegation, feedback, accountability and stakeholder situations.</p><span class="output">OUTPUT · SCENARIO FEEDBACK</span></article>
-      <article class="ai-card reveal"><b>08 · DECIDE</b><h3>Career Decision Coach</h3><p>Compare career, role and study options using structured decision criteria.</p><span class="output">OUTPUT · DECISION MATRIX</span></article>
-      <article class="ai-card reveal"><b>09 · TRACK</b><h3>Goal & Accountability Agent</h3><p>Track agreed actions and keep development commitments visible.</p><span class="output">OUTPUT · PROGRESS SUMMARY</span></article>
+    <div class="ai-hub-public">
+      <aside class="ai-public-menu">
+        <h3>AI Career Hub</h3>
+        <div id="publicAIMenu"></div>
+      </aside>
+      <div class="ai-public-work">
+        <div class="admin-badge">● AI Career Hub Online</div>
+        <h3 id="publicAITitle">Goal & Accountability Agent</h3>
+        <p id="publicAIDesc">Actions & progress</p>
+        <div class="ai-quick" id="publicAIQuick"></div>
+        <textarea id="publicAIPrompt" placeholder="Tell the AI Career Hub what you need help with..."></textarea>
+        <div class="admin-actions"><button class="btn btn-gold" id="publicAskAI">Ask AI Career Hub →</button><button class="btn btn-outline" id="publicClearAI">Clear</button></div>
+        <div class="ai-response-v4" id="publicAIResponse">Your AI Career Hub response will appear here.</div>
+        <div class="admin-actions"><button class="btn btn-gold" id="publicSaveAI">Save to Career Portfolio</button><button class="btn btn-outline" id="publicCopyAI">Copy Response</button></div>
+        <p class="admin-note">AI guidance is developmental and should be reviewed with your own judgement.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="section soft">
+<section class="section soft" data-page="coaching">
   <div class="container">
     <div class="section-head reveal">
       <div class="eyebrow">Common Career Challenges</div>
@@ -807,7 +858,7 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<section class="section" id="coaching">
+<section class="section" id="coaching" data-page="coaching">
   <div class="container">
     <div class="section-head reveal">
       <div class="eyebrow">Coaching & Programmes</div>
@@ -834,7 +885,7 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<section class="section quote-section">
+<section class="section quote-section" data-page="about">
   <div class="container">
     <div class="quote-card reveal">
       <div class="quote-mark">“</div>
@@ -844,7 +895,7 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<section class="section navy">
+<section class="section navy" data-page="about">
   <div class="container">
     <div class="section-head center reveal">
       <div class="eyebrow">The Philosophy</div>
@@ -858,7 +909,7 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<section class="section" id="contact">
+<section class="section" id="contact" data-page="coaching">
   <div class="container">
     <div class="contact-grid">
       <div class="contact-info reveal">
@@ -902,7 +953,38 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
   </div>
 </section>
 
-<footer>
+<section class="section academy-page" id="academy" data-page="academy">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">CareerOS Academy</div>
+      <h2>Learn with structure. <span style="color:var(--gold-dark)">Grow with purpose.</span></h2>
+      <p>Practical learning pathways designed around career readiness, leadership, workplace confidence and academic success.</p>
+    </div>
+    <div class="expertise-grid">
+      <article class="expertise reveal"><div class="icon">01</div><h3>Graduate Launchpad</h3><p>CV readiness, interview preparation, workplace behaviour and confidence for your first opportunity.</p></article>
+      <article class="expertise reveal"><div class="icon">02</div><h3>Leadership Lab</h3><p>Delegation, feedback, accountability, difficult conversations and practical leadership scenarios.</p></article>
+      <article class="expertise reveal"><div class="icon">03</div><h3>Academic Success</h3><p>Study planning, time management, assessment preparation and connecting academic progress to career goals.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section soft resources-page" id="resources" data-page="resources">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">CareerOS Resources</div>
+      <h2>Tools you can use <span style="color:var(--gold-dark)">between sessions.</span></h2>
+      <p>Guides, checklists and practical development resources that turn advice into action.</p>
+    </div>
+    <div class="audience-grid">
+      <article class="audience reveal"><div class="big">01</div><div class="icon">CV</div><h3>CV Checklist</h3><p>Review your structure, achievements, evidence and alignment before applying.</p><span class="tag">Career Tool</span></article>
+      <article class="audience reveal"><div class="big">02</div><div class="icon">IN</div><h3>Interview Planner</h3><p>Prepare examples, likely questions, stories and role-specific evidence.</p><span class="tag">Preparation</span></article>
+      <article class="audience reveal"><div class="big">03</div><div class="icon">LD</div><h3>Leadership Reflection</h3><p>Reflect on decisions, people leadership, communication and your next development action.</p><span class="tag">Leadership</span></article>
+      <article class="audience reveal"><div class="big">04</div><div class="icon">ST</div><h3>Study Planner</h3><p>Turn deadlines and priorities into a realistic weekly academic plan.</p><span class="tag">Academic</span></article>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
   <div class="container">
     <div class="footer-top">
       <div class="footer-brand">
@@ -911,13 +993,15 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
       </div>
 
       <div class="footer-links">
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#journey">Journey</a>
-        <a href="#education">Education</a>
-        <a href="#ai">AI Career Hub</a>
-        <a href="#coaching">Coaching</a>
-        <a href="#contact">Contact</a>
+        <a href="#home" data-route="home">Home</a>
+        <a href="#about" data-route="about">About</a>
+        <a href="#journey" data-route="journey">Journey</a>
+        <a href="#education" data-route="education">Education</a>
+        <a href="#ai" data-route="ai">AI Career Hub</a>
+        <a href="#coaching" data-route="coaching">Coaching</a>
+        <a href="#academy" data-route="academy">Academy</a>
+        <a href="#resources" data-route="resources">Resources</a>
+        <a href="#contact" data-route="coaching">Contact</a>
       </div>
     </div>
 
@@ -942,6 +1026,8 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
         <div class="form-field"><label for="bookPackage">Programme</label><select id="bookPackage" required>
           <option>Discovery Call</option><option>Single Coaching Session</option><option>Career Starter Package</option><option>Career Growth Package</option><option>Career & Academic Success Journey</option><option>Graduate / Student Rate</option><option>Group Coaching</option>
         </select></div>
+        <div class="form-field"><label for="bookDate">Preferred date</label><input id="bookDate" type="date" required></div>
+        <div class="form-field"><label for="bookTime">Available slot</label><select id="bookTime" required></select></div>
         <div class="form-field"><label for="bookGoal">Main goal</label><select id="bookGoal"><option>Career growth</option><option>Academic success</option><option>Leadership development</option><option>CV / interview readiness</option><option>Personal branding</option><option>Other</option></select></div>
         <div class="form-field full"><label for="bookMessage">What would you like help with?</label><textarea id="bookMessage" placeholder="Briefly describe your goal or challenge..."></textarea></div>
       </div>
@@ -963,137 +1049,379 @@ footer{background:#041120;color:#aebdcb;padding:45px 0 22px}
 </div>
 <div class="toast" id="toast" role="status"></div>
 
+<button class="admin-fab" id="adminFab" aria-label="Administrator">🎓</button>
+
+<div class="login-overlay" id="adminLogin">
+  <div class="login-box">
+    <div class="eyebrow">Secure Area</div><h2>Administrator Login</h2>
+    <p>Enter the administrator credentials to manage CareerOS.</p>
+    <form id="adminLoginForm">
+      <div class="login-field"><label>Username</label><input id="adminUser" autocomplete="username" required></div>
+      <div class="login-field"><label>Password</label><input id="adminPass" type="password" autocomplete="current-password" required></div>
+      <div class="admin-actions"><button class="btn btn-gold" type="submit">Sign in →</button><button class="btn btn-outline" type="button" id="cancelAdminLogin">Cancel</button></div>
+      <div class="admin-note" id="adminLoginMsg"></div>
+    </form>
+  </div>
+</div>
+
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-shell">
+    <aside class="admin-side">
+      <h2>CareerOS Admin</h2><p>Owner control centre</p>
+      <div class="admin-nav">
+        <button class="active" data-admin-view="dashboard">Dashboard</button>
+        <button data-admin-view="bookings">Bookings</button>
+        <button data-admin-view="messages">Messages</button>
+        <button data-admin-view="content">Website Content</button>
+        <button data-admin-view="appearance">Themes & Images</button>
+        <button data-admin-view="settings">Owner Settings</button>
+      </div>
+    </aside>
+    <main class="admin-main">
+      <div class="admin-top"><div><div class="eyebrow">Administrator</div><h1 id="adminViewTitle">Dashboard</h1></div><div class="admin-actions"><button class="admin-close" id="viewWebsite">View Website</button><button class="admin-close" id="logoutAdmin">Log out</button></div></div>
+
+      <div id="adminDashboard" class="admin-view"><div id="legacyDashboardPlaceholder"></div></div>
+
+      <div id="adminBookings" class="admin-view" style="display:none"><div class="admin-card"><h3>Bookings</h3><div style="overflow:auto"><table class="admin-table"><thead><tr><th>Name</th><th>Programme</th><th>Date / Time</th><th>Email</th><th>Status</th><th>Action</th></tr></thead><tbody id="bookingTable"></tbody></table></div></div></div>
+      <div id="adminMessages" class="admin-view" style="display:none"><div class="admin-card"><h3>Enquiries & messages</h3><div style="overflow:auto"><table class="admin-table"><thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Programme</th><th>Message</th></tr></thead><tbody id="messageTable"></tbody></table></div></div></div>
+      <div id="adminContent" class="admin-view" style="display:none"><div class="admin-card"><h3>Website content controls</h3><p class="admin-note">The page structure and your existing content stay intact. Use the fields below for lightweight owner-controlled updates.</p><div class="admin-form"><div class="full"><label>Hero headline</label><input id="contentHero"></div><div class="full"><label>Hero supporting text</label><textarea id="contentLead"></textarea></div></div><div class="admin-actions"><button class="btn btn-gold" id="saveContent">Save Website Content</button><button class="btn btn-outline" id="resetContent">Reset</button></div></div></div>
+      <div id="adminAppearance" class="admin-view" style="display:none"><div class="admin-card"><h3>Choose a CareerOS theme</h3><div class="theme-options" id="themeOptions"><div class="theme-option" data-theme="classic"><div class="theme-swatch" style="background:linear-gradient(135deg,#071a2f,#c9a04a)"></div><b>Classic Navy & Gold</b></div><div class="theme-option" data-theme="blue"><div class="theme-swatch" style="background:linear-gradient(135deg,#063b66,#4da3d9)"></div><b>Executive Blue</b></div><div class="theme-option" data-theme="sage"><div class="theme-swatch" style="background:linear-gradient(135deg,#25483f,#8da58e)"></div><b>Sage Leadership</b></div><div class="theme-option" data-theme="slate"><div class="theme-swatch" style="background:linear-gradient(135deg,#27384d,#bca46a)"></div><b>Slate Executive</b></div></div></div><div class="admin-card"><h3>Website pictures</h3><div class="admin-form"><div><label>Hero / profile picture</label><input type="file" id="heroImageUpload" accept="image/*"><img class="image-preview" id="heroPreview"></div><div><label>Education picture</label><input type="file" id="eduImageUpload" accept="image/*"><img class="image-preview" id="eduPreview"></div></div><p class="admin-note">Images are stored in this browser using local storage. For a public multi-device website, connect this to cloud storage.</p></div></div>
+      <div id="adminSettings" class="admin-view" style="display:none"><div class="admin-card"><h3>Owner email & booking control</h3><div class="admin-form"><div class="full"><label>Email that receives messages and bookings</label><input id="ownerEmail" type="email"></div><div><label>New administrator username</label><input id="newAdminUser"></div><div><label>New administrator password</label><input id="newAdminPass" type="password"></div></div><div class="admin-actions"><button class="btn btn-gold" id="saveSettings">Save Settings</button></div><p class="admin-note">Changing the email changes the destination used by the website's enquiry mail composer.</p></div><div class="admin-card"><h3>Manage booking slots</h3><div class="admin-form"><div><label>Date</label><input id="slotDate" type="date"></div><div><label>Time</label><input id="slotTime" type="time"></div></div><div class="admin-actions"><button class="btn btn-gold" id="addSlot">Add Available Slot</button></div><div style="overflow:auto;margin-top:15px"><table class="admin-table"><thead><tr><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr></thead><tbody id="slotTable"></tbody></table></div></div><div class="admin-card"><h3>Data controls</h3><button class="btn danger" id="clearBookings">Delete All Booking Records</button> <button class="btn danger" id="clearMessages">Delete All Message Records</button></div></div>
+    </main>
+  </div>
+</div>
 <button class="back-top" id="backTop" aria-label="Back to top">↑</button>
 
 <script>
-const $ = (id) => document.getElementById(id);
+const $ = id => document.getElementById(id);
+const STORAGE_KEY = 'careeros_v3';
+const defaults = {
+  ownerEmail:'masenamelatebogo@gmail.com', adminUser:'careeros', adminPass:'123456', theme:'classic', bankPayment:{enabled:true,bankName:'',accountHolder:'',accountNumber:'',branchCode:'',accountType:'',referencePrefix:'CAREEROS',paymentNote:'Use your booking ID as the payment reference. Attach proof of payment before submitting.',onlinePaymentUrl:''},
+  heroTitle:'Build the career', heroLead:'Practical career development, academic success and leadership growth combining real-world experience, structured coaching and AI-powered tools.',
+  bookings:[], messages:[], slots:[], tracking:{home:0,about:0,journey:0,education:0,ai:0,coaching:0,academy:0,resources:0}, activity:[]
+};
+let db = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || structuredClone(defaults);
+db.bankPayment={...defaults.bankPayment,...(db.bankPayment||{})};
+const saveDB=()=>localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
+function applyTheme(){document.body.classList.remove('theme-blue','theme-sage','theme-slate');if(db.theme!=='classic')document.body.classList.add('theme-'+db.theme);}
+applyTheme();
 
-const menu = $("menu");
-const navLinks = $("navLinks");
-menu.addEventListener("click", () => navLinks.classList.toggle("open"));
+/* True page-style navigation: one view is visible at a time. */
+const routes=['home','about','journey','education','ai','coaching','academy','resources'];
+function go(route, updateHash=true){
+  if(!routes.includes(route)) route='home';
+  document.body.dataset.page=route;
+  window.scrollTo({top:0,behavior:'instant'});
+  document.querySelectorAll('[data-route]').forEach(a=>a.classList.toggle('active-route',a.dataset.route===route));
+  if(updateHash) history.pushState({route},'', '#'+route);
+  document.querySelectorAll('.reveal').forEach(el=>el.classList.remove('visible'));
+  setTimeout(()=>document.querySelectorAll('[data-page="'+route+'"] .reveal').forEach(el=>el.classList.add('visible')),30);
+  db.tracking[route]=(db.tracking[route]||0)+1;
+  db.activity.unshift({time:new Date().toLocaleString(),type:'Page view',detail:route.charAt(0).toUpperCase()+route.slice(1)});db.activity=db.activity.slice(0,30);saveDB();
+}
+function routeFromHash(){const r=(location.hash||'#home').slice(1).split('?')[0];go(r,false);}
+window.addEventListener('hashchange',routeFromHash);window.addEventListener('popstate',routeFromHash);routeFromHash();
 
-document.querySelectorAll(".nav-links a").forEach(link => {
-  link.addEventListener("click", () => navLinks.classList.remove("open"));
-});
-
-/* Reveal animation */
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if(entry.isIntersecting){
-      entry.target.classList.add("visible");
-      observer.unobserve(entry.target);
-    }
-  });
-},{threshold:.08});
-document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+document.querySelectorAll('[data-route]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();go(a.dataset.route);document.querySelector('#navLinks')?.classList.remove('open')}));
+$('menu').addEventListener('click',()=>$('navLinks').classList.toggle('open'));
 
 /* Back to top */
-const backTop = $("backTop");
-window.addEventListener("scroll", () => {
-  backTop.classList.toggle("show", window.scrollY > 500);
-},{passive:true});
-backTop.addEventListener("click", () => window.scrollTo({top:0,behavior:"smooth"}));
+const backTop=$('backTop');window.addEventListener('scroll',()=>backTop.classList.toggle('show',scrollY>500),{passive:true});backTop.onclick=()=>scrollTo({top:0,behavior:'smooth'});
 
 /* Modal engine */
-function openModal(id){
-  const el=$(id); if(!el) return;
-  el.classList.add("open"); el.setAttribute("aria-hidden","false");
-  document.body.style.overflow="hidden";
+function openModal(id){const e=$(id);if(!e)return;e.classList.add('open');e.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
+function closeModal(id){const e=$(id);if(!e)return;e.classList.remove('open');e.setAttribute('aria-hidden','true');if(!document.querySelector('.modal.open'))document.body.style.overflow=''}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));
+document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)closeModal(m.id)});document.onkeydown=e=>{if(e.key==='Escape')document.querySelectorAll('.modal.open').forEach(m=>closeModal(m.id))};
+
+/* Booking slots */
+function slotKey(date,time){return date+'|'+time}
+function getFreeSlots(){return db.slots.filter(s=>!db.bookings.some(b=>b.date===s.date&&b.time===s.time&&b.status!=='Cancelled'))}
+function populateSlots(){const d=$('bookDate'),t=$('bookTime');if(!d||!t)return;const today=new Date();today.setHours(0,0,0,0);d.min=today.toISOString().slice(0,10);const slots=getFreeSlots().filter(s=>!d.value||s.date===d.value);t.innerHTML='<option value="">Select an available slot</option>'+slots.map(s=>`<option value="${s.time}">${s.time}</option>`).join('');}
+$('bookDate').addEventListener('change',populateSlots);populateSlots();
+
+/* Bookable coaching rows */
+document.querySelectorAll('.package-row').forEach(row=>{row.tabIndex=0;const choose=()=>{$('bookPackage').value=row.dataset.package;openModal('bookingModal');populateSlots()};row.onclick=choose;row.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose()}}});
+document.querySelectorAll('a[href="#contact"],a[href*="mailto:"],.nav-cta').forEach(link=>link.addEventListener('click',e=>{if(link.classList.contains('nav-cta')||link.textContent.toLowerCase().includes('book')||link.textContent.toLowerCase().includes('discovery')){e.preventDefault();openModal('bookingModal');populateSlots()}}));
+
+/* AI cards */
+const toolData={"Career Navigator":["Clarify your target role or direction.","Identify skills, exposure and experience gaps.","Build practical next actions and milestones."],"Interview Coach":["Practise realistic role-specific questions.","Structure stronger evidence-based answers.","Review confidence, clarity and examples."],"CV Architect":["Check structure and readability.","Identify missing achievements and evidence.","Align your CV to a target opportunity."],"Personal Brand Coach":["Shape your professional positioning.","Develop a concise value proposition.","Plan credible LinkedIn and networking themes."],"Presentation Coach":["Improve storyline and executive messaging.","Strengthen structure and delivery.","Prepare for important presentations and meetings."],"Academic Success Coach":["Build a realistic study routine.","Prioritise academic commitments.","Connect study goals with longer-term career plans."],"Leadership Coach":["Practise delegation and feedback.","Work through difficult leadership situations.","Build accountability and stakeholder confidence."],"Career Decision Coach":["Compare options using clear criteria.","Surface trade-offs and priorities.","Turn uncertainty into a practical decision process."],"Goal & Accountability Agent":["Define measurable development actions.","Track commitments and milestones.","Keep progress visible between coaching sessions."]};
+document.querySelectorAll('.ai-card').forEach(card=>card.onclick=()=>{const title=card.querySelector('h3')?.textContent.trim();$('toolTitle').textContent=title;$('toolDescription').textContent=card.querySelector('p')?.textContent||'';$('toolList').innerHTML=(toolData[title]||[]).map(x=>`<div>${x}</div>`).join('');$('toolBook').onclick=()=>{closeModal('toolModal');openModal('bookingModal');populateSlots()};openModal('toolModal')});
+
+/* Booking: prevent double booking before recording and email owner */
+$('bookingForm').addEventListener('submit',e=>{e.preventDefault();const name=$('bookName').value.trim(),email=$('bookEmail').value.trim(),pkg=$('bookPackage').value,date=$('bookDate').value,time=$('bookTime').value,goal=$('bookGoal').value,message=$('bookMessage').value.trim();if(!date||!time){alert('Please select an available date and time.');return}if(db.bookings.some(b=>b.date===date&&b.time===time&&b.status!=='Cancelled')){alert('That slot has just been booked. Please choose another available slot.');populateSlots();return}const booking={id:Date.now().toString(),name,email,pkg,date,time,goal,message,status:'Confirmed',created:new Date().toLocaleString()};db.bookings.unshift(booking);db.messages.unshift({date:booking.created,name,email,pkg,message:message||'Booking enquiry'});db.activity.unshift({time:booking.created,type:'New booking',detail:`${name} · ${date} ${time}`});saveDB();const subject=encodeURIComponent('CareerOS Booking - '+pkg);const body=encodeURIComponent(`Hello Tebogo,\n\nA new CareerOS booking has been requested.\n\nName: ${name}\nEmail: ${email}\nProgramme: ${pkg}\nDate: ${date}\nTime: ${time}\nMain goal: ${goal}\n\nMessage:\n${message||'No additional message.'}\n\nPlease confirm the session.\n\nCareerOS`);window.location.href=`mailto:${encodeURIComponent(db.ownerEmail)}?subject=${subject}&body=${body}`;closeModal('bookingModal');populateSlots();});
+
+/* Admin login */
+$('adminFab').onclick=()=>{$('adminLoginMsg').textContent='';$('adminLogin').classList.add('open');$('adminUser').focus()};$('cancelAdminLogin').onclick=()=>$('adminLogin').classList.remove('open');
+$('adminLoginForm').onsubmit=e=>{e.preventDefault();if($('adminUser').value===db.adminUser&&$('adminPass').value===db.adminPass){$('adminLogin').classList.remove('open');$('adminPanel').classList.add('open');renderAdmin();}else $('adminLoginMsg').textContent='Incorrect username or password.'};
+$('logoutAdmin').onclick=()=>$('adminPanel').classList.remove('open');$('viewWebsite').onclick=()=>{$('adminPanel').classList.remove('open');go('home')};
+
+document.querySelectorAll('[data-admin-view]').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('[data-admin-view]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.admin-view').forEach(v=>v.style.display='none');const id='admin'+btn.dataset.adminView.charAt(0).toUpperCase()+btn.dataset.adminView.slice(1);$(id).style.display='block';$('adminViewTitle').textContent=btn.textContent;renderAdmin()});
+function renderAdmin(){
+  $('statBookings').textContent=db.bookings.filter(b=>b.status!=='Cancelled').length;$('statMessages').textContent=db.messages.length;$('statSlots').textContent=getFreeSlots().length;$('statTracked').textContent=Object.values(db.tracking).reduce((a,b)=>a+b,0);
+  $('activityBoard').innerHTML=db.activity.length?db.activity.slice(0,12).map(a=>`<div style="padding:10px 0;border-bottom:1px solid var(--line);font-size:.75rem"><b>${a.type}</b> — ${a.detail}<small style="display:block;color:var(--muted)">${a.time}</small></div>`).join(''):'<p class="admin-note">No activity yet.</p>';
+  $('trackingBoard').innerHTML=Object.entries(db.tracking).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:.75rem"><span>${k}</span><b>${v}</b></div>`).join('');
+  $('bookingTable').innerHTML=db.bookings.map(b=>`<tr><td>${esc(b.name)}</td><td>${esc(b.pkg)}</td><td>${esc(b.date)}<br>${esc(b.time)}</td><td>${esc(b.email)}</td><td><span class="admin-badge">${esc(b.status)}</span></td><td><button class="btn btn-outline" onclick="cancelBooking('${b.id}')">Cancel</button> <button class="btn danger" onclick="deleteBooking('${b.id}')">Delete</button></td></tr>`).join('')||'<tr><td colspan="6">No bookings.</td></tr>';
+  $('messageTable').innerHTML=db.messages.map(m=>`<tr><td>${esc(m.date)}</td><td>${esc(m.name)}</td><td>${esc(m.email)}</td><td>${esc(m.pkg)}</td><td>${esc(m.message)}</td></tr>`).join('')||'<tr><td colspan="5">No messages.</td></tr>';
+  $('slotTable').innerHTML=db.slots.map(s=>{const booked=db.bookings.some(b=>b.date===s.date&&b.time===s.time&&b.status!=='Cancelled');return `<tr><td>${s.date}</td><td>${s.time}</td><td>${booked?'<span class="admin-badge">Booked</span>':'<span class="admin-badge">Available</span>'}</td><td><button class="btn danger" onclick="deleteSlot('${slotKey(s.date,s.time)}')">Delete</button></td></tr>`}).join('')||'<tr><td colspan="4">No slots configured.</td></tr>';
+  $('ownerEmail').value=db.ownerEmail;$('contentHero').value=db.heroTitle;$('contentLead').value=db.heroLead;$('newAdminUser').value=db.adminUser;document.querySelectorAll('.theme-option').forEach(x=>x.classList.toggle('selected',x.dataset.theme===db.theme));
+  $('heroPreview').src=document.querySelector('.hero-photo-frame img').src;$('eduPreview').src=document.querySelector('.edu-photo img').src;
 }
-function closeModal(id){
-  const el=$(id); if(!el) return;
-  el.classList.remove("open"); el.setAttribute("aria-hidden","true");
-  if(!document.querySelector(".modal.open")) document.body.style.overflow="";
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+window.cancelBooking=id=>{const b=db.bookings.find(x=>x.id===id);if(b){b.status='Cancelled';db.activity.unshift({time:new Date().toLocaleString(),type:'Booking cancelled',detail:b.name+' · '+b.date+' '+b.time});saveDB();renderAdmin();populateSlots()}};
+window.deleteBooking=id=>{db.bookings=db.bookings.filter(x=>x.id!==id);saveDB();renderAdmin();populateSlots()};
+window.deleteSlot=k=>{db.slots=db.slots.filter(s=>slotKey(s.date,s.time)!==k);saveDB();renderAdmin();populateSlots()};
+$('addSlot').onclick=()=>{const date=$('slotDate').value,time=$('slotTime').value;if(!date||!time)return alert('Select a date and time.');if(db.slots.some(s=>s.date===date&&s.time===time))return alert('That slot already exists.');if(db.bookings.some(b=>b.date===date&&b.time===time&&b.status!=='Cancelled'))return alert('That slot is already booked.');db.slots.push({date,time});db.slots.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));db.activity.unshift({time:new Date().toLocaleString(),type:'Slot added',detail:date+' '+time});saveDB();renderAdmin();populateSlots()};
+$('saveSettings').onclick=()=>{const email=$('ownerEmail').value.trim(),u=$('newAdminUser').value.trim(),p=$('newAdminPass').value;if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return alert('Enter a valid owner email.');db.ownerEmail=email;if(u)db.adminUser=u;if(p)db.adminPass=p;saveDB();alert('Administrator settings saved.')};
+$('saveContent').onclick=()=>{db.heroTitle=$('contentHero').value.trim()||defaults.heroTitle;db.heroLead=$('contentLead').value.trim()||defaults.heroLead;document.querySelector('.hero-title').childNodes[0].textContent=db.heroTitle+' ';document.querySelector('.hero-lead').textContent=db.heroLead;saveDB();alert('Website content saved.')};$('resetContent').onclick=()=>{db.heroTitle=defaults.heroTitle;db.heroLead=defaults.heroLead;saveDB();renderAdmin()};
+document.querySelectorAll('.theme-option').forEach(o=>o.onclick=()=>{db.theme=o.dataset.theme;applyTheme();saveDB();renderAdmin()});
+function imageUpload(input,selector,key,preview){input.onchange=()=>{const f=input.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{localStorage.setItem(key,r.result);document.querySelector(selector).src=r.result;$(preview).src=r.result;db.activity.unshift({time:new Date().toLocaleString(),type:'Picture changed',detail:key});saveDB()};r.readAsDataURL(f)}}
+imageUpload($('heroImageUpload'),'.hero-photo-frame img','careerosHeroImage','heroPreview');imageUpload($('eduImageUpload'),'.edu-photo img','careerosEduImage','eduPreview');
+function restoreImages(){const h=localStorage.getItem('careerosHeroImage'),e=localStorage.getItem('careerosEduImage');if(h)document.querySelector('.hero-photo-frame img').src=h;if(e)document.querySelector('.edu-photo img').src=e}restoreImages();
+$('clearBookings').onclick=()=>{if(confirm('Delete all booking records?')){db.bookings=[];saveDB();renderAdmin();populateSlots()}};$('clearMessages').onclick=()=>{if(confirm('Delete all message records?')){db.messages=[];saveDB();renderAdmin()}};
+
+/* Apply saved hero content */
+document.querySelector('.hero-title').childNodes[0].textContent=db.heroTitle+' ';document.querySelector('.hero-lead').textContent=db.heroLead;
+</script>
+
+
+<style id="careeros-v4-styles">
+/* CareerOS v4 advanced controls */
+.photo-label{left:24px!important;right:24px!important;width:auto!important;max-width:calc(100% - 48px)!important;box-sizing:border-box}.photo-label .quote{overflow-wrap:anywhere}
+.member-actions{display:flex;gap:8px;align-items:center}.member-btn{padding:12px 16px;border:1px solid var(--navy);border-radius:5px;background:#fff;color:var(--navy);font-weight:800;cursor:pointer}.member-btn.primary{background:var(--gold);border-color:var(--gold)}
+.theme-burgundy{--navy:#491f2c;--navy2:#642b3c;--navy3:#7d3a4d;--gold:#c7a56b;--gold2:#ead7aa;--cream:#fbf6f2;--soft:#f3e8e5;--green:#52705d}.theme-teal{--navy:#073f46;--navy2:#0d5b62;--navy3:#14737a;--gold:#b8734c;--gold2:#e0b08e;--cream:#f6fbfa;--soft:#e7f3f1;--green:#2f725f}.theme-midnight{--navy:#101827;--navy2:#1b273a;--navy3:#2b3a50;--gold:#aab3bf;--gold2:#e2e6eb;--cream:#f7f8fa;--soft:#eceff3;--green:#3f7462}.theme-emerald{--navy:#0d4938;--navy2:#14604a;--navy3:#1c755a;--gold:#c7aa72;--gold2:#ead9b2;--cream:#faf8f0;--soft:#eef3e8;--green:#247254}
+body.theme-blue{background:linear-gradient(180deg,#f7fbff,#edf6fb)}body.theme-sage{background:linear-gradient(180deg,#f8faf5,#eef2eb)}body.theme-slate{background:linear-gradient(180deg,#fafafa,#edf0f4)}body.theme-burgundy{background:linear-gradient(180deg,#fffaf7,#f3e8e5)}body.theme-teal{background:linear-gradient(180deg,#f7fcfb,#e7f3f1)}body.theme-midnight{background:linear-gradient(180deg,#fbfcfd,#eceff3)}body.theme-emerald{background:linear-gradient(180deg,#fcfbf6,#eef3e8)}
+.advanced-booking{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}.programme-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.programme-card{border:1px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;background:#fff}.programme-card.active{border:2px solid var(--gold);box-shadow:0 8px 24px rgba(7,26,47,.08)}.programme-card b{display:block;color:var(--navy)}.programme-card small{color:var(--muted)}.programme-price{font-weight:900;color:var(--gold);margin-top:8px}.slot-grid{display:flex;flex-wrap:wrap;gap:8px}.slot-chip{border:1px solid #cbd5df;background:#fff;padding:9px 11px;border-radius:99px;cursor:pointer}.slot-chip.active{background:var(--navy);color:#fff}.slot-chip[disabled]{opacity:.4;cursor:not-allowed}.booking-summary{background:var(--soft);border-radius:14px;padding:18px;position:sticky;top:15px}.date-status{font-size:.7rem;margin-top:6px;color:var(--muted)}
+.ai-hub-v4{display:grid;grid-template-columns:310px 1fr;gap:0;border-radius:20px;overflow:hidden;box-shadow:0 25px 70px rgba(0,0,0,.16)}.ai-menu-v4{background:linear-gradient(180deg,var(--navy),var(--navy2));padding:24px;color:#fff}.ai-menu-v4 h3{color:#fff;margin-bottom:14px}.ai-agent-btn{display:block;width:100%;text-align:left;border:0;background:transparent;color:#d7e1ea;padding:14px;border-radius:10px;cursor:pointer}.ai-agent-btn b{display:block;color:inherit}.ai-agent-btn small{opacity:.7}.ai-agent-btn.active{background:rgba(255,255,255,.12);color:#fff}.ai-work-v4{background:#fff;padding:28px;min-height:620px}.ai-quick{display:flex;flex-wrap:wrap;gap:8px;margin:15px 0}.ai-quick button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:9px 12px;cursor:pointer}.ai-response-v4{min-height:190px;border:1px solid var(--line);border-radius:12px;padding:18px;margin:14px 0;white-space:pre-wrap}.ai-prompt-v4{width:100%;min-height:110px;padding:14px;border:1px solid var(--line);border-radius:12px}
+.user-shell{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100vh;background:var(--theme-bg);background-image:radial-gradient(circle at 85% 10%,color-mix(in srgb,var(--gold) 9%,transparent),transparent 26%),linear-gradient(135deg,var(--theme-bg),var(--soft));color:var(--ink)}.user-side{background:linear-gradient(180deg,var(--navy),var(--navy2));color:#fff;padding:24px 18px;position:sticky;top:0;height:100vh;overflow:auto;box-shadow:14px 0 45px rgba(7,26,47,.12)}.member-logo{display:flex;align-items:center;gap:12px;padding:4px 8px 20px;border-bottom:1px solid rgba(255,255,255,.13)}.member-logo-mark{width:58px;height:58px;border:2px solid var(--gold);display:grid;place-items:center;font:800 1.8rem Manrope;color:var(--gold2);position:relative;background:rgba(255,255,255,.035)}.member-logo-mark:after{content:"";position:absolute;width:8px;height:8px;background:var(--gold);right:-5px;bottom:-5px}.member-logo-name{font:800 .92rem Manrope;letter-spacing:.15em}.member-logo-sub{font-size:.48rem;letter-spacing:.14em;color:#aebdcb;margin-top:3px}.member-dash-label{font:800 .82rem Manrope;letter-spacing:.08em;color:#fff;margin:22px 8px 3px}.member-side-copy{font-size:.66rem;line-height:1.45;color:#aebdcb;margin:0 8px 17px}.user-side button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;margin:3px 0;text-align:left;border:0;background:transparent;color:#dce5ed;border-radius:9px;cursor:pointer;font-weight:700;font-size:.72rem;transition:.2s}.user-side button:hover{background:rgba(255,255,255,.08);transform:translateX(2px)}.user-side button.active{background:linear-gradient(90deg,rgba(255,255,255,.15),rgba(255,255,255,.06));color:var(--gold2);box-shadow:inset 3px 0 0 var(--gold)}.member-logout{margin-top:18px!important;border-top:1px solid rgba(255,255,255,.12)!important;padding-top:16px!important;color:#f0c5c5!important}.user-main{padding:34px;min-width:0}.member-main-top{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:26px}.member-main-top h1{font-size:1.55rem!important;font-weight:900!important;letter-spacing:-.03em!important;margin-top:2px}.member-top-actions{display:flex;gap:10px}.member-dashboard{display:grid;gap:18px}.member-welcome{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:24px 26px;border-radius:18px;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;box-shadow:0 18px 45px rgba(7,26,47,.15);position:relative;overflow:hidden}.member-welcome:after{content:"C";position:absolute;right:24px;bottom:-45px;font:900 10rem Manrope;color:rgba(255,255,255,.045);pointer-events:none}.member-welcome h2{color:#fff;font-size:1.55rem;margin:4px 0 4px;position:relative;z-index:1}.member-welcome p{color:#d7e1ea;font-size:.74rem;position:relative;z-index:1}.member-welcome .member-welcome-meta{position:relative;z-index:1;text-align:right}.member-welcome-meta strong{display:block;font-size:1.1rem;color:var(--gold2)}.member-welcome-meta span{font-size:.63rem;color:#c0ccd7}.member-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.member-kpi{background:var(--theme-card);border:1px solid var(--line);border-radius:15px;padding:17px;box-shadow:0 8px 25px rgba(7,26,47,.05);min-width:0}.member-kpi .kpi-label{font-size:.61rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:800}.member-kpi b{display:block;font:900 1.55rem Manrope;color:var(--navy);margin-top:5px}.member-kpi small{display:block;color:var(--muted);font-size:.6rem;margin-top:3px}.member-dashboard-grid{display:grid;grid-template-columns:1.35fr .95fr;gap:18px}.member-panel-card{background:var(--theme-card);border:1px solid var(--line);border-radius:17px;padding:20px;box-shadow:0 8px 25px rgba(7,26,47,.045)}.member-panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.member-panel-head h3{font-size:1rem;margin:0;color:var(--navy)}.member-panel-head span{font-size:.62rem;color:var(--muted)}.member-progress-wrap{display:grid;grid-template-columns:150px 1fr;gap:22px;align-items:center}.member-ring{width:132px;height:132px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--gold) calc(var(--progress)*1%),var(--soft) 0);position:relative;margin:auto}.member-ring:after{content:"";position:absolute;inset:11px;background:var(--theme-card);border-radius:50%}.member-ring b{position:relative;z-index:1;font:900 1.8rem Manrope;color:var(--navy)}.member-bars{display:grid;gap:13px}.member-bar-row{display:grid;grid-template-columns:100px 1fr 35px;align-items:center;gap:9px;font-size:.66rem}.member-bar{height:8px;border-radius:99px;background:var(--soft);overflow:hidden}.member-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--navy),var(--gold));border-radius:inherit}.member-bar-row b{text-align:right;color:var(--navy)}.member-mini-list{display:grid;gap:0}.member-mini-item{display:grid;grid-template-columns:1fr auto;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}.member-mini-item:last-child{border-bottom:0}.member-mini-item b{font-size:.72rem;color:var(--navy)}.member-mini-item small{display:block;color:var(--muted);font-size:.61rem;margin-top:2px}.member-status{padding:5px 8px;border-radius:999px;font-size:.57rem;font-weight:900;background:var(--soft);color:var(--navy);white-space:nowrap}.member-status.overdue{background:#f9e4e4;color:#9b2d2d}.member-status.closed,.member-status.completed{background:#e3f2ea;color:#26704f}.member-status.inprogress{background:#fff1d4;color:#8a5c00}.member-next-session{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:13px;padding:14px;border-radius:13px;background:var(--soft);margin-top:8px}.member-date-box{width:50px;height:54px;border-radius:10px;background:var(--navy);color:#fff;display:grid;place-items:center;text-align:center}.member-date-box b{font-size:1.15rem;line-height:1}.member-date-box small{font-size:.5rem;text-transform:uppercase;color:var(--gold2)}.member-next-session b{display:block;font-size:.73rem;color:var(--navy)}.member-next-session small{display:block;color:var(--muted);font-size:.61rem}.member-countdown{text-align:right}.member-countdown strong{display:block;font:900 1rem Manrope;color:var(--gold)}.member-countdown small{font-size:.55rem;color:var(--muted)}.member-alert{display:flex;align-items:flex-start;gap:11px;padding:12px;border-radius:11px;background:var(--soft);margin-top:9px}.member-alert-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);margin-top:5px;flex:0 0 auto}.member-alert b{font-size:.68rem;color:var(--navy)}.member-alert p{font-size:.6rem;color:var(--muted);margin-top:2px}.member-empty{padding:22px;text-align:center;color:var(--muted);font-size:.68rem;border:1px dashed var(--line);border-radius:12px}.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.dash-card{background:var(--theme-card);border:1px solid var(--line);border-radius:14px;padding:18px}.progressbar{height:9px;background:var(--soft);border-radius:99px;overflow:hidden}.progressbar span{display:block;height:100%;background:linear-gradient(90deg,var(--navy),var(--gold))}
+@media(max-width:1100px){.member-kpis{grid-template-columns:repeat(3,1fr)}.member-dashboard-grid{grid-template-columns:1fr}.member-progress-wrap{grid-template-columns:140px 1fr}}@media(max-width:900px){.advanced-booking,.ai-hub-v4,.user-shell{grid-template-columns:1fr}.user-side{position:relative;height:auto;max-height:none}.member-logo{justify-content:center}.member-dash-label{text-align:center}.member-side-copy{text-align:center}.programme-grid,.dash-grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.user-main{padding:20px 14px}.member-main-top{align-items:center}.member-main-top h1{font-size:1.3rem!important}.member-kpis{grid-template-columns:1fr 1fr}.member-welcome{padding:20px;display:block}.member-welcome .member-welcome-meta{text-align:left;margin-top:12px}.member-progress-wrap{grid-template-columns:1fr}.member-kpis .member-kpi{padding:14px}.member-dashboard-grid{gap:12px}.programme-grid,.dash-grid{grid-template-columns:1fr}.photo-label{left:14px!important;right:14px!important;max-width:calc(100% - 28px)!important}}
+</style>
+
+<!-- Registered user access -->
+<div class="login-overlay" id="memberAuth"><div class="login-box"><button class="close-modal" id="closeMemberAuth">×</button><div class="eyebrow">CareerOS Member</div><h2 id="memberAuthTitle">Login</h2><div id="memberAuthBody"></div></div></div>
+<div class="admin-panel" id="memberPanel"><div class="user-shell"><aside class="user-side"><div class="member-logo"><div class="member-logo-mark">C</div><div><div class="member-logo-name">CAREEROS</div><div class="member-logo-sub">MEMBER WORKSPACE</div></div></div><div class="member-dash-label">MY DASHBOARD</div><p class="member-side-copy">Your private career development workspace</p><div id="memberNav"></div><button id="memberLogout" class="member-logout">Log out</button></aside><main class="user-main"><div class="member-main-top"><div><div class="eyebrow">Premium Member</div><h1 id="memberViewTitle">Overview</h1></div><div class="member-top-actions"><button class="admin-close" id="memberViewSite">View Website</button></div></div><div id="memberView"></div></main></div></div>
+
+<script id="careeros-v4-script">
+(()=>{
+'use strict';
+const V4='careeros_v4';
+const basePrograms=[
+{id:'discovery',name:'Discovery Call',includes:'20–30 min introduction, goals and fit assessment',price:0,priceLabel:'Free',sessions:1,duration:'20–30 min',active:true},
+{id:'single',name:'Single Coaching Session',includes:'60 min focused career/academic session',price:450,priceLabel:'R450',sessions:1,duration:'60 min',active:true},
+{id:'starter',name:'Career Starter Package',includes:'3 × 60 min sessions',price:1200,priceLabel:'R1,200',sessions:3,duration:'3 × 60 min',active:true},
+{id:'growth',name:'Career Growth Package',includes:'5 × 60 min sessions + development action plan',price:1850,priceLabel:'R1,850',sessions:5,duration:'5 × 60 min',active:true},
+{id:'journey',name:'Career & Academic Success Journey',includes:'8 sessions over 8–12 weeks + action plan + accountability check-ins',price:2800,priceLabel:'R2,800',sessions:8,duration:'8 sessions',active:true},
+{id:'graduate',name:'Graduate / Student Rate',includes:'60 min coaching session',price:350,priceLabel:'R350',sessions:1,duration:'60 min',active:true},
+{id:'group',name:'Group Coaching',includes:'60–90 min, 5–15 participants',price:200,priceLabel:'R200–R300 pp',sessions:1,duration:'60–90 min',active:true}
+];
+const baseGoals=['Academic success','Career growth','Leadership development','CV / interview readiness','Personal branding','Career direction','Graduate transition','Other'];
+const agents=[
+['Career Navigator','Roadmaps & next actions',['Build my career roadmap','Identify my skills gaps','Give me my next 5 actions']],
+['Interview Coach','Mock interviews & feedback',['Run a mock interview','Improve my STAR answer','Prepare role-specific questions']],
+['CV / Personal Brand Coach','CV, LinkedIn & positioning',['Improve my CV summary','Write achievement bullets','Strengthen my LinkedIn positioning']],
+['Academic Success Coach','Study & postgraduate planning',['Build my study plan','Plan postgraduate options','Balance study and work']],
+['Presentation Coach','Executive communication',['Structure my presentation','Improve my opening','Coach my delivery']],
+['Leadership Coach','Scenarios & judgement',['Help with a leadership scenario','Plan a difficult conversation','Improve delegation']],
+['Career Decision Coach','Compare options',['Compare two career paths','Build a decision matrix','Clarify my priorities']],
+['Goal & Accountability Agent','Actions & progress',['Turn my goal into weekly actions','Create a 30/60/90-day plan','Review my progress']]
+];
+const old=JSON.parse(localStorage.getItem(V4)||'null')||{};
+const defaultsV={programs:basePrograms,goals:baseGoals,dayStatus:{},availabilityRules:[],users:[],pdca:[],goalsData:[],schedules:[],portfolio:[],aiAgents:agents,monthly:{kicker:'PEOPLE · PROGRESS · POSSIBILITIES',line1:'Build the',line2:'career',line3:'you are',line4:'capable of.'},messages:[],messageThreads:[]};
+const v={...defaultsV,...old};
+for(const k of ['programs','goals','users','pdca','goalsData','schedules','portfolio','aiAgents','availabilityRules','messages','messageThreads']) if(!Array.isArray(v[k])) v[k]=defaultsV[k];
+const sv=()=>localStorage.setItem(V4,JSON.stringify(v));
+window.db=db;window.saveDB=saveDB;window.careerosV=v;
+// Requested administrator credentials.
+db.adminUser='careeros';db.adminPass='123456';db.bankPayment={...defaults.bankPayment,...(db.bankPayment||{})};saveDB();sv();
+
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtMoney=n=>{const x=Number(n)||0;return 'R'+x.toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:0})};
+const dateObj=d=>{const [y,m,day]=String(d||'').split('-').map(Number);return y&&m&&day?new Date(y,m-1,day):null};
+const dayName=d=>dateObj(d)?.toLocaleDateString('en-ZA',{weekday:'long'})||'';
+const isBooked=(date,time)=>db.bookings.some(b=>b.date===date&&b.time===time&&!['Cancelled','Rejected'].includes(b.status));
+const normalizeTime=t=>String(t||'').slice(0,5);
+function minutes(t){const [h,m]=normalizeTime(t).split(':').map(Number);return (h||0)*60+(m||0)}
+function timeText(n){return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
+function inRange(d,from,to){return (!from||d>=from)&&(!to||d<=to)}
+function generatedSlots(date){
+ let out=new Set();
+ const status=v.dayStatus[date];
+ if(status && status.status!=='Available' && status.status!=='Limited Availability') return [];
+ (v.availabilityRules||[]).forEach(r=>{
+   if(!inRange(date,r.fromDate,r.toDate)) return;
+   if(r.weekdays?.length && !r.weekdays.includes(new Date(dateObj(date)).getDay())) return;
+   if(r.status!=='Available' && r.status!=='Limited Availability') return;
+   const start=minutes(r.fromTime||'09:00'), end=minutes(r.toTime||'17:00'), step=Math.max(5,Number(r.interval)||60);
+   for(let x=start;x<=end-5;x+=step) out.add(timeText(x));
+ });
+ db.slots.filter(s=>s.date===date).forEach(s=>out.add(normalizeTime(s.time)));
+ return [...out].filter(t=>!isBooked(date,t)).sort();
 }
-document.querySelectorAll("[data-close]").forEach(btn=>{
-  btn.addEventListener("click",()=>closeModal(btn.dataset.close));
-});
-document.querySelectorAll(".modal").forEach(modal=>{
-  modal.addEventListener("click",e=>{if(e.target===modal) closeModal(modal.id)});
-});
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape") document.querySelectorAll(".modal.open").forEach(m=>closeModal(m.id));
-});
-
-/* Every Book a Session / enquiry CTA opens the working form */
-document.querySelectorAll('a[href="#contact"], a[href*="mailto:"], .nav-cta').forEach(link=>{
-  link.addEventListener("click",e=>{
-    if(link.classList.contains("nav-cta") || link.textContent.toLowerCase().includes("book") || link.textContent.toLowerCase().includes("discovery")){
-      e.preventDefault();
-      openModal("bookingModal");
-    }
-  });
-});
-
-/* Coaching packages are clickable */
-document.querySelectorAll(".package-row").forEach(row=>{
-  row.setAttribute("tabindex","0");
-  const choose=()=>{
-    $("bookPackage").value=row.dataset.package;
-    openModal("bookingModal");
-  };
-  row.addEventListener("click",choose);
-  row.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ") {e.preventDefault();choose();}});
-});
-
-/* AI cards open an informative interactive preview */
-const toolData={
-"Career Navigator":["Clarify your target role or direction.","Identify skills, exposure and experience gaps.","Build practical next actions and milestones."],
-"Interview Coach":["Practise realistic role-specific questions.","Structure stronger evidence-based answers.","Review confidence, clarity and examples."],
-"CV Architect":["Check structure and readability.","Identify missing achievements and evidence.","Align your CV to a target opportunity."],
-"Personal Brand Coach":["Shape your professional positioning.","Develop a concise value proposition.","Plan credible LinkedIn and networking themes."],
-"Presentation Coach":["Improve storyline and executive messaging.","Strengthen structure and delivery.","Prepare for important presentations and meetings."],
-"Academic Success Coach":["Build a realistic study routine.","Prioritise academic commitments.","Connect study goals with longer-term career plans."],
-"Leadership Coach":["Practise delegation and feedback.","Work through difficult leadership situations.","Build accountability and stakeholder confidence."],
-"Career Decision Coach":["Compare options using clear criteria.","Surface trade-offs and priorities.","Turn uncertainty into a practical decision process."],
-"Goal & Accountability Agent":["Define measurable development actions.","Track commitments and milestones.","Keep progress visible between coaching sessions."]
-};
-document.querySelectorAll(".ai-card").forEach(card=>{
-  const title=card.querySelector("h3")?.textContent.trim();
-  if(!title) return;
-  card.addEventListener("click",()=>{
-    $("toolTitle").textContent=title;
-    $("toolDescription").textContent=card.querySelector("p")?.textContent || "Explore this CareerOS capability.";
-    $("toolList").innerHTML=(toolData[title]||["Explore this capability with CareerOS."]).map(x=>`<div>${x}</div>`).join("");
-    $("toolBook").onclick=()=>{closeModal("toolModal");openModal("bookingModal");};
-    openModal("toolModal");
-  });
-});
-
-/* Booking form prepares a real email enquiry */
-$("bookingForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  const name=$("bookName").value.trim();
-  const email=$("bookEmail").value.trim();
-  const pkg=$("bookPackage").value;
-  const goal=$("bookGoal").value;
-  const message=$("bookMessage").value.trim();
-  const subject=encodeURIComponent("CareerOS Enquiry - "+pkg);
-  const body=encodeURIComponent(
-`Hello Tebogo,
-
-I would like to enquire about CareerOS.
-
-Name: ${name}
-Email: ${email}
-Programme: ${pkg}
-Main goal: ${goal}
-
-What I need help with:
-${message || "I would like to discuss my goals and next steps."}
-
-Thank you.`
-  );
-  window.location.href=`mailto:masenamelatebogo@gmail.com?subject=${subject}&body=${body}`;
-  closeModal("bookingModal");
-});
-
-/* Small feedback for keyboard/interaction */
-let toastTimer;
-function showToast(text){
-  const toast=$("toast"); toast.textContent=text; toast.classList.add("show");
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove("show"),2400);
+function futureDates(){
+ const set=new Set();const today=new Date();today.setHours(0,0,0,0);
+ for(let i=0;i<370;i++){const d=new Date(today);d.setDate(today.getDate()+i);const iso=d.toISOString().slice(0,10);if(generatedSlots(iso).length)set.add(iso)}
+ return [...set];
 }
+
+/* Header: Book first, then small Login. Register lives inside Login. */
+const book=[...document.querySelectorAll('.nav-cta')].find(x=>x.textContent.trim().toLowerCase().includes('book'));
+let memberWrap=document.querySelector('.member-actions');
+if(memberWrap) memberWrap.remove();
+if(book){
+ memberWrap=document.createElement('span');memberWrap.className='member-actions';
+ memberWrap.innerHTML='<button class="member-btn primary" id="loginBtn" type="button">Login</button><button class="member-btn dashboard-btn" id="dashboardBtn" type="button" style="display:none">Dashboard</button>';
+ book.parentNode.insertBefore(memberWrap,book.nextSibling);
+}
+const auth=document.getElementById('memberAuth'), body=document.getElementById('memberAuthBody'), title=document.getElementById('memberAuthTitle');
+function showAuth(mode){
+ auth.classList.add('open'); title.textContent=mode==='register'?'Register for CareerOS':'Member Login';
+ body.innerHTML=mode==='register'?`<form id="regForm"><div class="login-field"><label>Full name</label><input id="rName" required></div><div class="login-field"><label>Email</label><input id="rEmail" type="email" required></div><div class="login-field"><label>Password</label><input id="rPass" type="password" minlength="6" required></div><div class="login-field"><label>Target career / goal</label><input id="rTarget"></div><button class="btn btn-gold" type="submit">Submit Registration →</button><p class="admin-note">Your account remains pending until the administrator approves it.</p></form>`:`<form id="memLogin"><div class="login-field"><label>Email</label><input id="lEmail" type="email" required></div><div class="login-field"><label>Password</label><input id="lPass" type="password" required></div><button class="btn btn-gold" type="submit">Login →</button><button type="button" class="auth-register-link" id="openRegisterFromLogin">New here? Register for CareerOS</button><p class="admin-note" id="memMsg"></p></form>`;
+ if(mode==='register') $('regForm').onsubmit=e=>{e.preventDefault();const email=$('rEmail').value.trim().toLowerCase();if(v.users.some(u=>u.email===email))return alert('An account already exists for this email.');v.users.push({id:'u'+Date.now(),name:$('rName').value.trim(),email,password:$('rPass').value,target:$('rTarget').value.trim(),status:'Pending Approval',joined:new Date().toISOString(),progress:0});sv();alert('Registration submitted. The administrator must approve your account.');auth.classList.remove('open');renderAdmin();};
+ else {$('openRegisterFromLogin').onclick=()=>showAuth('register');$('memLogin').onsubmit=e=>{e.preventDefault();const u=v.users.find(x=>x.email===$('lEmail').value.trim().toLowerCase()&&x.password===$('lPass').value);if(!u)return $('memMsg').textContent='Incorrect email or password.';if(!['Approved','Active'].includes(u.status))return $('memMsg').textContent='Account status: '+u.status+'. Premium access is not available yet.';sessionStorage.setItem('careerosMember',u.id);auth.classList.remove('open');updateMemberButtons();openMember(u);};}
+}
+$('loginBtn')?.addEventListener('click',e=>{if(sessionStorage.getItem('careerosMember')){sessionStorage.removeItem('careerosMember');updateMemberButtons();alert('You have been logged out.');}else showAuth('login')});
+$('closeMemberAuth')?.addEventListener('click',()=>auth.classList.remove('open'));
+function currentMember(){const id=sessionStorage.getItem('careerosMember');return v.users.find(u=>u.id===id&&['Approved','Active'].includes(u.status))||null}
+function updateMemberButtons(){const u=currentMember(),login=$('loginBtn'),dash=$('dashboardBtn');if(login){login.textContent=u?'Log off':'Login';login.classList.toggle('primary',!u);login.classList.toggle('logout-btn',!!u)}if(dash)dash.style.display=u?'inline-flex':'none';}
+$('dashboardBtn')?.addEventListener('click',()=>{const u=currentMember();if(u)openMember(u)});
+updateMemberButtons();
+
+/* Member dashboard */
+const mnav=['Overview','Career Plan','Goals','PDCA Tracker','My Schedule','AI Coach','Career Portfolio','My Bookings','Messages'];
+function openMember(u){const panel=$('memberPanel');if(!panel)return;panel.classList.add('open');memberNav.innerHTML=mnav.map((x,i)=>`<button class="${i?'':'active'}" data-mv="${esc(x)}">${esc(x)}</button>`).join('');memberNav.querySelectorAll('button').forEach(b=>b.onclick=()=>{memberNav.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderMember(u,b.dataset.mv)});$('memberLogout').onclick=()=>{sessionStorage.removeItem('careerosMember');panel.classList.remove('open');updateMemberButtons()};$('memberViewSite').onclick=()=>panel.classList.remove('open');renderMember(u,'Overview')}
+function memberStatus(x){if(x.target&&new Date(x.target)<new Date()&&!['Closed','Completed'].includes(x.status))return 'Overdue';return x.status||'In Progress'}
+function renderMember(u,view){
+ if(!v.users.includes(u)) return;memberViewTitle.textContent=view;
+ const myG=v.goalsData.filter(x=>x.userId===u.id), myP=v.pdca.filter(x=>x.userId===u.id), myS=v.schedules.filter(x=>x.userId===u.id), myB=db.bookings.filter(x=>x.email?.toLowerCase()===u.email.toLowerCase());
+ const overdue=[...myG,...myP].filter(x=>memberStatus(x)==='Overdue').length;
+ if(view==='Overview'){const progress=Math.max(0,Math.min(100,Number(u.progress)||0));const openGoals=myG.filter(x=>!['Closed','Completed'].includes(x.status)).length;const activePdca=myP.filter(x=>!['Closed','Completed'].includes(x.status)).length;const dueSoon=myG.concat(myP).filter(x=>{if(!x.target||['Closed','Completed'].includes(x.status))return false;const d=new Date(x.target);const now=new Date();return d>=now&&d<=new Date(now.getTime()+7*86400000)}).length;const upcomingBookings=myB.filter(x=>x.status!=='Cancelled'&&new Date(x.date+'T'+(x.time||'00:00'))>=new Date()).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));const nextBooking=upcomingBookings[0];const daysLeft=nextBooking?Math.max(0,Math.ceil((new Date(nextBooking.date+'T'+(nextBooking.time||'00:00'))-new Date())/86400000)):null;const plan=myG.concat(myP);const totalPlan=plan.length;const closedPlan=plan.filter(x=>['Closed','Completed'].includes(x.status)).length;const inProg=plan.filter(x=>['In Progress','Do','Check','Act','Submitted'].includes(x.status)).length;const overdueCount=plan.filter(x=>memberStatus(x)==='Overdue').length;const recentTasks=plan.filter(x=>!['Closed','Completed'].includes(x.status)).sort((a,b)=>String(a.target||'9999').localeCompare(String(b.target||'9999'))).slice(0,5);const upcomingSchedule=myS.filter(x=>new Date(x.date+'T'+(x.time||'00:00'))>=new Date()).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,4);const unread=(v.messageThreads||[]).filter(m=>m.userId===u.id&&m.from!=='user'&&!m.read).length;memberView.innerHTML=`<div class="member-dashboard"><section class="member-welcome"><div><div class="eyebrow" style="color:var(--gold2);margin-bottom:5px">CareerOS Member</div><h2>Welcome back, ${esc((u.name||'Member').split(' ')[0])}.</h2><p>${esc(u.target||'Your career development journey starts here. Keep moving one meaningful step at a time.')}</p></div><div class="member-welcome-meta"><strong>${progress}%</strong><span>Career progress</span></div></section><section class="member-kpis"><div class="member-kpi"><span class="kpi-label">Career progress</span><b>${progress}%</b><small>Overall development</small></div><div class="member-kpi"><span class="kpi-label">Open goals</span><b>${openGoals}</b><small>${dueSoon} due soon</small></div><div class="member-kpi"><span class="kpi-label">PDCA</span><b>${activePdca}</b><small>${closedPlan} closed</small></div><div class="member-kpi"><span class="kpi-label">Overdue</span><b>${overdueCount}</b><small>Needs attention</small></div><div class="member-kpi"><span class="kpi-label">Messages</span><b>${unread}</b><small>${unread?'Unread from CareerOS':'All caught up'}</small></div></section><div class="member-dashboard-grid"><section class="member-panel-card"><div class="member-panel-head"><h3>Career development progress</h3><span>${totalPlan} tracked items</span></div><div class="member-progress-wrap"><div class="member-ring" style="--progress:${progress}"><b>${progress}%</b></div><div class="member-bars"><div class="member-bar-row"><span>Completed</span><div class="member-bar"><i style="width:${totalPlan?Math.round(closedPlan/totalPlan*100):0}%"></i></div><b>${closedPlan}</b></div><div class="member-bar-row"><span>In progress</span><div class="member-bar"><i style="width:${totalPlan?Math.round(inProg/totalPlan*100):0}%"></i></div><b>${inProg}</b></div><div class="member-bar-row"><span>Overdue</span><div class="member-bar"><i style="width:${totalPlan?Math.round(overdueCount/totalPlan*100):0}%"></i></div><b>${overdueCount}</b></div><div class="member-bar-row"><span>Remaining</span><div class="member-bar"><i style="width:${totalPlan?Math.round(Math.max(0,totalPlan-closedPlan)/totalPlan*100):0}%"></i></div><b>${Math.max(0,totalPlan-closedPlan)}</b></div></div></div></section><section class="member-panel-card"><div class="member-panel-head"><h3>Next coaching session</h3><span>${nextBooking?'Upcoming':'No booking'}</span></div>${nextBooking?`<div class="member-next-session"><div class="member-date-box"><b>${esc(String(nextBooking.date).slice(8,10))}</b><small>${esc(dayName(nextBooking.date).slice(0,3))}</small></div><div><b>${esc(nextBooking.pkg||'CareerOS Session')}</b><small>${esc(nextBooking.date)} · ${esc(nextBooking.time||'Time TBC')}</small></div><div class="member-countdown"><strong>${daysLeft===0?'Today':daysLeft+'d'}</strong><small>days left</small></div></div>`:'<div class="member-empty">No upcoming booking. Use Book a Session to plan your next coaching session.</div>'}</section><section class="member-panel-card"><div class="member-panel-head"><h3>Priority tasks</h3><span>${recentTasks.length} shown</span></div><div class="member-mini-list">${recentTasks.map(x=>`<div class="member-mini-item"><div><b>${esc(x.title)}</b><small>Target: ${esc(x.target||'No target date')}</small></div><span class="member-status ${memberStatus(x).toLowerCase().replace(/\s+/g,'')}">${esc(memberStatus(x))}</span></div>`).join('')||'<div class="member-empty">No active tasks. Your administrator will add development actions when needed.</div>'}</div></section><section class="member-panel-card"><div class="member-panel-head"><h3>Upcoming schedule</h3><span>${upcomingSchedule.length} upcoming</span></div><div class="member-mini-list">${upcomingSchedule.map(x=>`<div class="member-mini-item"><div><b>${esc(x.title)}</b><small>${esc(x.date)} ${esc(x.time||'')}</small></div><span class="member-status">${esc(x.status||'Planned')}</span></div>`).join('')||'<div class="member-empty">Your upcoming tasks and activities will appear here.</div>'}</div></section><section class="member-panel-card"><div class="member-panel-head"><h3>CareerOS plan</h3><span>Current focus</span></div><div class="member-alert"><span class="member-alert-dot"></span><div><b>${esc(u.target||'Set your target career')}</b><p>Use Career Plan, Goals and PDCA Tracker to turn your ambition into measurable progress.</p></div></div>${overdueCount?`<div class="member-alert"><span class="member-alert-dot" style="background:#b33"></span><div><b>${overdueCount} item${overdueCount===1?' is':'s are'} overdue</b><p>Open your PDCA Tracker or Goals to update the status and keep your plan moving.</p></div></div>`:''}</section><section class="member-panel-card"><div class="member-panel-head"><h3>Quick actions</h3><span>Keep momentum</span></div><div class="admin-actions"><button class="btn btn-gold" onclick="document.querySelector('#memberNav button:nth-child(2)')?.click()">Career Plan</button><button class="btn btn-outline" onclick="document.querySelector('#memberNav button:nth-child(4)')?.click()">PDCA Tracker</button><button class="btn btn-outline" onclick="document.querySelector('#memberNav button:nth-child(6)')?.click()">AI Coach</button><button class="btn btn-outline" onclick="document.querySelector('#memberNav button:nth-child(9)')?.click()">Messages</button></div></section></div></div>`;}
+ if(view==='Career Plan')memberView.innerHTML=`<div class="admin-card"><h3>Career planning</h3><div class="admin-form"><div class="full"><label>Target career</label><input id="mpTarget" value="${esc(u.target||'')}"></div><div><label>Current progress %</label><input id="mpProgress" type="number" min="0" max="100" value="${u.progress||0}"></div></div><button class="btn btn-gold" id="saveMemberPlan">Save Career Plan</button><div class="admin-card mini-card"><h4>AI planning prompt</h4><button class="btn btn-outline" id="memberPlanAI">Build a 90-day plan from my goal</button></div></div>`;
+ if(view==='Goals')memberView.innerHTML=`<div class="admin-card"><h3>My goals</h3><div class="admin-form"><input id="gTitle" placeholder="Goal title"><input id="gTarget" type="date"><select id="gStatus"><option>In Progress</option><option>Pending</option><option>Closed</option></select></div><button class="btn btn-gold" id="addGoal">Add Goal</button><div class="member-list">${myG.map(g=>`<div><b>${esc(g.title)}</b><span>${esc(memberStatus(g))}</span><small>Target: ${esc(g.target||'—')}</small></div>`).join('')||'<p class="admin-note">No goals yet.</p>'}</div></div>`;
+ if(view==='PDCA Tracker')memberView.innerHTML=`<div class="admin-card"><h3>PDCA Tracker</h3><div class="admin-form"><input id="pTitle" placeholder="PDCA objective"><input id="pTarget" type="date"><select id="pStatus"><option>Plan</option><option>Do</option><option>Check</option><option>Act</option><option>In Progress</option><option>Closed</option></select><textarea class="full" id="pNotes" placeholder="What are you planning, doing, checking or changing?"></textarea></div><button class="btn btn-gold" id="addPdca">Add PDCA Item</button><div class="member-list">${myP.map(p=>`<div><b>${esc(p.title)}</b><span>${esc(memberStatus(p))}</span><small>Target: ${esc(p.target||'—')} · ${esc(p.notes||'')}</small></div>`).join('')||'<p class="admin-note">No PDCA items yet.</p>'}</div></div>`;
+ if(view==='My Schedule')memberView.innerHTML=`<div class="admin-card"><h3>My Schedule</h3><div class="admin-form"><input id="sTitle" placeholder="Task / activity"><input id="sDate" type="date"><input id="sTime" type="time"><select id="sStatus"><option>Planned</option><option>In Progress</option><option>Completed</option></select></div><button class="btn btn-gold" id="addSchedule">Add to Schedule</button><div class="member-list">${myS.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(s=>`<div><b>${esc(s.title)}</b><span>${esc(s.status)}</span><small>${esc(s.date)} ${esc(s.time||'')}</small></div>`).join('')||'<p class="admin-note">No scheduled activities yet.</p>'}</div></div>`;
+ if(view==='AI Coach')renderAI(memberView,u);
+ if(view==='Career Portfolio')memberView.innerHTML=`<div class="admin-card"><h3>Career Portfolio</h3>${v.portfolio.filter(x=>x.userId===u.id).map(x=>`<article class="portfolio-item"><b>${esc(x.agent)}</b><small>${esc(x.date)}</small><p>${esc(x.text)}</p></article>`).join('')||'<p class="admin-note">Saved AI outputs will appear here.</p>'}</div>`;
+ if(view==='My Bookings')memberView.innerHTML=`<div class="admin-card"><h3>My Bookings</h3>${myB.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(x=>`<div class="member-list"><div><b>${esc(x.pkg)}</b><span>${esc(x.status)}</span><small>${esc(x.date)} · ${esc(x.time)} · ${esc(x.price||'')}</small></div></div>`).join('')||'<p class="admin-note">No bookings found.</p>'}</div>`;
+ if(view==='Messages')renderMemberMessages(u);
+ if($('saveMemberPlan'))$('saveMemberPlan').onclick=()=>{u.target=$('mpTarget').value.trim();u.progress=Math.max(0,Math.min(100,Number($('mpProgress').value)||0));sv();alert('Career plan updated.');renderMember(u,'Career Plan')};
+ if($('memberPlanAI'))$('memberPlanAI').onclick=()=>{v.portfolio.push({id:Date.now(),userId:u.id,agent:'Career Navigator',text:careerPlanText(u.target,u),date:new Date().toLocaleString()});sv();renderMember(u,'Career Portfolio');};
+ if($('addGoal'))$('addGoal').onclick=()=>{if(!$('gTitle').value.trim())return;v.goalsData.push({id:'g'+Date.now(),userId:u.id,title:$('gTitle').value.trim(),target:$('gTarget').value,status:$('gStatus').value});sv();renderMember(u,'Goals')};
+ if($('addPdca'))$('addPdca').onclick=()=>{if(!$('pTitle').value.trim())return;v.pdca.push({id:'p'+Date.now(),userId:u.id,title:$('pTitle').value.trim(),target:$('pTarget').value,status:$('pStatus').value,notes:$('pNotes').value.trim()});sv();renderMember(u,'PDCA Tracker')};
+ if($('addSchedule'))$('addSchedule').onclick=()=>{if(!$('sTitle').value.trim()||!$('sDate').value)return;v.schedules.push({id:'s'+Date.now(),userId:u.id,title:$('sTitle').value.trim(),date:$('sDate').value,time:$('sTime').value,status:$('sStatus').value});sv();renderMember(u,'My Schedule')};
+}
+function careerPlanText(q,u){return `CAREER DEVELOPMENT PLAN\n\nTarget: ${q||'Define your target career'}\n\n90-DAY ROADMAP\n1. Clarify the target role and success measures.\n2. Identify the three highest-value skills or experiences to develop.\n3. Create weekly actions and add them to Goals and Schedule.\n4. Record evidence of progress and feedback.\n5. Review using PDCA at the end of each month.\n\nNEXT STEP\nChoose one action you can complete in the next 7 days.`}
+function renderAI(root,u){let a=v.aiAgents||agents;root.innerHTML=`<div class="ai-hub-v4"><aside class="ai-menu-v4"><h3>AI Career Hub</h3>${a.map((x,i)=>`<button class="ai-agent-btn ${i?'':'active'}" data-ai="${i}"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></button>`).join('')}</aside><div class="ai-work-v4"><div class="admin-badge">● AI Career Hub Online</div><h2 id="aiTitle4">${esc(a[0][0])}</h2><p id="aiDesc4">${esc(a[0][1])}</p><div class="ai-quick" id="aiQuick4"></div><textarea class="ai-prompt-v4" id="aiPrompt4" placeholder="Tell the AI Career Hub what you need help with..."></textarea><div class="admin-actions"><button class="btn btn-gold" id="askAI4">Ask AI Career Hub →</button><button class="btn btn-outline" id="clearAI4">Clear</button></div><div class="ai-response-v4" id="aiResponse4">Your AI Career Hub response will appear here.</div><div class="admin-actions"><button class="btn btn-gold" id="saveAI4">Save to Career Portfolio</button><button class="btn btn-outline" id="copyAI4">Copy Response</button></div><p class="admin-note">AI guidance is developmental and should be reviewed with your own judgement.</p></div></div>`;
+ let idx=0;const set=i=>{idx=i;root.querySelectorAll('.ai-agent-btn').forEach((b,j)=>b.classList.toggle('active',j===i));root.querySelector('#aiTitle4').textContent=a[i][0];root.querySelector('#aiDesc4').textContent=a[i][1];root.querySelector('#aiQuick4').innerHTML=(a[i][2]||[]).map(q=>`<button>${esc(q)}</button>`).join('');root.querySelectorAll('#aiQuick4 button').forEach(b=>b.onclick=()=>root.querySelector('#aiPrompt4').value=b.textContent)};set(0);root.querySelectorAll('.ai-agent-btn').forEach((b,i)=>b.onclick=()=>set(i));root.querySelector('#askAI4').onclick=()=>{let q=root.querySelector('#aiPrompt4').value.trim();if(!q)return;root.querySelector('#aiResponse4').textContent=aiDemo(a[idx][0],q,u)};root.querySelector('#clearAI4').onclick=()=>{root.querySelector('#aiPrompt4').value='';root.querySelector('#aiResponse4').textContent='Your AI Career Hub response will appear here'};root.querySelector('#copyAI4').onclick=()=>navigator.clipboard?.writeText(root.querySelector('#aiResponse4').textContent);root.querySelector('#saveAI4').onclick=()=>{v.portfolio.push({id:Date.now(),userId:u.id,agent:a[idx][0],text:root.querySelector('#aiResponse4').textContent,date:new Date().toLocaleString()});sv();alert('Saved to Career Portfolio.')}}
+function aiDemo(agent,q,u){return `${agent.toUpperCase()}\n\nYour focus: ${q}\n\nRECOMMENDED APPROACH\n1. Define the outcome in one measurable sentence.\n2. Identify the strongest evidence you already have.\n3. Choose the smallest next action you can complete this week.\n4. Add a target date and success measure.\n5. Review the result and adjust using PDCA.\n\nNEXT ACTION\nAdd the next action to your CareerOS Goals or Schedule.${u?.target?'\n\nMEMBER CONTEXT\nTarget career: '+u.target:''}`}
+function renderMemberMessages(u){const threads=(v.messageThreads||[]).filter(m=>m.userId===u.id);memberView.innerHTML=`<div class="admin-card"><h3>Messages with CareerOS</h3><div class="chat-box">${threads.map(m=>`<div class="chat-msg ${m.from==='user'?'mine':'theirs'}"><small>${esc(m.from==='user'?'You':'CareerOS')} · ${esc(m.date)}</small><p>${esc(m.text)}</p></div>`).join('')||'<p class="admin-note">No messages yet.</p>'}</div><textarea id="memberMessage" placeholder="Write a message to the administrator..."></textarea><button class="btn btn-gold" id="sendMemberMessage">Send Message</button></div>`;$('sendMemberMessage').onclick=()=>{const text=$('memberMessage').value.trim();if(!text)return;v.messageThreads.push({id:Date.now(),userId:u.id,from:'user',text,date:new Date().toLocaleString(),read:false});v.messages.push({id:Date.now()+1,userId:u.id,name:u.name,email:u.email,type:'Member message',message:text,date:new Date().toLocaleString(),read:false});sv();renderMemberMessages(u)}}
+
+/* Advanced booking modal */
+const oldForm=$('bookingForm');
+if(oldForm){
+ oldForm.innerHTML=`<div class="advanced-booking"><div><div class="booking-step"><span>01</span><div><b>Choose a programme</b><small>Price and session details are shown before you continue.</small></div></div><div class="programme-grid" id="programCards"></div><div class="booking-step"><span>02</span><div><b>Choose your date and time</b><small>Only available times are offered. Fully booked days are clearly marked.</small></div></div><div class="calendar-nav"><button type="button" id="prevBookDay">‹</button><input id="bookDate" type="date" required><button type="button" id="nextBookDay">›</button></div><div class="date-status" id="dateStatus"></div><div class="slot-grid" id="slotGrid"></div><input id="bookTime" type="hidden" required><div class="booking-step"><span>03</span><div><b>Your details</b><small>Tell us how to contact you and what you want to achieve.</small></div></div><div class="form-grid"><div class="form-field"><label>Full name</label><input id="bookName" required></div><div class="form-field"><label>Email</label><input id="bookEmail" type="email" required></div><div class="form-field full"><label>Main goal</label><select id="bookGoal"></select></div><div class="form-field full"><label>What would you like help with?</label><textarea id="bookMessage" placeholder="Briefly describe your goal or challenge..."></textarea></div><div class="form-field full"><label>Attachments (optional)</label><input id="bookAttachment" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.jpg,.jpeg,.png,.txt"><small class="payment-help">Attach a CV, Excel file, certificate, supporting document or proof of payment. Maximum 5 MB per file.</small><div id="bookAttachmentList" class="proof-name"></div></div></div><button type="button" class="btn btn-outline" id="addAnotherSession">＋ Add another session</button><div id="extraSessions"></div><div class="payment-panel"><h4>Payment & booking confirmation</h4><p class="payment-help">Choose how you intend to pay. Bank transfer/EFT uses the bank details configured by the administrator. You can attach proof of payment above.</p><div class="form-field" style="margin-bottom:12px"><label for="payerBank">Your bank</label><select id="payerBank"><option value="">Select your bank</option><option>Absa</option><option>African Bank</option><option>Capitec Bank</option><option>Discovery Bank</option><option>FNB</option><option>Nedbank</option><option>Standard Bank</option><option>TymeBank</option><option>Investec</option><option>Other</option></select></div><div class="payment-methods"><label class="payment-method"><input type="radio" name="bookPaymentMethod" value="Bank Transfer / EFT" checked><span><b>Bank Transfer / EFT</b><small>Pay using the bank details provided by CareerOS.</small></span></label><label class="payment-method"><input type="radio" name="bookPaymentMethod" value="Pay Online"><span><b>Pay Online</b><small>Use the configured online payment gateway when enabled.</small></span></label></div><div id="bankPaymentDetails" class="bank-details"></div><div class="payment-assist" id="paymentAssist">Payment assistant: your booking will be created with payment status <b>Pending</b> until the administrator verifies the payment.</div></div></div><aside class="booking-summary"><div class="eyebrow">Booking Summary</div><h3 id="sumProgram">Select a programme</h3><p id="sumIncludes"></p><div class="summary-price" id="sumPrice"></div><div id="sumSessions"></div><div class="summary-note">Your selected slot is checked again when you confirm.</div><button class="btn btn-gold" type="submit" style="width:100%;margin-top:15px">Confirm Booking →</button><button class="btn btn-outline" type="button" data-close="bookingModal" style="width:100%;margin-top:8px">Cancel</button></aside></div>`;
+ const formHandler=async e=>{e.preventDefault();e.stopImmediatePropagation();const name=$('bookName').value.trim(),email=$('bookEmail').value.trim(),all=[{date:$('bookDate').value,time:$('bookTime').value},...extras],message=$('bookMessage').value.trim(),paymentMethod=document.querySelector('input[name="bookPaymentMethod"]:checked')?.value||'Bank Transfer / EFT',payerBank=$('payerBank')?.value||'Not specified';if(!name||!email||!all[0].date||!all[0].time)return alert('Complete your name, email, date and time.');if(paymentMethod==='Bank Transfer / EFT'&&db.bankPayment?.enabled===false)return alert('Bank transfer/EFT is currently disabled. Please choose another payment method.');if(all.some(s=>isBooked(s.date,s.time)))return alert('One of the selected slots was just booked. Please choose another time.');const files=await readBookingAttachments();if(!files)return;const p=selected;const priceTotal=(Number(p.price)||0)*all.length;const price=p.priceLabel||fmtMoney(p.price);const bookingGroup='BG'+Date.now();const proof=files.map(f=>({name:f.name,type:f.type,size:f.size,data:f.data}));all.forEach((s,i)=>db.bookings.push({id:'b'+(Date.now()+i),bookingGroup,name,email,pkg:p.name,date:s.date,time:s.time,goal:$('bookGoal').value,message,paymentMethod,payerBank,paymentStatus:'Pending',paymentProof:proof,status:'Pending',price,priceAmount:Number(p.price)||0,totalAmount:priceTotal,created:new Date().toISOString()}));const firstBooking=db.bookings.find(x=>x.bookingGroup===bookingGroup);db.messages.push({id:'m'+Date.now(),name,email,pkg:p.name,message:message||'Booking request',date:new Date().toLocaleString(),type:'Booking',read:false,attachments:proof,bookingId:firstBooking?.id,paymentMethod,payerBank,paymentStatus:'Pending'});saveDB();sv();const ref=firstBooking?.id||bookingGroup;const bank=db.bankPayment||{};const bankText=paymentMethod==='Bank Transfer / EFT'?`\n\nPAYMENT DETAILS\nBank: ${bank.bankName||'Administrator will provide bank details'}\nAccount holder: ${bank.accountHolder||'—'}\nAccount number: ${bank.accountNumber||'—'}\nBranch code: ${bank.branchCode||'—'}\nAccount type: ${bank.accountType||'—'}\nReference: ${(bank.referencePrefix||'CAREEROS')}-${ref}\n`:'';const subject=encodeURIComponent('CareerOS Booking - '+p.name);const body=encodeURIComponent(`Hello CareerOS,\n\nA new booking has been submitted.\n\nBooking ID: ${ref}\nName: ${name}\nEmail: ${email}\nProgramme: ${p.name}\nSessions: ${all.length}\nMain goal: ${$('bookGoal').value}\nPayment method: ${paymentMethod}\nCustomer bank: ${payerBank}\nPayment status: Pending verification\n${bankText}\nMessage:\n${message||'No additional message.'}\n\nAttachments: ${files.length?files.map(f=>f.name).join(', '):'None'}\n\nCareerOS`);closeModal('bookingModal');extras=[];renderAdmin();populateSlots();alert('Booking submitted. Your booking ID is '+ref+'. Payment remains pending until verified by the administrator.');window.location.href=`mailto:${encodeURIComponent(db.ownerEmail)}?subject=${subject}&body=${body}`;if(paymentMethod==='Pay Online'&&db.bankPayment?.onlinePaymentUrl){const payUrl=db.bankPayment.onlinePaymentUrl.replaceAll('{amount}',String(priceTotal)).replaceAll('{reference}',encodeURIComponent(ref)).replaceAll('{email}',encodeURIComponent(email));setTimeout(()=>window.open(payUrl,'_blank','noopener,noreferrer'),250)} };
+ function readBookingAttachments(){const input=$('bookAttachment');if(!input?.files?.length)return Promise.resolve([]);const files=[...input.files];if(files.some(f=>f.size>5*1024*1024)){alert('Each attachment must be 5 MB or smaller.');return Promise.resolve(null)}return Promise.all(files.map(f=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve({name:f.name,type:f.type,size:f.size,data:r.result});r.onerror=()=>reject(new Error('Could not read '+f.name));r.readAsDataURL(f)}))).catch(err=>{alert(err.message||'Could not read attachment.');return null})}
+ function renderPaymentPanel(){const bank=db.bankPayment||{};const box=$('bankPaymentDetails'),assist=$('paymentAssist');if(!box)return;const method=document.querySelector('input[name="bookPaymentMethod"]:checked')?.value||'Bank Transfer / EFT';box.classList.toggle('open',method==='Bank Transfer / EFT');if(method==='Bank Transfer / EFT'){if(bank.enabled===false){box.innerHTML=`<div class="payment-help">Bank transfer/EFT has been disabled by the administrator.</div>`;assist.innerHTML='Payment assistant: choose another payment method.';return}box.innerHTML=`<div class="bank-details-grid"><div><b>Bank</b><br>${esc(bank.bankName||'Not configured yet')}</div><div><b>Account holder</b><br>${esc(bank.accountHolder||'—')}</div><div><b>Account number</b><br>${esc(bank.accountNumber||'—')}</div><div><b>Branch code</b><br>${esc(bank.branchCode||'—')}</div><div><b>Account type</b><br>${esc(bank.accountType||'—')}</div><div><b>Reference</b><br>${esc((bank.referencePrefix||'CAREEROS')+'-Booking ID')}</div></div><div class="payment-help" style="margin:10px 0 0">${esc(bank.paymentNote||'Use your booking ID as the payment reference. Attach proof of payment before submitting.')}</div>`;assist.innerHTML='Payment assistant: after transfer, attach your proof of payment. Your booking stays <b>Pending</b> until the administrator verifies it.'}else{box.innerHTML=`<div class="payment-help">Online payment is selected. A real payment window will only appear after the administrator connects a supported payment gateway. This page never asks for or stores online-banking passwords.</div>`;assist.innerHTML='Payment assistant: online payment is selected. Complete the secure gateway payment when it is connected.'}document.querySelectorAll('input[name="bookPaymentMethod"]').forEach(r=>r.onchange=renderPaymentPanel)}
+ oldForm.addEventListener('submit',formHandler,true);
+ let selected=v.programs.find(x=>x.active)||v.programs[0],extras=[];
+ function renderPrograms(){programCards.innerHTML=v.programs.filter(x=>x.active).map(p=>`<div class="programme-card ${p.id===selected.id?'active':''}" data-p="${esc(p.id)}"><b>${esc(p.name)}</b><small>${esc(p.includes)}</small><div class="programme-price">${esc(p.priceLabel||fmtMoney(p.price))}</div></div>`).join('');programCards.querySelectorAll('.programme-card').forEach(c=>c.onclick=()=>{selected=v.programs.find(x=>x.id===c.dataset.p);extras=[];renderPrograms();renderSlots();updateSummary()})}
+ function renderSlots(){const d=$('bookDate').value;if(!d){dateStatus.textContent='Choose a date to see availability.';slotGrid.innerHTML='';return}const ss=generatedSlots(d);const status=v.dayStatus[d];dateStatus.textContent=status?.status==='Limited Availability'?'Limited availability — '+ss.length+' slot(s) remaining':ss.length?`${ss.length} available slot(s) on ${dayName(d)}`:(status?.status||'Fully booked / no availability. Try another day.');slotGrid.innerHTML=ss.map(t=>`<button type="button" class="slot-chip" data-time="${t}">${t}</button>`).join('');$('bookTime').value='';slotGrid.querySelectorAll('button').forEach(b=>b.onclick=()=>{slotGrid.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('bookTime').value=b.dataset.time;updateSummary()});}
+ function updateSummary(){$('sumProgram').textContent=selected.name;$('sumIncludes').textContent=selected.includes;$('sumPrice').textContent=selected.priceLabel||fmtMoney(selected.price);$('sumSessions').innerHTML=($('bookDate').value&&$('bookTime').value?`<p><b>Session 1</b><br>${esc($('bookDate').value)} · ${esc($('bookTime').value)}</p>`:'')+extras.map((x,i)=>`<p><b>Session ${i+2}</b><br>${esc(x.date)} · ${esc(x.time)}</p>`).join('')}
+ renderPrograms();bookGoal.innerHTML=v.goals.map(g=>`<option>${esc(g)}</option>`).join(''); renderPaymentPanel();$('bookAttachment')?.addEventListener('change',()=>{$('bookAttachmentList').textContent=[...$('bookAttachment').files].map(f=>f.name+' ('+(f.size/1024/1024).toFixed(2)+' MB)').join(' · ')});
+ const dates=futureDates();if(dates.length&&!$('bookDate').value)$('bookDate').value=dates[0];$('bookDate').min=new Date().toISOString().slice(0,10);$('bookDate').onchange=renderSlots;$('prevBookDay').onclick=()=>shiftDate(-1);$('nextBookDay').onclick=()=>shiftDate(1);function shiftDate(delta){const d=dateObj($('bookDate').value)||new Date();d.setDate(d.getDate()+delta);$('bookDate').value=d.toISOString().slice(0,10);renderSlots()}
+ $('addAnotherSession').onclick=()=>{if(!$('bookDate').value||!$('bookTime').value)return alert('Choose the current session date and time first.');const d=prompt('Additional session date (YYYY-MM-DD):');if(!d)return;const ss=generatedSlots(d);if(!ss.length)return alert('No available times on that date.');const t=prompt('Available times: '+ss.join(', ')+'\nEnter one time exactly:');if(!ss.includes(t)||isBooked(d,t))return alert('That time is not available.');if(extras.some(x=>x.date===d&&x.time===t)||($('bookDate').value===d&&$('bookTime').value===t))return alert('That session is already selected.');extras.push({date:d,time:t});updateSummary()};renderSlots();updateSummary();
+}
+
+/* Public AI Career Hub workspace */
+const publicAIMenu=$('publicAIMenu');
+if(publicAIMenu){
+ const pa=v.aiAgents||agents;let pi=pa.findIndex(x=>x[0]==='Goal & Accountability Agent');if(pi<0)pi=pa.length-1;
+ const setPublic=i=>{pi=i;publicAIMenu.querySelectorAll('button').forEach((b,j)=>b.classList.toggle('active',j===i));$('publicAITitle').textContent=pa[i][0];$('publicAIDesc').textContent=pa[i][1];$('publicAIQuick').innerHTML=(pa[i][2]||[]).map(q=>`<button type="button">${esc(q)}</button>`).join('');$('publicAIQuick').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('publicAIPrompt').value=b.textContent})};
+ publicAIMenu.innerHTML=pa.map((x,i)=>`<button type="button"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></button>`).join('');publicAIMenu.querySelectorAll('button').forEach((b,i)=>b.onclick=()=>setPublic(i));setPublic(pi);
+ $('publicAskAI').onclick=()=>{const q=$('publicAIPrompt').value.trim();if(!q)return;const u=currentMember();$('publicAIResponse').textContent=aiDemo(pa[pi][0],q,u)};
+ $('publicClearAI').onclick=()=>{$('publicAIPrompt').value='';$('publicAIResponse').textContent='Your AI Career Hub response will appear here.'};
+ $('publicCopyAI').onclick=()=>navigator.clipboard?.writeText($('publicAIResponse').textContent);
+ $('publicSaveAI').onclick=()=>{const u=currentMember();if(!u){showAuth('login');return}v.portfolio.push({id:Date.now(),userId:u.id,agent:pa[pi][0],text:$('publicAIResponse').textContent,date:new Date().toLocaleString()});sv();alert('Saved to Career Portfolio.')};
+}
+
+/* Admin navigation and dashboard */
+const nav=document.querySelector('.admin-nav');
+if(nav){
+ const wanted=['Dashboard','Bookings','Messages','Users & Approvals','Availability','Programmes & Pricing','Main Goals','AI Career Hub','Member Tracking','Website Content','Themes & Images','Owner Settings'];
+ nav.innerHTML=wanted.map((n,i)=>`<button class="${i===0?'active':''}" data-admin-view="${n.toLowerCase().replace(/[^a-z]+/g,'-').replace(/^-|-$/g,'')}">${esc(n)}</button>`).join('');
+ nav.querySelectorAll('button').forEach(b=>b.onclick=()=>openAdminView(b.textContent.trim(),b));
+}
+const adminMain=document.querySelector('.admin-main');const originalViews=[...document.querySelectorAll('.admin-view')];let adminDynamic=document.getElementById('adminDynamic');if(!adminDynamic){adminDynamic=document.createElement('div');adminDynamic.id='adminDynamic';adminMain.appendChild(adminDynamic)}
+function openAdminView(name,btn){document.querySelectorAll('.admin-view').forEach(x=>x.style.display='none');document.querySelectorAll('.admin-nav button').forEach(x=>x.classList.remove('active'));btn?.classList.add('active');$('adminViewTitle').textContent=name;adminDynamic.style.display='block';renderAdminView(name)}
+function renderAdmin(){const first=document.querySelector('.admin-nav button');if(first){document.querySelectorAll('.admin-nav button').forEach(x=>x.classList.remove('active'));first.classList.add('active');$('adminViewTitle').textContent='Dashboard';}document.querySelectorAll('.admin-view').forEach(x=>x.style.display='none');adminDynamic.style.display='block';renderAdminView('Dashboard');updateAdminHeaderStats()}
+function revenue(filter){return db.bookings.filter(b=>b.status!=='Cancelled'&&b.paymentStatus==='Paid').reduce((sum,b)=>{const n=Number(String(b.price||'').replace(/[^0-9.]/g,''));return sum+n},0)}
+function updateAdminHeaderStats(){
+ const stats={users:v.users.length,pending:v.users.filter(u=>u.status==='Pending Approval').length,active:v.users.filter(u=>['Approved','Active'].includes(u.status)).length,bookings:db.bookings.filter(b=>b.status!=='Cancelled').length,upcoming:db.bookings.filter(b=>b.status!=='Cancelled'&&b.date>=new Date().toISOString().slice(0,10)).length,revenue:revenue(),messages:(v.messageThreads||[]).filter(m=>m.from==='user'&&!m.read).length+db.messages.filter(m=>m.read===false).length,goals:v.goalsData.filter(g=>g.status!=='Closed').length,pdca:v.pdca.filter(p=>p.status!=='Closed').length};
+ Object.entries(stats).forEach(([k,val])=>{const el=$('stat_'+k);if(el)el.textContent=k==='revenue'?fmtMoney(val):val});
+}
+function renderAdminView(name){
+ if(name==='Dashboard')return adminDynamic.innerHTML=`<div class="admin-grid admin-grid-wide"><div class="admin-stat"><b id="stat_users">${v.users.length}</b><span>Registered users</span></div><div class="admin-stat"><b id="stat_pending">${v.users.filter(u=>u.status==='Pending Approval').length}</b><span>Pending approvals</span></div><div class="admin-stat"><b id="stat_active">${v.users.filter(u=>['Approved','Active'].includes(u.status)).length}</b><span>Active users</span></div><div class="admin-stat"><b id="stat_bookings">${db.bookings.filter(b=>b.status!=='Cancelled').length}</b><span>Total bookings</span></div><div class="admin-stat"><b id="stat_upcoming">${db.bookings.filter(b=>b.status!=='Cancelled'&&b.date>=new Date().toISOString().slice(0,10)).length}</b><span>Upcoming bookings</span></div><div class="admin-stat"><b id="stat_revenue">${fmtMoney(revenue())}</b><span>Recorded paid revenue</span></div><div class="admin-stat"><b id="stat_messages">${(v.messageThreads||[]).filter(m=>m.from==='user'&&!m.read).length}</b><span>Unread messages</span></div><div class="admin-stat"><b id="stat_goals">${v.goalsData.filter(g=>g.status!=='Closed').length}</b><span>Open goals</span></div></div><div class="admin-card"><div class="section-toolbar"><div><h3>CareerOS business overview</h3><p class="admin-note">Use filters and drill into users, bookings, revenue and development.</p></div><select id="dashUserFilter"><option value="">All users</option>${v.users.map(u=>`<option value="${esc(u.id)}">${esc(u.name)}</option>`).join('')}</select></div><div class="insight-grid"><div><b>Most booked programme</b><span>${esc(mostBooked())}</span></div><div><b>Overdue development items</b><span>${v.goalsData.concat(v.pdca).filter(x=>memberStatus(x)==='Overdue').length}</span></div><div><b>Available future slots</b><span>${futureDates().reduce((n,d)=>n+generatedSlots(d).length,0)}</span></div><div><b>Conversion opportunities</b><span>${v.users.filter(u=>u.status==='Pending Approval').length} pending members</span></div></div></div><div class="admin-card"><h3>Revenue by programme</h3><div class="bar-list">${revenueByProgram().map(x=>`<div><span>${esc(x.name)}</span><b>${fmtMoney(x.value)}</b><i style="width:${Math.min(100,(x.value/Math.max(1,revenue()))*100)}%"></i></div>`).join('')||'<p class="admin-note">No paid bookings recorded.</p>'}</div></div>`;
+ if(name==='Bookings')return renderBookingsAdmin();
+ if(name==='Messages')return renderMessagesAdmin();
+ if(name==='Users & Approvals')return renderUsersAdmin();
+ if(name==='Availability')return renderAvailabilityAdmin();
+ if(name==='Programmes & Pricing')return renderProgramsAdmin();
+ if(name==='Main Goals')return renderGoalsAdmin();
+ if(name==='AI Career Hub')return renderAIAdmin();
+ if(name==='Member Tracking')return renderTrackingAdmin();
+ if(name==='Website Content')return renderContentAdmin();
+ if(name==='Themes & Images')return renderAppearanceAdmin();
+ if(name==='Owner Settings')return renderSettingsAdmin();
+}
+function mostBooked(){const c={};db.bookings.forEach(b=>c[b.pkg]=(c[b.pkg]||0)+1);return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||'No bookings yet'}
+function revenueByProgram(){const m={};db.bookings.filter(b=>b.status!=='Cancelled'&&b.paymentStatus==='Paid').forEach(b=>{m[b.pkg]=(m[b.pkg]||0)+Number(String(b.price||'').replace(/[^0-9.]/g,''))});return Object.entries(m).map(([name,value])=>({name,value})).sort((a,b)=>b.value-a.value)}
+function renderBookingsAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><div class="section-toolbar"><div><h3>All bookings</h3><p class="admin-note">Bookings are ordered from the first upcoming booking through to the latest.</p></div><div class="filter-row"><input id="bookingFilter" placeholder="Search user, email or programme"><select id="bookingStatusFilter"><option value="">All statuses</option><option>Confirmed</option><option>Pending</option><option>Completed</option><option>Cancelled</option></select></div></div><div style="overflow:auto"><table class="admin-table"><thead><tr><th>#</th><th>Date / Time</th><th>Client</th><th>Programme</th><th>Amount</th><th>Status</th><th>Payment</th><th>Action</th></tr></thead><tbody id="bookingRows"></tbody></table></div></div>`;const render=()=>{let q=$('bookingFilter').value.toLowerCase(),st=$('bookingStatusFilter').value;let bs=[...db.bookings].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).filter(b=>(!q||[b.name,b.email,b.pkg].join(' ').toLowerCase().includes(q))&&(!st||b.status===st));$('bookingRows').innerHTML=bs.map((b,i)=>`<tr><td>${i+1}</td><td><b>${esc(b.date)}</b><br>${esc(b.time)}</td><td><b>${esc(b.name)}</b><br>${esc(b.email)}</td><td>${esc(b.pkg)}</td><td>${esc(b.price||'')}</td><td><span class="admin-badge">${esc(b.status)}</span></td><td><span class="booking-payment-badge">${esc(b.paymentMethod||'—')}</span><br><small>${esc(b.payerBank||'Bank not specified')}</small><br><select onchange="careerosSetPayment('${b.id}',this.value)"><option ${b.paymentStatus==='Unpaid'?'selected':''}>Unpaid</option><option ${b.paymentStatus==='Paid'?'selected':''}>Paid</option><option ${b.paymentStatus==='Pending'?'selected':''}>Pending</option></select>${b.paymentProof?.length?`<br><span class="attachment-chip">📎 ${b.paymentProof.length} file(s)</span>`:''}</td><td><button onclick="careerosEditBooking('${b.id}')">Edit</button> <button onclick="careerosCancelBooking('${b.id}')">Cancel</button> <button class="danger" onclick="careerosDeleteBooking('${b.id}')">Delete</button></td></tr>`).join('')||'<tr><td colspan="8">No bookings match your filter.</td></tr>'};$('bookingFilter').oninput=render;$('bookingStatusFilter').onchange=render;render()}
+function renderMessagesAdmin(){const users=v.users;adminDynamic.innerHTML=`<div class="admin-card messages-admin"><div class="message-users" id="messageUsers">${users.map(u=>{const unread=(v.messageThreads||[]).filter(m=>m.userId===u.id&&m.from==='user'&&!m.read).length;return `<button data-mid="${esc(u.id)}"><b>${esc(u.name)}</b><small>${esc(u.email)}</small>${unread?`<span>${unread}</span>`:''}</button>`}).join('')||'<p class="admin-note">No registered users yet.</p>'}</div><div class="message-conversation" id="messageConversation"><h3>Messages</h3><p class="admin-note">Select a user to open the conversation.</p></div></div>`;document.querySelectorAll('[data-mid]').forEach(b=>b.onclick=()=>openAdminConversation(b.dataset.mid))}
+function openAdminConversation(uid){const u=v.users.find(x=>x.id===uid);if(!u)return;const thread=(v.messageThreads||[]).filter(m=>m.userId===uid);thread.filter(m=>m.from==='user').forEach(m=>m.read=true);sv();$('messageConversation').innerHTML=`<div class="conversation-head"><div><h3>${esc(u.name)}</h3><small>${esc(u.email)}</small></div><button onclick="careerosOpenUser('${esc(u.id)}')">View User</button></div><div class="chat-box">${thread.map(m=>`<div class="chat-msg ${m.from==='admin'?'theirs':'mine'}"><small>${esc(m.from==='admin'?'Administrator':'User')} · ${esc(m.date)}</small><p>${esc(m.text)}</p></div>`).join('')||'<p class="admin-note">No messages yet.</p>'}</div><textarea id="adminReply" placeholder="Reply to this user..."></textarea><button class="btn btn-gold" id="sendAdminReply">Send Reply</button>`;$('sendAdminReply').onclick=()=>{const text=$('adminReply').value.trim();if(!text)return;v.messageThreads.push({id:Date.now(),userId:uid,from:'admin',text,date:new Date().toLocaleString(),read:false});v.messages.push({id:Date.now()+1,userId:uid,name:u.name,email:u.email,type:'Administrator reply',message:text,date:new Date().toLocaleString(),read:false});sv();openAdminConversation(uid)}}
+function renderUsersAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><div class="section-toolbar"><h3>Registered users & approvals</h3><input id="userSearch" placeholder="Search name or email"></div><div style="overflow:auto"><table class="admin-table"><thead><tr><th>User</th><th>Joined</th><th>Target</th><th>Status</th><th>Progress</th><th>Actions</th></tr></thead><tbody id="userRows"></tbody></table></div></div><div class="admin-card" id="selectedUserCard"><h3>Select a user</h3><p class="admin-note">View goals, PDCA, bookings and improvement areas by selecting View.</p></div>`;const render=()=>{$('userRows').innerHTML=v.users.filter(u=>{const q=$('userSearch').value.toLowerCase();return !q||[u.name,u.email,u.target].join(' ').toLowerCase().includes(q)}).map(u=>`<tr><td><b>${esc(u.name)}</b><br>${esc(u.email)}</td><td>${esc(new Date(u.joined).toLocaleDateString())}</td><td>${esc(u.target||'—')}</td><td>${esc(u.status)}</td><td>${u.progress||0}%</td><td><button onclick="careerosOpenUser('${u.id}')">View</button> ${u.status==='Pending Approval'?`<button onclick="careerosUserStatus('${u.id}','Approved')">Approve</button>`:''} ${u.status!=='Blocked'?`<button onclick="careerosUserStatus('${u.id}','Blocked')">Block</button>`:`<button onclick="careerosUserStatus('${u.id}','Approved')">Unblock</button>`} <button onclick="careerosUserStatus('${u.id}','Deactivated')">Deactivate</button> <button class="danger" onclick="careerosDeleteUser('${u.id}')">Delete</button></td></tr>`).join('')||'<tr><td colspan="6">No users found.</td></tr>'};$('userSearch').oninput=render;render()}
+function openAdminUser(uid){const u=v.users.find(x=>x.id===uid);if(!u)return;const goals=v.goalsData.filter(x=>x.userId===uid),pd=v.pdca.filter(x=>x.userId===uid),bs=db.bookings.filter(x=>x.email?.toLowerCase()===u.email.toLowerCase());$('selectedUserCard').innerHTML=`<div class="section-toolbar"><div><h3>${esc(u.name)}</h3><p>${esc(u.email)} · ${esc(u.status)}</p></div><div><label>Progress %</label><input id="editUP" type="number" min="0" max="100" value="${u.progress||0}"></div></div><div class="insight-grid"><div><b>Career target</b><span>${esc(u.target||'—')}</span></div><div><b>Goals</b><span>${goals.length}</span></div><div><b>PDCA</b><span>${pd.length}</span></div><div><b>Bookings</b><span>${bs.length}</span></div></div><div class="admin-actions"><button class="btn btn-gold" onclick="careerosSaveUserProgress('${u.id}')">Save progress</button></div><h4>Development items</h4><div class="user-detail-list">${goals.concat(pd).map(x=>`<div><b>${esc(x.title)}</b><span>${esc(memberStatus(x))}</span><small>Target: ${esc(x.target||'—')}</small></div>`).join('')||'<p class="admin-note">No goals or PDCA items recorded.</p>'}</div><h4>Bookings</h4>${bs.map(b=>`<p>${esc(b.date)} ${esc(b.time)} · ${esc(b.pkg)} · ${esc(b.status)}</p>`).join('')||'<p class="admin-note">No bookings.</p>'}`}
+function renderAvailabilityAdmin(){const r=v.availabilityRules||[];adminDynamic.innerHTML=`<div class="admin-card"><h3>Availability Manager</h3><p class="admin-note">Set exactly when you are available or unavailable. A range can cover days, times and recurring weekdays.</p><div class="availability-mode"><label>Set status</label><select id="avMode"><option>Available</option><option>Limited Availability</option><option>Fully Booked</option><option>Not Available</option><option>Leave</option><option>Personal Commitment</option><option>Public Holiday</option></select></div><div class="admin-form"><div><label>From date</label><input id="avFrom" type="date"></div><div><label>To date</label><input id="avTo" type="date"></div><div><label>From time</label><input id="avFromTime" type="time" value="08:00"></div><div><label>To time</label><input id="avToTime" type="time" value="17:00"></div><div><label>Slot interval</label><select id="avInterval"><option value="30">30 minutes</option><option value="45">45 minutes</option><option value="60" selected>60 minutes</option><option value="90">90 minutes</option><option value="120">120 minutes</option></select></div><div><label>Note</label><input id="avNote" placeholder="Optional reason / note"></div><div class="full"><label>Repeat on weekdays</label><div class="weekday-grid">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map((x,i)=>`<label><input type="checkbox" class="avDay" value="${i}" checked> ${x}</label>`).join('')}</div></div></div><div class="admin-actions"><button class="btn btn-gold" id="saveAvailabilityRule">Save availability rule</button><button class="btn btn-outline" id="markTodayUnavailable">Make today unavailable</button></div></div><div class="admin-card"><h3>Availability rules</h3><div class="rule-list">${r.map((x,i)=>`<div><b>${esc(x.status)}</b><span>${esc(x.fromDate)} → ${esc(x.toDate||x.fromDate)} · ${esc(x.fromTime||'All day')}–${esc(x.toTime||'')}</span><small>${x.weekdays?.length?esc(x.weekdays.map(n=>['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][n]).join(', ')):'All days'}${x.note?' · '+esc(x.note):''}</small><button class="danger" onclick="careerosDeleteRule(${i})">Delete</button></div>`).join('')||'<p class="admin-note">No range rules yet.</p>'}</div></div><div class="admin-card"><h3>Individual booking slots</h3><p class="admin-note">Use this for one-off times outside the recurring schedule.</p><div class="admin-form"><input id="oneDate" type="date"><input id="oneTime" type="time"></div><button class="btn btn-gold" id="addOneSlot">Add one-off slot</button><div style="overflow:auto;margin-top:15px"><table class="admin-table"><thead><tr><th>Date</th><th>Day</th><th>Time</th><th>Status</th><th>Action</th></tr></thead><tbody>${db.slots.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(s=>`<tr><td>${esc(s.date)}</td><td>${esc(dayName(s.date))}</td><td>${esc(s.time)}</td><td>${isBooked(s.date,s.time)?'Booked':'Available'}</td><td><button class="danger" onclick="careerosDeleteSlot('${esc(s.date)}','${esc(s.time)}')">Delete</button></td></tr>`).join('')||'<tr><td colspan="5">No one-off slots.</td></tr>'}</tbody></table></div></div>`;$('saveAvailabilityRule').onclick=()=>{const from=$('avFrom').value,to=$('avTo').value||from;if(!from)return alert('Choose a start date.');const weekdays=[...document.querySelectorAll('.avDay:checked')].map(x=>Number(x.value));const status=$('avMode').value;if(status==='Available'||status==='Limited Availability')v.availabilityRules.push({fromDate:from,toDate:to,fromTime:$('avFromTime').value,toTime:$('avToTime').value,interval:Number($('avInterval').value),weekdays,status,note:$('avNote').value.trim()});else{let d=dateObj(from),end=dateObj(to);while(d&&end&&d<=end){v.dayStatus[d.toISOString().slice(0,10)]={status,note:$('avNote').value.trim()};d.setDate(d.getDate()+1)}}sv();renderAvailabilityAdmin()};$('markTodayUnavailable').onclick=()=>{const d=new Date().toISOString().slice(0,10);v.dayStatus[d]={status:'Not Available',note:'Administrator blocked today'};sv();renderAvailabilityAdmin()};$('addOneSlot').onclick=()=>{const d=$('oneDate').value,t=$('oneTime').value;if(!d||!t)return alert('Choose date and time.');if(db.slots.some(s=>s.date===d&&s.time===t)||isBooked(d,t))return alert('That slot already exists or is booked.');db.slots.push({date:d,time:t});saveDB();renderAvailabilityAdmin()}}
+function renderProgramsAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><div class="section-toolbar"><h3>Programmes & Pricing</h3><button class="btn btn-gold" id="addProgram">＋ Add programme</button></div><div class="program-admin-list">${v.programs.map((p,i)=>`<div class="program-admin-row"><input data-pid="${esc(p.id)}" data-f="name" value="${esc(p.name)}"><input data-pid="${esc(p.id)}" data-f="price" type="number" value="${Number(p.price)||0}"><input data-pid="${esc(p.id)}" data-f="priceLabel" value="${esc(p.priceLabel||'')}"><input data-pid="${esc(p.id)}" data-f="duration" value="${esc(p.duration||'')}"><textarea data-pid="${esc(p.id)}" data-f="includes">${esc(p.includes||'')}</textarea><label><input data-pid="${esc(p.id)}" data-f="active" type="checkbox" ${p.active?'checked':''}> Active</label><button class="danger" onclick="careerosDeleteProgram('${esc(p.id)}')">Delete</button></div>`).join('')}</div><button class="btn btn-gold" id="savePrograms">Save Programme Changes</button></div>`;$('savePrograms').onclick=()=>{document.querySelectorAll('[data-pid]').forEach(el=>{const p=v.programs.find(x=>x.id===el.dataset.pid);if(!p)return;p[el.dataset.f]=el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value});sv();alert('Programme and pricing changes saved.');renderProgramsAdmin()};$('addProgram').onclick=()=>{v.programs.push({id:'p'+Date.now(),name:'New Programme',includes:'Add programme description',price:0,priceLabel:'R0',sessions:1,duration:'60 min',active:true});sv();renderProgramsAdmin()}}
+function renderGoalsAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><h3>Main Goals</h3><p class="admin-note">These options appear in the public booking form and can be changed without editing the code.</p><textarea id="goalEditor" style="width:100%;min-height:240px">${esc(v.goals.join('\n'))}</textarea><button class="btn btn-gold" id="saveGoals">Save Main Goals</button></div>`;$('saveGoals').onclick=()=>{v.goals=$('goalEditor').value.split('\n').map(x=>x.trim()).filter(Boolean);sv();alert('Main goals updated.')}}
+function renderAIAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><h3>AI Career Hub Manager</h3><p class="admin-note">Edit specialist names, descriptions and quick prompts. These are the public labels; the underlying provider is not shown.</p>${v.aiAgents.map((a,i)=>`<div class="ai-admin-row"><input id="aiN${i}" value="${esc(a[0])}"><input id="aiD${i}" value="${esc(a[1])}"><textarea id="aiQ${i}">${esc(a[2].join(' | '))}</textarea></div>`).join('')}<div class="admin-actions"><button class="btn btn-gold" id="saveAIAdmin">Save AI Career Hub</button><button class="btn btn-outline" id="addAIAdmin">Add Specialist</button></div></div>`;$('saveAIAdmin').onclick=()=>{v.aiAgents=v.aiAgents.map((a,i)=>[$('aiN'+i).value.trim(),$('aiD'+i).value.trim(),$('aiQ'+i).value.split('|').map(x=>x.trim()).filter(Boolean)]);sv();alert('AI Career Hub updated.')};$('addAIAdmin').onclick=()=>{v.aiAgents.push(['New Career Coach','Specialist career development support',['Help me plan my next steps','Review my progress','Create an action plan']]);sv();renderAIAdmin()}}
+function renderTrackingAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><div class="section-toolbar"><h3>Member development intelligence</h3><select id="trackFilter"><option value="">All users</option>${v.users.map(u=>`<option value="${esc(u.id)}">${esc(u.name)}</option>`).join('')}</select></div><div id="trackingRows"></div></div>`;const render=()=>{const uid=$('trackFilter').value;const us=v.users.filter(u=>!uid||u.id===uid);$('trackingRows').innerHTML=us.map(u=>{const g=v.goalsData.filter(x=>x.userId===u.id),p=v.pdca.filter(x=>x.userId===u.id),over=[...g,...p].filter(x=>memberStatus(x)==='Overdue').length;return `<div class="tracking-user"><div><b>${esc(u.name)}</b><span>${esc(u.status)} · ${u.progress||0}% progress</span></div><div><strong>${g.length}</strong> goals · <strong>${p.length}</strong> PDCA · <strong>${over}</strong> overdue</div><button onclick="careerosOpenUser('${u.id}')">View improvement areas</button></div>`}).join('')||'<p class="admin-note">No users match.</p>'};$('trackFilter').onchange=render;render()}
+function renderContentAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><h3>Website Content</h3><div class="admin-form"><div class="full"><label>Hero headline line 1</label><input id="mh1" value="${esc(v.monthly.line1)}"></div><div><label>Line 2</label><input id="mh2" value="${esc(v.monthly.line2)}"></div><div><label>Line 3</label><input id="mh3" value="${esc(v.monthly.line3)}"></div><div><label>Line 4</label><input id="mh4" value="${esc(v.monthly.line4)}"></div><div class="full"><label>Hero supporting text</label><textarea id="heroLeadAdmin">${esc(db.heroLead)}</textarea></div><div class="full"><label>Photo quote</label><textarea id="quoteAdmin">${esc(document.querySelector('.photo-label .quote')?.textContent.replace(/[“”]/g,'')||'')}</textarea></div><div class="full"><label>Quote author</label><input id="quoteAuthorAdmin" value="${esc(document.querySelector('.photo-label small')?.textContent||'— TEBOGO MASENAMELA')}"></div></div><button class="btn btn-gold" id="saveContentAdmin">Save Website Content</button></div>`;$('saveContentAdmin').onclick=()=>{v.monthly={...v.monthly,line1:$('mh1').value,line2:$('mh2').value,line3:$('mh3').value,line4:$('mh4').value};db.heroLead=$('heroLeadAdmin').value.trim()||db.heroLead;const titleEl=document.querySelector('.hero-title');if(titleEl){titleEl.innerHTML=`${esc(v.monthly.line1)} <span>${esc(v.monthly.line2)}</span><span style="display:block">${esc(v.monthly.line3)} ${esc(v.monthly.line4)}</span>`}const q=document.querySelector('.photo-label .quote');if(q)q.textContent='“'+$('quoteAdmin').value.trim()+'”';const a=document.querySelector('.photo-label small');if(a)a.textContent=$('quoteAuthorAdmin').value.trim();saveDB();sv();alert('Website content saved.')}}
+const themes={classic:{name:'Classic Navy & Gold',navy:'#071a2f',navy2:'#0d2947',accent:'#c9a04a',accent2:'#ead8a8',bg:'#f8f5ed',soft:'#f1eee5',card:'#ffffff'},blue:{name:'Executive Blue',navy:'#063b66',navy2:'#0b527f',accent:'#4da3d9',accent2:'#a8dcf5',bg:'#eef7fc',soft:'#e4f0f8',card:'#ffffff'},sage:{name:'Sage Leadership',navy:'#25483f',navy2:'#376458',accent:'#8da58e',accent2:'#c7d6c5',bg:'#f2f5ef',soft:'#e6ece3',card:'#ffffff'},slate:{name:'Slate Executive',navy:'#27384d',navy2:'#344c66',accent:'#bca46a',accent2:'#e0cf9a',bg:'#eef1f5',soft:'#e3e8ef',card:'#ffffff'},burgundy:{name:'Royal Burgundy',navy:'#491f2c',navy2:'#642b3c',accent:'#c7a56b',accent2:'#ead7aa',bg:'#f7eeeb',soft:'#f0e1dd',card:'#ffffff'},teal:{name:'Teal & Copper',navy:'#073f46',navy2:'#0d5b62',accent:'#b8734c',accent2:'#e0b08e',bg:'#eaf5f3',soft:'#dfedeb',card:'#ffffff'},midnight:{name:'Midnight & Platinum',navy:'#101827',navy2:'#1b273a',accent:'#aab3bf',accent2:'#e2e6eb',bg:'#e9edf2',soft:'#dfe4ea',card:'#ffffff'},emerald:{name:'Emerald & Sand',navy:'#0d4938',navy2:'#14604a',accent:'#c7aa72',accent2:'#ead9b2',bg:'#f2f0e5',soft:'#e6eadb',card:'#ffffff'}};
+function applyTheme(theme){const t=themes[theme]||themes.classic;document.body.classList.remove(...Object.keys(themes).filter(x=>x!=='classic').map(x=>'theme-'+x));if(theme!=='classic')document.body.classList.add('theme-'+theme);for(const [k,val] of Object.entries({'--navy':t.navy,'--navy2':t.navy2,'--navy3':t.navy2,'--gold':t.accent,'--gold2':t.accent2,'--cream':t.bg,'--soft':t.soft,'--theme-card':t.card,'--theme-bg':t.bg}))document.documentElement.style.setProperty(k,val);document.body.dataset.theme=theme}
+applyTheme(db.theme||'classic');
+function renderAppearanceAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><h3>Choose a CareerOS theme</h3><div class="theme-options theme-options-8">${Object.entries(themes).map(([k,t])=>`<button type="button" class="theme-option ${db.theme===k?'selected':''}" data-theme="${k}"><div class="theme-swatch" style="background:linear-gradient(135deg,${t.navy},${t.accent})"></div><b>${esc(t.name)}</b><small>Preview & apply</small></button>`).join('')}</div></div><div class="admin-card"><h3>Website pictures</h3><div class="admin-form"><div><label>Hero / profile picture</label><input type="file" id="heroImageUpload2" accept="image/*"><img class="image-preview" id="heroPreview2"></div><div><label>Education picture</label><input type="file" id="eduImageUpload2" accept="image/*"><img class="image-preview" id="eduPreview2"></div></div><p class="admin-note">Image files and layout settings are kept separate. Replacing an image does not change its crop or position.</p></div>`;document.querySelectorAll('.theme-option').forEach(o=>o.onclick=()=>{db.theme=o.dataset.theme;applyTheme(db.theme);saveDB();document.querySelectorAll('.theme-option').forEach(x=>x.classList.toggle('selected',x.dataset.theme===db.theme))});$('heroPreview2').src=document.querySelector('.hero-photo-frame img')?.src||'';$('eduPreview2').src=document.querySelector('.edu-photo img')?.src||'';const upload=(input,selector,preview,key)=>input.onchange=()=>{const f=input.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{localStorage.setItem(key,r.result);document.querySelector(selector).src=r.result;$(preview).src=r.result;saveDB();};r.readAsDataURL(f)};upload($('heroImageUpload2'),'.hero-photo-frame img','heroPreview2','careerosHeroImage');upload($('eduImageUpload2'),'.edu-photo img','eduPreview2','careerosEduImage')}
+function renderSettingsAdmin(){const bank=db.bankPayment||defaults.bankPayment;adminDynamic.innerHTML=`<div class="admin-card"><h3>Owner & administrator settings</h3><div class="admin-form"><div class="full"><label>Email receiving bookings and messages</label><input id="ownerEmail2" type="email" value="${esc(db.ownerEmail)}"></div><div><label>Administrator username</label><input id="adminUser2" value="${esc(db.adminUser)}"></div><div><label>Administrator password</label><input id="adminPass2" type="password" value="${esc(db.adminPass)}"></div></div><button class="btn btn-gold" id="saveAdminSettings">Save Settings</button></div><div class="admin-card"><h3>Payment / bank details</h3><p class="admin-note">These details are shown to customers choosing Bank Transfer / EFT. Never enter card PINs, online-banking passwords or other private banking credentials here.</p><div class="admin-bank-grid"><div><label>Bank name</label><input id="bankNameAdmin" value="${esc(bank.bankName)}" placeholder="e.g. FNB"></div><div><label>Account holder</label><input id="bankHolderAdmin" value="${esc(bank.accountHolder)}"></div><div><label>Account number</label><input id="bankNumberAdmin" value="${esc(bank.accountNumber)}"></div><div><label>Branch code</label><input id="bankBranchAdmin" value="${esc(bank.branchCode)}"></div><div><label>Account type</label><input id="bankTypeAdmin" value="${esc(bank.accountType)}" placeholder="Cheque / Current / Savings"></div><div><label>Reference prefix</label><input id="bankRefAdmin" value="${esc(bank.referencePrefix||'CAREEROS')}"></div><div class="full"><label>Payment instructions</label><textarea id="bankNoteAdmin">${esc(bank.paymentNote)}</textarea></div><div class="full"><label>Secure online payment link (optional)</label><input id="onlinePaymentUrlAdmin" type="url" value="${esc(bank.onlinePaymentUrl||'')}" placeholder="https://your-secure-payment-provider.example/..."><small class="payment-help">Optional gateway/payment-page URL. You may use {amount}, {reference} and {email} placeholders if your provider supports them.</small></div><div class="full"><label><input id="bankEnabledAdmin" type="checkbox" ${bank.enabled!==false?'checked':''}> Enable Bank Transfer / EFT option</label></div></div><button class="btn btn-gold" id="saveBankSettings">Save Payment Settings</button></div><div class="admin-card"><h3>Data controls</h3><button class="btn danger" id="clearAllBookings2">Delete All Bookings</button> <button class="btn danger" id="clearAllMessages2">Delete All Messages</button> <button class="btn danger" id="clearAllUsers2">Delete All Users</button></div>`;$('saveAdminSettings').onclick=()=>{if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('ownerEmail2').value.trim()))return alert('Enter a valid email.');db.ownerEmail=$('ownerEmail2').value.trim();db.adminUser=$('adminUser2').value.trim()||'careeros';db.adminPass=$('adminPass2').value||'123456';saveDB();alert('Administrator settings saved.')};$('saveBankSettings').onclick=()=>{db.bankPayment={enabled:$('bankEnabledAdmin').checked,bankName:$('bankNameAdmin').value.trim(),accountHolder:$('bankHolderAdmin').value.trim(),accountNumber:$('bankNumberAdmin').value.trim(),branchCode:$('bankBranchAdmin').value.trim(),accountType:$('bankTypeAdmin').value.trim(),referencePrefix:$('bankRefAdmin').value.trim()||'CAREEROS',paymentNote:$('bankNoteAdmin').value.trim()||'Use your booking ID as the payment reference. Attach proof of payment before submitting.',onlinePaymentUrl:$('onlinePaymentUrlAdmin').value.trim()};saveDB();alert('Payment and bank settings saved.');renderSettingsAdmin()};$('clearAllBookings2').onclick=()=>{if(confirm('Delete all bookings?')){db.bookings=[];saveDB();renderSettingsAdmin()}};$('clearAllMessages2').onclick=()=>{if(confirm('Delete all messages?')){db.messages=[];v.messageThreads=[];sv();renderSettingsAdmin()}};$('clearAllUsers2').onclick=()=>{if(confirm('Delete all registered users?')){v.users=[];v.goalsData=[];v.pdca=[];v.schedules=[];v.portfolio=[];v.messageThreads=[];sv();renderSettingsAdmin()}}}
+
+/* Admin actions */
+window.careerosUserStatus=(id,status)=>{const u=v.users.find(x=>x.id===id);if(u){u.status=status;sv();renderUsersAdmin();}};
+window.careerosDeleteUser=id=>{if(confirm('Delete this user and their member records?')){v.users=v.users.filter(x=>x.id!==id);v.goalsData=v.goalsData.filter(x=>x.userId!==id);v.pdca=v.pdca.filter(x=>x.userId!==id);v.schedules=v.schedules.filter(x=>x.userId!==id);v.portfolio=v.portfolio.filter(x=>x.userId!==id);v.messageThreads=v.messageThreads.filter(x=>x.userId!==id);sv();renderUsersAdmin()}};
+window.careerosOpenUser=id=>{if(document.getElementById('selectedUserCard'))openAdminUser(id);else{const b=[...document.querySelectorAll('.admin-nav button')].find(x=>x.textContent.trim()==='Users & Approvals');openAdminView('Users & Approvals',b);setTimeout(()=>openAdminUser(id),0)}};
+window.careerosSaveUserProgress=id=>{const u=v.users.find(x=>x.id===id);if(u){u.progress=Math.max(0,Math.min(100,Number($('editUP').value)||0));sv();openAdminUser(id)}};
+window.careerosSetPayment=(id,val)=>{const b=db.bookings.find(x=>x.id===id);if(b){b.paymentStatus=val;saveDB();updateAdminHeaderStats()}};
+window.careerosEditBooking=id=>{const b=db.bookings.find(x=>x.id===id);if(!b)return;const d=prompt('New date (YYYY-MM-DD):',b.date);if(!d)return;const t=prompt('New time (HH:MM):',b.time);if(!t)return;if(isBooked(d,t)&&!(d===b.date&&t===b.time))return alert('That new slot is already booked.');b.date=d;b.time=t;b.status='Confirmed';saveDB();renderBookingsAdmin()};
+window.careerosCancelBooking=id=>{const b=db.bookings.find(x=>x.id===id);if(b){b.status='Cancelled';saveDB();renderBookingsAdmin()}};
+window.careerosDeleteBooking=id=>{if(confirm('Delete this booking?')){db.bookings=db.bookings.filter(x=>x.id!==id);saveDB();renderBookingsAdmin()}};
+window.careerosDeleteSlot=(d,t)=>{db.slots=db.slots.filter(s=>!(s.date===d&&s.time===t));saveDB();renderAvailabilityAdmin()};
+window.careerosDeleteRule=i=>{v.availabilityRules.splice(i,1);sv();renderAvailabilityAdmin()};
+window.careerosDeleteProgram=id=>{v.programs=v.programs.filter(x=>x.id!==id);sv();renderProgramsAdmin()};
+
+/* Admin authentication remains through the existing secure form. */
+$('adminFab').onclick=()=>{$('adminLoginMsg').textContent='';$('adminLogin').classList.add('open');$('adminUser').focus()};
+$('cancelAdminLogin').onclick=()=>$('adminLogin').classList.remove('open');
+$('adminLoginForm').onsubmit=e=>{e.preventDefault();if($('adminUser').value===db.adminUser&&$('adminPass').value===db.adminPass){$('adminLogin').classList.remove('open');$('adminPanel').classList.add('open');renderAdmin()}else $('adminLoginMsg').textContent='Incorrect username or password.'};
+$('logoutAdmin').onclick=()=>$('adminPanel').classList.remove('open');$('viewWebsite').onclick=()=>{$('adminPanel').classList.remove('open');go('home')};
+
+/* Keep existing image settings and quote positioning intact, only fix text containment. */
+const photo=document.querySelector('.photo-label');if(photo){photo.style.left='24px';photo.style.right='24px';photo.style.width='auto';photo.style.maxWidth='calc(100% - 48px)';photo.style.boxSizing='border-box'}
+const titleEl=document.querySelector('.hero-title');if(titleEl&&v.monthly){titleEl.innerHTML=`${esc(v.monthly.line1||'Build the')} <span>${esc(v.monthly.line2||'career')}</span><span style="display:block">${esc(v.monthly.line3||'you are')} ${esc(v.monthly.line4||'capable of.')}</span>`}
+
+/* Message/booking data migration from old v4 structure. */
+if(v.messageThreads.length===0&&db.messages.length){db.messages.forEach((m,i)=>{if(m.email){const u=v.users.find(x=>x.email===m.email);if(u)v.messageThreads.push({id:'migrated'+i,userId:u.id,from:'user',text:m.message||'Booking enquiry',date:m.date||new Date().toLocaleString(),read:false})}});sv()}
+
+/* Apply saved uploaded images. */
+const savedHero=localStorage.getItem('careerosHeroImage'),savedEdu=localStorage.getItem('careerosEduImage');if(savedHero&&document.querySelector('.hero-photo-frame img'))document.querySelector('.hero-photo-frame img').src=savedHero;if(savedEdu&&document.querySelector('.edu-photo img'))document.querySelector('.edu-photo img').src=savedEdu;
+
+})();
 </script>
 
 </body>
