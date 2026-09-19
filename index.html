@@ -2011,5 +2011,789 @@ const savedHero=localStorage.getItem('careerosHeroImage'),savedEdu=localStorage.
 })();
 </script>
 
+
+<!-- =========================================================
+     ELEVATE360 FIREBASE + GEMINI AI LOGIC INTEGRATION
+     ========================================================= -->
+<script type="module" id="elevate360-firebase-gemini">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  updateProfile,
+  setPersistence,
+  browserLocalPersistence
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  addDoc,
+  deleteDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  limit,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
+import {
+  getAI,
+  getGenerativeModel,
+  GoogleAIBackend
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js";
+
+/* =========================================================
+   1. FIREBASE CONFIGURATION
+   ---------------------------------------------------------
+   Paste the Firebase Web App configuration from:
+   Firebase Console -> Project settings -> Your apps -> Web app
+
+   If the site is deployed with Firebase Hosting, the code also
+   tries /__/firebase/init.json automatically.
+   ========================================================= */
+const ELEVATE_FIREBASE_CONFIG = {
+  apiKey: "PASTE_FIREBASE_API_KEY",
+  authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
+  projectId: "PASTE_PROJECT_ID",
+  storageBucket: "PASTE_PROJECT_ID.firebasestorage.app",
+  messagingSenderId: "PASTE_MESSAGING_SENDER_ID",
+  appId: "PASTE_FIREBASE_APP_ID",
+  measurementId: ""
+};
+
+/* Firebase Auth requires passwords of at least 6 characters by default.
+   Keep the visible Elevate360 legacy administrator login as requested,
+   but use a real Firebase Auth admin account for production cloud access. */
+const ELEVATE_ADMIN = {
+  username: "Elevate360",
+  legacyPassword: "360",
+  firebaseEmail: "",
+  firebasePassword: ""
+};
+
+const GEMINI_MODEL = "gemini-3.8-flash";
+const FIRESTORE_SITE_DOC = "elevate360/site";
+const FIRESTORE_MEMBER_DOC = "elevate360/memberData";
+
+let firebaseReady = false;
+let firebaseError = null;
+let app = null;
+let auth = null;
+let firestore = null;
+let storage = null;
+let aiModel = null;
+let syncing = false;
+let currentFirebaseUser = null;
+let unsubscribeSite = null;
+let unsubscribeMembers = null;
+
+function configuredConfig(c) {
+  return c && c.apiKey && !String(c.apiKey).startsWith("PASTE_") &&
+    c.projectId && !String(c.projectId).startsWith("PASTE_") &&
+    c.appId && !String(c.appId).startsWith("PASTE_");
+}
+
+async function getHostingFirebaseConfig() {
+  try {
+    const response = await fetch('/__/firebase/init.json', { cache: 'no-store' });
+    if (!response.ok) return null;
+    const cfg = await response.json();
+    return configuredConfig(cfg) ? cfg : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+async function initFirebase() {
+  let config = configuredConfig(ELEVATE_FIREBASE_CONFIG)
+    ? ELEVATE_FIREBASE_CONFIG
+    : await getHostingFirebaseConfig();
+
+  if (!config) {
+    firebaseError = new Error('Firebase configuration has not been supplied yet.');
+    window.Elevate360Firebase = {
+      ready: false,
+      configured: false,
+      error: firebaseError,
+      message: 'Add your Firebase Web App configuration to ELEVATE_FIREBASE_CONFIG.'
+    };
+    document.documentElement.dataset.firebase = 'not-configured';
+    return;
+  }
+
+  try {
+    app = getApps().length ? getApp() : initializeApp(config);
+    auth = getAuth(app);
+    firestore = getFirestore(app);
+    storage = getStorage(app);
+
+    await setPersistence(auth, browserLocalPersistence);
+
+    const ai = getAI(app, { backend: new GoogleAIBackend() });
+    aiModel = getGenerativeModel(ai, { model: GEMINI_MODEL });
+
+    firebaseReady = true;
+    document.documentElement.dataset.firebase = 'connected';
+
+    window.Elevate360Firebase = {
+      app,
+      auth,
+      firestore,
+      storage,
+      aiModel,
+      ready: true,
+      model: GEMINI_MODEL,
+      config
+    };
+
+    onAuthStateChanged(auth, async user => {
+      currentFirebaseUser = user || null;
+      window.Elevate360Firebase.user = currentFirebaseUser;
+      if (user) await loadCloudState();
+    });
+
+    await loadCloudState();
+
+  } catch (error) {
+    firebaseError = error;
+    firebaseReady = false;
+    document.documentElement.dataset.firebase = 'error';
+    window.Elevate360Firebase = {
+      ready: false,
+      configured: true,
+      error
+    };
+    console.error('Elevate360 Firebase initialization failed:', error);
+  }
+}
+
+/* =========================================================
+   2. CLOUD STATE
+   ========================================================= */
+async function loadCloudState() {
+  if (!firebaseReady || !firestore) return;
+
+  try {
+    const siteSnap = await getDoc(doc(firestore, FIRESTORE_SITE_DOC));
+    if (siteSnap.exists()) {
+      const cloud = siteSnap.data();
+      if (cloud.db && window.db) {
+        Object.assign(window.db, cloud.db);
+        localStorage.setItem('careeros_v3', JSON.stringify(window.db));
+        window.dispatchEvent(new CustomEvent('e360:cloud-db-loaded'));
+      }
+    }
+
+    const memberSnap = await getDoc(doc(firestore, FIRESTORE_MEMBER_DOC));
+    if (memberSnap.exists() && window.careerosV) {
+      const cloud = memberSnap.data();
+      if (cloud.data) {
+        Object.assign(window.careerosV, cloud.data);
+        localStorage.setItem('careeros_v4', JSON.stringify(window.careerosV));
+        window.dispatchEvent(new CustomEvent('e360:cloud-members-loaded'));
+      }
+    }
+  } catch (error) {
+    console.warn('Elevate360 could not load cloud state:', error);
+  }
+}
+
+async function saveCloudState() {
+  if (!firebaseReady || !firestore || !window.db) return false;
+  if (!currentFirebaseUser) return false;
+  if (syncing) return false;
+
+  syncing = true;
+  try {
+    await setDoc(doc(firestore, FIRESTORE_SITE_DOC), {
+      db: JSON.parse(JSON.stringify(window.db)),
+      updatedAt: serverTimestamp(),
+      updatedBy: currentFirebaseUser.uid
+    }, { merge: true });
+
+    if (window.careerosV) {
+      await setDoc(doc(firestore, FIRESTORE_MEMBER_DOC), {
+        data: JSON.parse(JSON.stringify(window.careerosV)),
+        updatedAt: serverTimestamp(),
+        updatedBy: currentFirebaseUser.uid
+      }, { merge: true });
+    }
+
+    return true;
+  } catch (error) {
+    console.warn('Elevate360 cloud save failed:', error);
+    return false;
+  } finally {
+    syncing = false;
+  }
+}
+
+/* =========================================================
+   3. FIRESTORE RECORD SYNC
+   Public booking/message data is stored separately so that a
+   public visitor does not need access to the administrator doc.
+   ========================================================= */
+async function writeBookingToCloud(booking) {
+  if (!firebaseReady || !firestore || !booking) return;
+  try {
+    const safe = { ...booking };
+    delete safe.paymentProof;
+    delete safe.attachments;
+    await setDoc(doc(firestore, 'bookings', String(booking.id)), {
+      ...safe,
+      createdAt: serverTimestamp()
+    }, { merge: true });
+  } catch (error) {
+    console.warn('Booking cloud sync failed:', error);
+  }
+}
+
+async function writeMessageToCloud(message) {
+  if (!firebaseReady || !firestore || !message) return;
+  try {
+    const safe = { ...message };
+    delete safe.attachments;
+    await setDoc(doc(firestore, 'messages', String(message.id)), {
+      ...safe,
+      createdAt: serverTimestamp()
+    }, { merge: true });
+  } catch (error) {
+    console.warn('Message cloud sync failed:', error);
+  }
+}
+
+/* =========================================================
+   4. FIREBASE AUTHENTICATION
+   ========================================================= */
+async function firebaseMemberRegister(name, email, password, target) {
+  if (!firebaseReady) throw new Error('Firebase is not connected yet.');
+
+  const credential = await createUserWithEmailAndPassword(auth, email, password);
+  await updateProfile(credential.user, { displayName: name });
+
+  const userRecord = {
+    id: credential.user.uid,
+    uid: credential.user.uid,
+    name,
+    email: email.toLowerCase(),
+    target: target || '',
+    status: 'Pending Approval',
+    joined: new Date().toISOString(),
+    progress: 0
+  };
+
+  await setDoc(doc(firestore, 'users', credential.user.uid), {
+    ...userRecord,
+    createdAt: serverTimestamp()
+  }, { merge: true });
+
+  if (window.careerosV) {
+    const existing = window.careerosV.users.find(u => u.id === credential.user.uid);
+    if (!existing) window.careerosV.users.push(userRecord);
+    else Object.assign(existing, userRecord);
+    localStorage.setItem('careeros_v4', JSON.stringify(window.careerosV));
+  }
+
+  return credential.user;
+}
+
+async function firebaseMemberLogin(email, password) {
+  if (!firebaseReady) throw new Error('Firebase is not connected yet.');
+  const credential = await signInWithEmailAndPassword(auth, email, password);
+  const snap = await getDoc(doc(firestore, 'users', credential.user.uid));
+  const profile = snap.exists() ? snap.data() : null;
+
+  if (!profile) {
+    throw new Error('Your Firebase account exists, but your Elevate360 member profile is missing.');
+  }
+
+  if (!['Approved', 'Active'].includes(profile.status)) {
+    await signOut(auth);
+    throw new Error('Account status: ' + (profile.status || 'Pending Approval') + '. Premium access is not available yet.');
+  }
+
+  if (window.careerosV) {
+    const index = window.careerosV.users.findIndex(u => u.id === credential.user.uid || u.email === email.toLowerCase());
+    if (index >= 0) window.careerosV.users[index] = { ...window.careerosV.users[index], ...profile, id: credential.user.uid };
+    else window.careerosV.users.push({ ...profile, id: credential.user.uid });
+    localStorage.setItem('careeros_v4', JSON.stringify(window.careerosV));
+  }
+
+  sessionStorage.setItem('careerosMember', credential.user.uid);
+  return { user: credential.user, profile };
+}
+
+/* Capture the existing member forms without changing the website layout. */
+document.addEventListener('submit', async event => {
+  const form = event.target;
+  if (!firebaseReady) return;
+
+  if (form.id === 'regForm') {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const name = document.getElementById('rName')?.value.trim();
+    const email = document.getElementById('rEmail')?.value.trim().toLowerCase();
+    const password = document.getElementById('rPass')?.value || '';
+    const target = document.getElementById('rTarget')?.value.trim() || '';
+
+    if (!name || !email || password.length < 6) {
+      alert('Please enter your name, a valid email and a password of at least 6 characters.');
+      return;
+    }
+
+    try {
+      await firebaseMemberRegister(name, email, password, target);
+      alert('Registration submitted. The administrator must approve your account.');
+      document.getElementById('memberAuth')?.classList.remove('open');
+    } catch (error) {
+      document.getElementById('memMsg').textContent = friendlyFirebaseError(error);
+    }
+  }
+
+  if (form.id === 'memLogin') {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const email = document.getElementById('lEmail')?.value.trim().toLowerCase();
+    const password = document.getElementById('lPass')?.value || '';
+
+    try {
+      const result = await firebaseMemberLogin(email, password);
+      document.getElementById('memberAuth')?.classList.remove('open');
+      window.dispatchEvent(new CustomEvent('e360:member-login', { detail: result }));
+    } catch (error) {
+      document.getElementById('memMsg').textContent = friendlyFirebaseError(error);
+    }
+  }
+}, true);
+
+function friendlyFirebaseError(error) {
+  const code = error?.code || '';
+  const map = {
+    'auth/invalid-credential': 'The email or password is incorrect.',
+    'auth/invalid-email': 'Enter a valid email address.',
+    'auth/email-already-in-use': 'An account already exists for this email.',
+    'auth/weak-password': 'Choose a stronger password with at least 6 characters.',
+    'auth/network-request-failed': 'Network error. Check your internet connection.',
+    'permission-denied': 'Firebase security rules denied this operation.'
+  };
+  return map[code] || error?.message || 'Firebase authentication failed.';
+}
+
+
+/* =========================================================
+   4B. OPTIONAL FIREBASE ADMIN AUTH
+   ---------------------------------------------------------
+   The visible legacy administrator credentials remain:
+     Elevate360 / 360
+
+   For secure Firebase cloud administration, create an
+   Email/Password Firebase Auth account and set the two values
+   above. The visible username remains Elevate360; the Firebase
+   account is used only for the secure cloud session.
+   ========================================================= */
+window.Elevate360FirebaseAdminLogin = async function(username, password) {
+  if (username !== ELEVATE_ADMIN.username || password !== ELEVATE_ADMIN.legacyPassword) {
+    return { success: false, message: 'Incorrect username or password.' };
+  }
+
+  if (!firebaseReady || !auth) {
+    return { success: true, legacyOnly: true, message: 'Administrator login accepted. Firebase cloud administration is not configured yet.' };
+  }
+
+  if (!ELEVATE_ADMIN.firebaseEmail || !ELEVATE_ADMIN.firebasePassword) {
+    return { success: true, legacyOnly: true, message: 'Administrator login accepted. Add the Firebase administrator Auth account to enable protected cloud writes.' };
+  }
+
+  try {
+    const credential = await signInWithEmailAndPassword(
+      auth,
+      ELEVATE_ADMIN.firebaseEmail,
+      ELEVATE_ADMIN.firebasePassword
+    );
+    currentFirebaseUser = credential.user;
+    return { success: true, firebase: true, user: credential.user };
+  } catch (error) {
+    console.error('Firebase administrator authentication failed:', error);
+    return { success: false, message: friendlyFirebaseError(error) };
+  }
+};
+
+
+document.addEventListener('submit', async event => {
+  const form = event.target;
+  if (form.id !== 'adminLoginForm') return;
+  if (!firebaseReady) return;
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  const username = document.getElementById('adminUser')?.value.trim();
+  const password = document.getElementById('adminPass')?.value || '';
+  const message = document.getElementById('adminLoginMsg');
+  const result = await window.Elevate360FirebaseAdminLogin(username, password);
+
+  if (!result.success) {
+    if (message) message.textContent = result.message;
+    return;
+  }
+
+  document.getElementById('adminLogin')?.classList.remove('open');
+  document.getElementById('adminPanel')?.classList.add('open');
+  window.dispatchEvent(new CustomEvent('e360:admin-login', { detail: result }));
+  if (typeof window.renderAdmin === 'function') window.renderAdmin();
+}, true);
+
+/* =========================================================
+   5. GEMINI AI
+   ========================================================= */
+function fileToInlinePart(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const result = String(reader.result || '');
+        const comma = result.indexOf(',');
+        const data = comma >= 0 ? result.slice(comma + 1) : result;
+        resolve({ inlineData: { data, mimeType: file.type || 'application/octet-stream' } });
+      } catch (e) { reject(e); }
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function extractOfficeText(file) {
+  if (!window.JSZip && !window.XLSX) throw new Error('Document reader libraries are not available.');
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+
+  if (['txt','csv','json','md','rtf'].includes(ext)) return await file.text();
+
+  if (ext === 'docx') {
+    const zip = await JSZip.loadAsync(await file.arrayBuffer());
+    const xml = await zip.file('word/document.xml')?.async('text');
+    if (!xml) throw new Error('Could not read the DOCX document.');
+    const doc = new DOMParser().parseFromString(xml, 'application/xml');
+    return [...doc.getElementsByTagName('w:t')].map(n => n.textContent).join(' ');
+  }
+
+  if (['xlsx','xls'].includes(ext)) {
+    const workbook = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+    return workbook.SheetNames.map(name => {
+      const sheet = workbook.Sheets[name];
+      return 'SHEET: ' + name + '\n' + XLSX.utils.sheet_to_csv(sheet);
+    }).join('\n\n');
+  }
+
+  if (ext === 'pptx') {
+    const zip = await JSZip.loadAsync(await file.arrayBuffer());
+    const names = Object.keys(zip.files)
+      .filter(n => /^ppt\\/slides\\/slide\\d+\\.xml$/.test(n))
+      .sort();
+    const output = [];
+    for (const name of names) {
+      const xml = await zip.file(name).async('text');
+      const doc = new DOMParser().parseFromString(xml, 'application/xml');
+      output.push([...doc.getElementsByTagName('a:t')].map(n => n.textContent).join(' '));
+    }
+    return output.join('\n\n');
+  }
+
+  throw new Error('Unsupported document type.');
+}
+
+async function pdfOrTextPart(file) {
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  const allowedInline = file.type.startsWith('image/') || ext === 'pdf';
+  if (allowedInline) return await fileToInlinePart(file);
+  const text = await extractOfficeText(file);
+  return { text: text.slice(0, 180000) };
+}
+
+async function askGemini(question, agentName, attachments = [], history = []) {
+  if (!firebaseReady || !aiModel) throw new Error('Gemini AI is not connected. Complete Firebase setup first.');
+
+  const system = `You are Elevate360 AI Career Hub, a professional career-development assistant.
+Specialist: ${agentName}.
+Give practical, clear and structured guidance. Do not invent qualifications, employment history, documents or facts.
+When an attached document is supplied, answer using the document as the primary source and clearly distinguish document facts from general guidance.
+If the document does not contain the answer, say that it is not stated in the document instead of making it up.
+Do not claim to be a human career coach.
+`;
+
+  const parts = [
+    { text: system },
+    ...history.slice(-8).flatMap(item => [
+      { text: 'Previous user question: ' + item.q },
+      { text: 'Previous assistant answer: ' + item.answer }
+    ]),
+    { text: 'Current user question: ' + question }
+  ];
+
+  for (const file of attachments) {
+    const part = await pdfOrTextPart(file);
+    parts.push({ text: `Attached file: ${file.name}` });
+    if (part.inlineData) parts.push(part);
+    else parts.push({ text: `Document text from ${file.name}:\\n${part.text}` });
+  }
+
+  const result = await aiModel.generateContent(parts);
+  return result.response.text() || 'Gemini returned no text response.';
+}
+
+window.Elevate360AI = {
+  ask: askGemini,
+  model: GEMINI_MODEL,
+  ready: () => firebaseReady && !!aiModel
+};
+
+/* =========================================================
+   6. REPLACE PUBLIC AI SEND/ATTACHMENT WITH REAL GEMINI
+   ========================================================= */
+const publicPrompt = document.getElementById('publicAIPrompt');
+const publicSend = document.getElementById('publicAskAI');
+const publicAttach = document.getElementById('publicAttachAI');
+const publicFileInput = document.getElementById('publicAIFileInput');
+const publicConversation = document.getElementById('publicAIConversation');
+const publicStatus = document.getElementById('publicAIAttachmentStatus');
+let realAttachments = [];
+
+function addRealAIMessage(role, text) {
+  if (!publicConversation) return null;
+  const welcome = publicConversation.querySelector('.ai-reference-welcome');
+  if (welcome) welcome.remove();
+  const box = document.createElement('div');
+  box.className = 'ai-message ' + (role === 'user' ? 'ai-message-user' : 'ai-message-ai');
+  const label = document.createElement('div');
+  label.className = 'ai-message-label';
+  label.textContent = role === 'user' ? 'You' : 'Elevate 360 AI · Gemini';
+  const body = document.createElement('div');
+  body.textContent = text;
+  box.append(label, body);
+  publicConversation.appendChild(box);
+  publicConversation.scrollTop = publicConversation.scrollHeight;
+  return box;
+}
+
+function historyForGemini() {
+  try {
+    return JSON.parse(localStorage.getItem('elevate360_ai_history_v1') || '[]');
+  } catch (_) { return []; }
+}
+
+function saveGeminiHistory(q, answer, agent) {
+  const h = historyForGemini();
+  h.unshift({
+    id: Date.now(),
+    q,
+    answer,
+    agent,
+    date: new Date().toLocaleString()
+  });
+  localStorage.setItem('elevate360_ai_history_v1', JSON.stringify(h.slice(0, 30)));
+
+  if (firebaseReady && firestore && currentFirebaseUser) {
+    setDoc(doc(firestore, 'users', currentFirebaseUser.uid, 'aiHistory', String(h[0].id)), {
+      question: q,
+      answer,
+      agent,
+      createdAt: serverTimestamp()
+    }, { merge: true }).catch(error => console.warn('AI history cloud save failed:', error));
+  }
+}
+
+async function realAskAI() {
+  const question = publicPrompt?.value.trim();
+  if (!question) return;
+
+  if (!firebaseReady || !aiModel) {
+    addRealAIMessage('ai', 'Gemini is not connected yet. Add your Firebase Web App configuration to this website and enable Firebase AI Logic in the Firebase console.');
+    return;
+  }
+
+  const agent = document.getElementById('publicAITitle')?.textContent || 'Career Navigator';
+  const history = historyForGemini();
+  addRealAIMessage('user', question);
+  const loading = addRealAIMessage('ai', 'Gemini is reading your question' + (realAttachments.length ? ' and attached file…' : '…'));
+  if (publicSend) publicSend.disabled = true;
+
+  try {
+    const answer = await askGemini(question, agent, realAttachments, history);
+    if (loading) loading.querySelector('div:last-child').textContent = answer;
+    saveGeminiHistory(question, answer, agent);
+  } catch (error) {
+    if (loading) loading.querySelector('div:last-child').textContent = 'Gemini could not complete the request: ' + friendlyFirebaseError(error);
+    console.error(error);
+  } finally {
+    if (publicSend) publicSend.disabled = false;
+    if (publicPrompt) publicPrompt.value = '';
+  }
+}
+
+if (publicSend) publicSend.onclick = realAskAI;
+if (publicPrompt) publicPrompt.addEventListener('keydown', event => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    realAskAI();
+  }
+});
+if (publicAttach && publicFileInput) {
+  publicAttach.onclick = () => publicFileInput.click();
+  publicFileInput.onchange = event => {
+    realAttachments = [...(event.target.files || [])].slice(0, 5);
+    if (publicStatus) {
+      publicStatus.textContent = realAttachments.length
+        ? '✓ ' + realAttachments.map(f => f.name).join(', ') + ' ready for Gemini'
+        : '';
+    }
+    event.target.value = '';
+  };
+}
+
+
+/* =========================================================
+   6B. MEMBER AI WORKSPACE -> REAL GEMINI
+   ========================================================= */
+function bindMemberGemini(root) {
+  if (!root || root.dataset.e360GeminiBound === '1') return;
+  const askButton = root.querySelector('#askAI4');
+  const attachButton = root.querySelector('#attachAI4');
+  const fileInput = root.querySelector('#memberAIFile4');
+  const prompt = root.querySelector('#aiPrompt4');
+  const response = root.querySelector('#aiResponse4');
+  const status = root.querySelector('#memberAIFileStatus4');
+  const title = root.querySelector('#aiTitle4');
+  if (!askButton || !prompt || !response) return;
+
+  root.dataset.e360GeminiBound = '1';
+  let attachments = [];
+
+  if (attachButton && fileInput) {
+    attachButton.onclick = () => fileInput.click();
+    fileInput.onchange = event => {
+      attachments = [...(event.target.files || [])].slice(0, 5);
+      if (status) status.textContent = attachments.length
+        ? '✓ ' + attachments.map(f => f.name).join(', ') + ' ready for Gemini'
+        : '';
+      event.target.value = '';
+    };
+  }
+
+  askButton.onclick = async () => {
+    const question = prompt.value.trim();
+    if (!question) return;
+
+    if (!firebaseReady || !aiModel) {
+      response.textContent = 'Gemini is not connected. Add the Firebase configuration and enable Firebase AI Logic.';
+      return;
+    }
+
+    askButton.disabled = true;
+    response.textContent = 'Gemini is reading your question' + (attachments.length ? ' and your attachment…' : '…');
+
+    try {
+      const answer = await askGemini(
+        question,
+        title?.textContent || 'Career Navigator',
+        attachments,
+        historyForGemini()
+      );
+      response.textContent = answer;
+
+      if (currentFirebaseUser && firestore) {
+        await setDoc(
+          doc(firestore, 'users', currentFirebaseUser.uid, 'memberAIHistory', String(Date.now())),
+          {
+            question,
+            answer,
+            agent: title?.textContent || 'Career Navigator',
+            createdAt: serverTimestamp()
+          },
+          { merge: true }
+        );
+      }
+    } catch (error) {
+      response.textContent = 'Gemini could not complete the request: ' + friendlyFirebaseError(error);
+      console.error(error);
+    } finally {
+      askButton.disabled = false;
+    }
+  };
+
+  root.querySelector('#clearAI4')?.addEventListener('click', () => {
+    attachments = [];
+    if (status) status.textContent = '';
+  });
+
+  root.querySelector('#copyAI4')?.addEventListener('click', () => {
+    if (response.textContent) navigator.clipboard?.writeText(response.textContent);
+  });
+}
+
+const memberGeminiObserver = new MutationObserver(() => {
+  document.querySelectorAll('#memberView .ai-hub-v4').forEach(bindMemberGemini);
+});
+memberGeminiObserver.observe(document.body, { childList: true, subtree: true });
+document.querySelectorAll('#memberView .ai-hub-v4').forEach(bindMemberGemini);
+
+/* =========================================================
+   7. FIREBASE STORAGE UPLOAD HELPER
+   ========================================================= */
+window.Elevate360Firebase = window.Elevate360Firebase || {};
+window.Elevate360Firebase.uploadFile = async function(file, folder = 'uploads') {
+  if (!firebaseReady || !storage || !currentFirebaseUser) {
+    throw new Error('Sign in to Firebase before uploading cloud files.');
+  }
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const path = `${folder}/${currentFirebaseUser.uid}/${Date.now()}_${safeName}`;
+  const fileRef = ref(storage, path);
+  await uploadBytes(fileRef, file, { contentType: file.type || 'application/octet-stream' });
+  return { path, url: await getDownloadURL(fileRef) };
+};
+
+/* =========================================================
+   8. SYNC LOCAL STORAGE CHANGES TO FIRESTORE
+   Existing Elevate360 functions can continue using their
+   localStorage database while Firebase becomes the cloud layer.
+   ========================================================= */
+const originalSetItem = Storage.prototype.setItem;
+Storage.prototype.setItem = function(key, value) {
+  originalSetItem.call(this, key, value);
+
+  if (this !== localStorage || !firebaseReady) return;
+  if (key !== 'careeros_v3' && key !== 'careeros_v4') return;
+  if (!currentFirebaseUser) return;
+
+  clearTimeout(window.__e360CloudSyncTimer);
+  window.__e360CloudSyncTimer = setTimeout(() => {
+    saveCloudState();
+  }, 600);
+};
+
+/* =========================================================
+   9. CLOUD STATUS
+   ========================================================= */
+window.Elevate360FirebaseStatus = function() {
+  return {
+    firebaseReady,
+    firebaseUser: currentFirebaseUser?.uid || null,
+    geminiReady: !!aiModel,
+    model: GEMINI_MODEL,
+    error: firebaseError?.message || null
+  };
+};
+
+initFirebase();
+</script>
+
 </body>
 </html>
