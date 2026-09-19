@@ -1865,7 +1865,7 @@ function renderMember(u,view){
  if($('addSchedule'))$('addSchedule').onclick=()=>{if(!$('sTitle').value.trim()||!$('sDate').value)return;v.schedules.push({id:'s'+Date.now(),userId:u.id,title:$('sTitle').value.trim(),date:$('sDate').value,time:$('sTime').value,status:$('sStatus').value});sv();renderMember(u,'My Schedule')};
 }
 function careerPlanText(q,u){return `CAREER DEVELOPMENT PLAN\n\nTarget: ${q||'Define your target career'}\n\n90-DAY ROADMAP\n1. Clarify the target role and success measures.\n2. Identify the three highest-value skills or experiences to develop.\n3. Create weekly actions and add them to Goals and Schedule.\n4. Record evidence of progress and feedback.\n5. Review using PDCA at the end of each month.\n\nNEXT STEP\nChoose one action you can complete in the next 7 days.`}
-function renderAI(root,u){let a=v.aiAgents||agents;root.innerHTML=`<div class="ai-hub-v4"><aside class="ai-menu-v4"><h3>AI Career Hub</h3>${a.map((x,i)=>`<button class="ai-agent-btn ${i?'':'active'}" data-ai="${i}"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></button>`).join('')}</aside><div class="ai-work-v4"><div class="admin-badge">● AI Career Hub Online</div><h2 id="aiTitle4">${esc(a[0][0])}</h2><p id="aiDesc4">${esc(a[0][1])}</p><div class="ai-quick" id="aiQuick4"></div><textarea class="ai-prompt-v4" id="aiPrompt4" placeholder="Tell the AI Career Hub what you need help with..."></textarea><div class="admin-actions"><button class="btn btn-gold" id="askAI4">Ask AI Career Hub →</button><button class="btn btn-outline" id="attachAI4">⌕ Attach File</button><input id="memberAIFile4" type="file" hidden accept=".pdf,.docx,.xlsx,.xls,.pptx,.txt,.csv,.json,.md,.rtf"><button class="btn btn-outline" id="clearAI4">Clear</button></div><div id="memberAIFileStatus4" class="ai-attachment-status"></div><div class="ai-response-v4" id="aiResponse4">Your AI Career Hub response will appear here.</div><div class="admin-actions"><button class="btn btn-gold" id="saveAI4">Save to Career Portfolio</button><button class="btn btn-outline" id="copyAI4">Copy Response</button></div><p class="admin-note">AI guidance is developmental and should be reviewed with your own judgement.</p></div></div>`;let idx=0,doc=null;const set=i=>{idx=i;root.querySelectorAll('.ai-agent-btn').forEach((b,j)=>b.classList.toggle('active',j===i));root.querySelector('#aiTitle4').textContent=a[i][0];root.querySelector('#aiDesc4').textContent=a[i][1];root.querySelector('#aiQuick4').innerHTML=(a[i][2]||[]).map(q=>`<button>${esc(q)}</button>`).join('');root.querySelectorAll('#aiQuick4 button').forEach(b=>b.onclick=()=>root.querySelector('#aiPrompt4').value=b.textContent)};set(0);root.querySelectorAll('.ai-agent-btn').forEach((b,i)=>b.onclick=()=>set(i));root.querySelector('#attachAI4').onclick=()=>root.querySelector('#memberAIFile4').click();root.querySelector('#memberAIFile4').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const status=root.querySelector('#memberAIFileStatus4');status.textContent='Reading '+f.name+'…';try{const ext=(f.name.split('.').pop()||'').toLowerCase();let text='';if(['txt','csv','json','md','rtf'].includes(ext))text=await f.text();else if(ext==='pdf'&&window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;let pages=[];for(let n=1;n<=pdf.numPages;n++){const c=await (await pdf.getPage(n)).getTextContent();pages.push(c.items.map(x=>x.str).join(' '));if(pages.join('\n').length>120000)break}text=pages.join('\n')}else if((ext==='docx'||ext==='xlsx'||ext==='xls'||ext==='pptx')&&window.JSZip){if(ext==='docx'){const z=await JSZip.loadAsync(await f.arrayBuffer());const xml=await z.file('word/document.xml').async('text');const d=new DOMParser().parseFromString(xml,'application/xml');text=[...d.getElementsByTagName('w:t')].map(n=>n.textContent).join(' ')}else if((ext==='xlsx'||ext==='xls')&&window.XLSX){const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});text=wb.SheetNames.map(n=>n+'\n'+XLSX.utils.sheet_to_csv(wb.Sheets[n])).join('\n\n')}else{const z=await JSZip.loadAsync(await f.arrayBuffer());const names=Object.keys(z.files).filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n)).sort();for(const n of names){const d=new DOMParser().parseFromString(await z.file(n).async('text'),'application/xml');text+=[...d.getElementsByTagName('a:t')].map(x=>x.textContent).join(' ')+'\n'}}}else throw new Error('Supported files: PDF, DOCX, XLS/XLSX, PPTX, TXT, CSV, JSON, MD and RTF.');doc={name:f.name,text:String(text).slice(0,180000)};status.textContent='✓ '+f.name+' ready for AI questions'}catch(err){doc=null;status.textContent='Could not read file: '+(err.message||'unsupported file')}};root.querySelector('#askAI4').onclick=async()=>{let q=root.querySelector('#aiPrompt4').value.trim();if(!q)return;const response=root.querySelector('#aiResponse4');response.textContent='Gemini is preparing your career guidance…';try{const answer=window.elevate360AskGemini?await window.elevate360AskGemini({question:q,agent:a[idx][0],description:a[idx][1],document:doc}):aiDemo(a[idx][0],q,u);response.textContent=answer}catch(err){response.textContent='Gemini could not answer right now. Please check your Firebase AI Logic connection and try again.\n\nTechnical detail: '+(err.message||err)}};root.querySelector('#clearAI4').onclick=()=>{root.querySelector('#aiPrompt4').value='';root.querySelector('#aiResponse4').textContent='Your AI Career Hub response will appear here';doc=null;root.querySelector('#memberAIFileStatus4').textContent=''};root.querySelector('#copyAI4').onclick=()=>navigator.clipboard?.writeText(root.querySelector('#aiResponse4').textContent);root.querySelector('#saveAI4').onclick=()=>{v.portfolio.push({id:Date.now(),userId:u.id,agent:a[idx][0],text:root.querySelector('#aiResponse4').textContent,date:new Date().toLocaleString()});sv();alert('Saved to Career Portfolio.')}}
+function renderAI(root,u){let a=v.aiAgents||agents;root.innerHTML=`<div class="ai-hub-v4"><aside class="ai-menu-v4"><h3>AI Career Hub</h3>${a.map((x,i)=>`<button class="ai-agent-btn ${i?'':'active'}" data-ai="${i}"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></button>`).join('')}</aside><div class="ai-work-v4"><div class="admin-badge">● AI Career Hub Online</div><h2 id="aiTitle4">${esc(a[0][0])}</h2><p id="aiDesc4">${esc(a[0][1])}</p><div class="ai-quick" id="aiQuick4"></div><textarea class="ai-prompt-v4" id="aiPrompt4" placeholder="Tell the AI Career Hub what you need help with..."></textarea><div class="admin-actions"><button class="btn btn-gold" id="askAI4">Ask AI Career Hub →</button><button class="btn btn-outline" id="attachAI4">⌕ Attach File</button><input id="memberAIFile4" type="file" hidden accept=".pdf,.doc,.docx,.xlsx,.xls,.ppt,.pptx,.txt,.csv,.json,.md,.rtf,image/*"><button class="btn btn-outline" id="clearAI4">Clear</button></div><div id="memberAIFileStatus4" class="ai-attachment-status"></div><div class="ai-response-v4" id="aiResponse4">Your AI Career Hub response will appear here.</div><div class="admin-actions"><button class="btn btn-gold" id="saveAI4">Save to Career Portfolio</button><button class="btn btn-outline" id="copyAI4">Copy Response</button></div><p class="admin-note">AI guidance is developmental and should be reviewed with your own judgement.</p></div></div>`;let idx=0,doc=null;const set=i=>{idx=i;root.querySelectorAll('.ai-agent-btn').forEach((b,j)=>b.classList.toggle('active',j===i));root.querySelector('#aiTitle4').textContent=a[i][0];root.querySelector('#aiDesc4').textContent=a[i][1];root.querySelector('#aiQuick4').innerHTML=(a[i][2]||[]).map(q=>`<button>${esc(q)}</button>`).join('');root.querySelectorAll('#aiQuick4 button').forEach(b=>b.onclick=()=>root.querySelector('#aiPrompt4').value=b.textContent)};set(0);root.querySelectorAll('.ai-agent-btn').forEach((b,i)=>b.onclick=()=>set(i));root.querySelector('#attachAI4').onclick=()=>root.querySelector('#memberAIFile4').click();root.querySelector('#memberAIFile4').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const status=root.querySelector('#memberAIFileStatus4');status.textContent='Reading '+f.name+'…';try{const ext=(f.name.split('.').pop()||'').toLowerCase();let text='';if(['txt','csv','json','md','rtf'].includes(ext))text=await f.text();else if(ext==='pdf'&&window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;let pages=[];for(let n=1;n<=pdf.numPages;n++){const c=await (await pdf.getPage(n)).getTextContent();pages.push(c.items.map(x=>x.str).join(' '));if(pages.join('\n').length>120000)break}text=pages.join('\n')}else if((ext==='docx'||ext==='xlsx'||ext==='xls'||ext==='pptx')&&window.JSZip){if(ext==='docx'){const z=await JSZip.loadAsync(await f.arrayBuffer());const xml=await z.file('word/document.xml').async('text');const d=new DOMParser().parseFromString(xml,'application/xml');text=[...d.getElementsByTagName('w:t')].map(n=>n.textContent).join(' ')}else if((ext==='xlsx'||ext==='xls')&&window.XLSX){const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});text=wb.SheetNames.map(n=>n+'\n'+XLSX.utils.sheet_to_csv(wb.Sheets[n])).join('\n\n')}else{const z=await JSZip.loadAsync(await f.arrayBuffer());const names=Object.keys(z.files).filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n)).sort();for(const n of names){const d=new DOMParser().parseFromString(await z.file(n).async('text'),'application/xml');text+=[...d.getElementsByTagName('a:t')].map(x=>x.textContent).join(' ')+'\n'}}}else throw new Error('Supported files: PDF, DOCX, XLS/XLSX, PPTX, TXT, CSV, JSON, MD and RTF.');doc={name:f.name,text:String(text).slice(0,180000)};status.textContent='✓ '+f.name+' ready for AI questions'}catch(err){doc=null;status.textContent='Could not read file: '+(err.message||'unsupported file')}};root.querySelector('#askAI4').onclick=async()=>{let q=root.querySelector('#aiPrompt4').value.trim();if(!q)return;const response=root.querySelector('#aiResponse4');response.textContent='AI is preparing your career guidance…';try{const answer=window.elevate360AskAI?await window.elevate360AskAI({question:q,agent:a[idx][0],description:a[idx][1],document:doc}):aiDemo(a[idx][0],q,u);response.textContent=answer}catch(err){response.textContent='AI could not answer right now. Please check your the secure AI service connection and try again.\n\nTechnical detail: '+(err.message||err)}};root.querySelector('#clearAI4').onclick=()=>{root.querySelector('#aiPrompt4').value='';root.querySelector('#aiResponse4').textContent='Your AI Career Hub response will appear here';doc=null;root.querySelector('#memberAIFileStatus4').textContent=''};root.querySelector('#copyAI4').onclick=()=>navigator.clipboard?.writeText(root.querySelector('#aiResponse4').textContent);root.querySelector('#saveAI4').onclick=()=>{v.portfolio.push({id:Date.now(),userId:u.id,agent:a[idx][0],text:root.querySelector('#aiResponse4').textContent,date:new Date().toLocaleString()});sv();alert('Saved to Career Portfolio.')}}
 function aiDemo(agent,q,u){
  const guidance={
   'Career Navigator':['CLARIFY','What role, industry or direction are you targeting?','GAP CHECK','What experience, skills or exposure are you missing?','NEXT STEP','Choose one practical action you can complete within 7 days.'],
@@ -1926,7 +1926,7 @@ if(publicAIQuick){
  const readPptx=async file=>{if(!window.JSZip)throw new Error('PPTX reader is unavailable.');const zip=await JSZip.loadAsync(await file.arrayBuffer());const names=Object.keys(zip.files).filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n)).sort();let out=[];for(const name of names){const xml=await zip.file(name).async('text');const doc=new DOMParser().parseFromString(xml,'application/xml');out.push([...doc.getElementsByTagName('a:t')].map(n=>n.textContent).join(' '))}return cleanText(out.join('\n\n'))};
  const readFileText=async file=>{const ext=(file.name.split('.').pop()||'').toLowerCase();if(file.size>12*1024*1024)throw new Error('File is larger than 12 MB. Please upload a smaller file.');if(['txt','csv','json','md','rtf'].includes(ext))return cleanText(await file.text());if(ext==='pdf')return readPdf(file);if(ext==='docx')return readDocx(file);if(['xlsx','xls'].includes(ext))return readXlsx(file);if(ext==='pptx')return readPptx(file);if(file.type.startsWith('text/'))return cleanText(await file.text());throw new Error('Supported AI document types are PDF, DOCX, XLS/XLSX, PPTX, TXT, CSV, JSON, MD and RTF.');};
  const bestDocumentAnswer=(q,text)=>{if(!text)return '';const words=[...new Set((q.toLowerCase().match(/[a-z0-9]{3,}/g)||[]).filter(w=>!['the','and','for','what','how','can','you','with','this','that','from','about','does','are','was','why'].includes(w)))];const paras=text.split(/\n{2,}|(?<=[.!?])\s+(?=[A-Z])/).map(x=>x.trim()).filter(x=>x.length>25);const scored=paras.map(p=>({p,score:words.reduce((n,w)=>n+(p.toLowerCase().includes(w)?1:0),0)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,4);if(!scored.length)return `I read “${attachedDocument.name}”, but I could not find a passage closely matching your question. Try using a specific name, heading, topic, number or phrase from the file.`;return `DOCUMENT ANSWER — ${attachedDocument.name}\n\n${scored.map((x,i)=>`${i+1}. ${x.p.slice(0,700)}`).join('\n\n')}\n\nThe answer above is grounded in the text extracted from your attachment. Ask a follow-up question if you want me to focus on a specific section.`};
- const ask=async()=>{const q=$('publicAIPrompt').value.trim();if(!q)return;const u=currentMember();addMessage('user',q);const typing=addMessage('ai','Gemini is preparing your career guidance…');$('publicAIPrompt').value='';$('publicAIPrompt').classList.remove('ai-prompt-active');try{let answer=window.elevate360AskGemini?await window.elevate360AskGemini({question:q,agent:pa[pi]?.[0]||'Career Navigator',description:pa[pi]?.[1]||'',document:attachedDocument}):aiDemo(pa[pi][0],q,u);typing.querySelector('div:last-child').textContent=answer;addHistory(q,answer,pa[pi][0])}catch(err){typing.querySelector('div:last-child').textContent='Gemini could not answer right now. Please check your Firebase AI Logic connection and try again.\n\nTechnical detail: '+(err.message||err)}};
+ const ask=async()=>{const q=$('publicAIPrompt').value.trim();if(!q)return;const u=currentMember();addMessage('user',q);const typing=addMessage('ai','AI is preparing your career guidance…');$('publicAIPrompt').value='';$('publicAIPrompt').classList.remove('ai-prompt-active');try{let answer=window.elevate360AskAI?await window.elevate360AskAI({question:q,agent:pa[pi]?.[0]||'Career Navigator',description:pa[pi]?.[1]||'',document:attachedDocument}):aiDemo(pa[pi][0],q,u);typing.querySelector('div:last-child').textContent=answer;addHistory(q,answer,pa[pi][0])}catch(err){typing.querySelector('div:last-child').textContent='AI could not answer right now. Please check your the secure AI service connection and try again.\n\nTechnical detail: '+(err.message||err)}};
  $('publicAskAI').onclick=ask;$('publicAIPrompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask()}});$('publicClearAI').onclick=()=>{resetConversation();$('publicAIPrompt').value='';$('publicAIPrompt').classList.remove('ai-prompt-active');attachedDocument=null;status('')};$('publicCopyAI').onclick=()=>{const msgs=[...conversation.querySelectorAll('.ai-message')].map(x=>x.innerText).join('\n\n');if(msgs)navigator.clipboard?.writeText(msgs)};$('publicSaveAI').onclick=()=>{const u=currentMember();if(!u){showAuth('login');return}const msgs=[...conversation.querySelectorAll('.ai-message')].slice(-2).map(x=>x.innerText).join('\n\n');if(!msgs)return;v.portfolio.push({id:Date.now(),userId:u.id,agent:pa[pi][0],text:msgs,date:new Date().toLocaleString()});sv();alert('Saved to Career Portfolio.')};$('publicHistory')?.addEventListener('click',()=>{renderHistory();openModal('aiHistoryModal')});$('clearAIHistory')?.addEventListener('click',()=>{if(confirm('Clear your AI conversation history?')){localStorage.removeItem(historyKey);renderHistory()}});
  $('publicAttachAI')?.addEventListener('click',()=>$('publicAIFileInput')?.click());$('publicAIFileInput')?.addEventListener('change',async e=>{const files=[...e.target.files||[]];if(!files.length)return;const file=files[0];status('Reading '+file.name+'…');try{const text=await readFileText(file);attachedDocument={name:file.name,text:text.slice(0,180000)};status('✓ '+file.name+' attached · '+Math.round(text.length/1000)+' KB of text ready');let chip=document.querySelector('#publicAIConversation .ai-file-card');if(!chip){chip=document.createElement('div');chip.className='ai-file-card';conversation.appendChild(chip)}chip.innerHTML=`<b>Attached file: ${esc(file.name)}</b><small>The AI can now answer questions using the extracted document text. Attach another file to replace it.</small>`}catch(err){attachedDocument=null;status('Could not read '+file.name+': '+(err.message||'unsupported file'),true)}e.target.value=''});
  renderHistory();
@@ -2033,9 +2033,9 @@ const savedHero=localStorage.getItem('careerosHeroImage'),savedEdu=localStorage.
 
 
 <!-- =========================================================
-     ELEVATE360 FIREBASE + GEMINI AI LOGIC INTEGRATION
+     ELEVATE360 FIREBASE + SECURE AI INTEGRATION
      ========================================================= -->
-<script type="module" id="elevate360-firebase-gemini">
+<script type="module" id="elevate360-firebase-ai">
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import {
   getAuth,
@@ -2067,11 +2067,6 @@ import {
   uploadBytes,
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-storage.js";
-import {
-  getAI,
-  getGenerativeModel,
-  GoogleAIBackend
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js";
 
 /* =========================================================
    1. FIREBASE CONFIGURATION
@@ -2083,9 +2078,9 @@ import {
    tries /__/firebase/init.json automatically.
    ========================================================= */
 /* IMPORTANT SECURITY NOTE:
-   Do NOT put a Gemini Developer API key in this HTML.
-   Firebase AI Logic now authorizes Gemini Developer API requests through
-   Firebase-managed infrastructure. The Gemini key supplied in chat should
+   Do NOT put a private service key in this HTML.
+   the secure AI service now authorizes AI Developer API requests through
+   Firebase-managed infrastructure. The AI key supplied in chat should
    be revoked/rotated because it has been exposed.
 */
 const ELEVATE_FIREBASE_CONFIG = {
@@ -2108,7 +2103,7 @@ const ELEVATE_ADMIN = {
   firebasePassword: ""
 };
 
-const GEMINI_MODEL = "gemini-3.8-flash";
+const AI_MODEL = "gemini-3.8-flash";
 const FIRESTORE_SITE_DOC = "elevate360/site";
 const FIRESTORE_MEMBER_DOC = "elevate360/memberData";
 
@@ -2118,7 +2113,6 @@ let app = null;
 let auth = null;
 let firestore = null;
 let storage = null;
-let aiModel = null;
 let syncing = false;
 let currentFirebaseUser = null;
 let unsubscribeSite = null;
@@ -2141,7 +2135,18 @@ async function getHostingFirebaseConfig() {
   }
 }
 
-window.elevate360AskGemini = async function({question,agent='Career Navigator',description='',document=null}={}){if(!aiModel)throw new Error('Gemini AI is not connected. Check Firebase AI Logic configuration.');let prompt=`You are Elevate360 AI Career Hub. You are an AI assistant designed to provide practical career guidance and support professional growth. Focus on actionable advice, realistic career planning, CVs, interviews, study habits, leadership and workplace skills. Keep responses concise, professional and directly relevant to the user's professional journey. You are acting as the ${agent} specialist. ${description}\n\nUSER QUESTION:\n${question}`;if(document?.text)prompt+=`\n\nATTACHED FILE: ${document.name}\nUse the attachment as the primary source for document-specific questions. Do not invent facts not supported by the file.\n\nDOCUMENT CONTENT:\n${String(document.text).slice(0,180000)}`;const result=await aiModel.generateContent(prompt);const response=result?.response;if(response?.text)return response.text();if(response?.candidates?.[0]?.content?.parts)return response.candidates[0].content.parts.map(p=>p.text||'').join('');throw new Error('Gemini returned an empty response.');};
+window.elevate360AskAI = async function({question,agent='Career Navigator',description='',document=null,history=[]}={}){
+  const payload={question,agent,description,history};
+  if(document){
+    payload.document={name:document.name||'attachment',text:document.text||'',mimeType:document.mimeType||'',dataBase64:document.dataBase64||''};
+  }
+  const response=await fetch('/api/elevate360AI',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  let data={};
+  try{data=await response.json();}catch(_){data={};}
+  if(!response.ok) throw new Error(data.error||'The AI service could not complete the request.');
+  if(!data.answer) throw new Error('The AI service returned an empty response.');
+  return data.answer;
+};
 
 async function initFirebase() {
   let config = configuredConfig(ELEVATE_FIREBASE_CONFIG)
@@ -2154,7 +2159,7 @@ async function initFirebase() {
       ready: false,
       configured: false,
       error: firebaseError,
-      message: 'Connect this site to your Firebase Web App. Firebase AI Logic supplies the Gemini authorization; do not paste a Gemini Developer API key into this HTML.'
+      message: 'Connect this site to your Firebase Web App. Cloud AI is served through the secure site backend.'
     };
     document.documentElement.dataset.firebase = 'not-configured';
     return;
@@ -2168,9 +2173,6 @@ async function initFirebase() {
 
     await setPersistence(auth, browserLocalPersistence);
 
-    const ai = getAI(app, { backend: new GoogleAIBackend() });
-    aiModel = getGenerativeModel(ai, { model: GEMINI_MODEL });
-
     firebaseReady = true;
     document.documentElement.dataset.firebase = 'connected';
 
@@ -2179,9 +2181,8 @@ async function initFirebase() {
       auth,
       firestore,
       storage,
-      aiModel,
       ready: true,
-      model: GEMINI_MODEL,
+      model: AI_MODEL,
       config
     };
 
@@ -2482,7 +2483,7 @@ document.addEventListener('submit', async event => {
 }, true);
 
 /* =========================================================
-   5. GEMINI AI
+   5. AI
    ========================================================= */
 function fileToInlinePart(file) {
   return new Promise((resolve, reject) => {
@@ -2547,45 +2548,31 @@ async function pdfOrTextPart(file) {
   return { text: text.slice(0, 180000) };
 }
 
-async function askGemini(question, agentName, attachments = [], history = []) {
-  if (!firebaseReady || !aiModel) throw new Error('Gemini AI is not connected. Complete Firebase setup first.');
-
-  const system = `You are Elevate360 AI Career Hub, a professional career-development assistant.
-Specialist: ${agentName}.
-Give practical, clear and structured guidance. Do not invent qualifications, employment history, documents or facts.
-When an attached document is supplied, answer using the document as the primary source and clearly distinguish document facts from general guidance.
-If the document does not contain the answer, say that it is not stated in the document instead of making it up.
-Do not claim to be a human career coach.
-`;
-
-  const parts = [
-    { text: system },
-    ...history.slice(-8).flatMap(item => [
-      { text: 'Previous user question: ' + item.q },
-      { text: 'Previous assistant answer: ' + item.answer }
-    ]),
-    { text: 'Current user question: ' + question }
-  ];
-
+async function askAI(question, agentName, attachments = [], history = []) {
+  const documents = [];
   for (const file of attachments) {
     const part = await pdfOrTextPart(file);
-    parts.push({ text: `Attached file: ${file.name}` });
-    if (part.inlineData) parts.push(part);
-    else parts.push({ text: `Document text from ${file.name}:\\n${part.text}` });
+    const item = { name: file.name, mimeType: file.type || 'application/octet-stream' };
+    if (part.inlineData) item.dataBase64 = part.inlineData.data;
+    else item.text = part.text || '';
+    documents.push(item);
   }
-
-  const result = await aiModel.generateContent(parts);
-  return result.response.text() || 'Gemini returned no text response.';
+  return await window.elevate360AskAI({
+    question,
+    agent: agentName,
+    history: history.slice(-8),
+    documents
+  });
 }
 
 window.Elevate360AI = {
-  ask: askGemini,
-  model: GEMINI_MODEL,
-  ready: () => firebaseReady && !!aiModel
+  ask: askAI,
+  model: AI_MODEL,
+  ready: () => true
 };
 
 /* =========================================================
-   6. REPLACE PUBLIC AI SEND/ATTACHMENT WITH REAL GEMINI
+   6. REPLACE PUBLIC AI SEND/ATTACHMENT WITH REAL AI
    ========================================================= */
 const publicPrompt = document.getElementById('publicAIPrompt');
 const publicSend = document.getElementById('publicAskAI');
@@ -2603,7 +2590,7 @@ function addRealAIMessage(role, text) {
   box.className = 'ai-message ' + (role === 'user' ? 'ai-message-user' : 'ai-message-ai');
   const label = document.createElement('div');
   label.className = 'ai-message-label';
-  label.textContent = role === 'user' ? 'You' : 'Elevate 360 AI · Gemini';
+  label.textContent = role === 'user' ? 'You' : 'Elevate 360 AI';
   const body = document.createElement('div');
   body.textContent = text;
   box.append(label, body);
@@ -2612,14 +2599,14 @@ function addRealAIMessage(role, text) {
   return box;
 }
 
-function historyForGemini() {
+function historyForAI() {
   try {
     return JSON.parse(localStorage.getItem('elevate360_ai_history_v1') || '[]');
   } catch (_) { return []; }
 }
 
-function saveGeminiHistory(q, answer, agent) {
-  const h = historyForGemini();
+function saveAIHistory(q, answer, agent) {
+  const h = historyForAI();
   h.unshift({
     id: Date.now(),
     q,
@@ -2643,23 +2630,18 @@ async function realAskAI() {
   const question = publicPrompt?.value.trim();
   if (!question) return;
 
-  if (!firebaseReady || !aiModel) {
-    addRealAIMessage('ai', 'Gemini is not connected yet. Connect this website to your Firebase Web App and enable Firebase AI Logic. Do not paste a Gemini Developer API key into the website.');
-    return;
-  }
-
   const agent = document.getElementById('publicAITitle')?.textContent || 'Career Navigator';
-  const history = historyForGemini();
+  const history = historyForAI();
   addRealAIMessage('user', question);
-  const loading = addRealAIMessage('ai', 'Gemini is reading your question' + (realAttachments.length ? ' and attached file…' : '…'));
+  const loading = addRealAIMessage('ai', 'AI is reading your question' + (realAttachments.length ? ' and attached file…' : '…'));
   if (publicSend) publicSend.disabled = true;
 
   try {
-    const answer = await askGemini(question, agent, realAttachments, history);
+    const answer = await askAI(question, agent, realAttachments, history);
     if (loading) loading.querySelector('div:last-child').textContent = answer;
-    saveGeminiHistory(question, answer, agent);
+    saveAIHistory(question, answer, agent);
   } catch (error) {
-    if (loading) loading.querySelector('div:last-child').textContent = 'Gemini could not complete the request: ' + friendlyFirebaseError(error);
+    if (loading) loading.querySelector('div:last-child').textContent = 'AI could not complete the request: ' + friendlyFirebaseError(error);
     console.error(error);
   } finally {
     if (publicSend) publicSend.disabled = false;
@@ -2680,7 +2662,7 @@ if (publicAttach && publicFileInput) {
     realAttachments = [...(event.target.files || [])].slice(0, 5);
     if (publicStatus) {
       publicStatus.textContent = realAttachments.length
-        ? '✓ ' + realAttachments.map(f => f.name).join(', ') + ' ready for Gemini'
+        ? '✓ ' + realAttachments.map(f => f.name).join(', ') + ' ready for AI'
         : '';
     }
     event.target.value = '';
@@ -2689,10 +2671,10 @@ if (publicAttach && publicFileInput) {
 
 
 /* =========================================================
-   6B. MEMBER AI WORKSPACE -> REAL GEMINI
+   6B. MEMBER AI WORKSPACE -> REAL AI
    ========================================================= */
-function bindMemberGemini(root) {
-  if (!root || root.dataset.e360GeminiBound === '1') return;
+function bindMemberAI(root) {
+  if (!root || root.dataset.e360AIBound === '1') return;
   const askButton = root.querySelector('#askAI4');
   const attachButton = root.querySelector('#attachAI4');
   const fileInput = root.querySelector('#memberAIFile4');
@@ -2702,7 +2684,7 @@ function bindMemberGemini(root) {
   const title = root.querySelector('#aiTitle4');
   if (!askButton || !prompt || !response) return;
 
-  root.dataset.e360GeminiBound = '1';
+  root.dataset.e360AIBound = '1';
   let attachments = [];
 
   if (attachButton && fileInput) {
@@ -2710,7 +2692,7 @@ function bindMemberGemini(root) {
     fileInput.onchange = event => {
       attachments = [...(event.target.files || [])].slice(0, 5);
       if (status) status.textContent = attachments.length
-        ? '✓ ' + attachments.map(f => f.name).join(', ') + ' ready for Gemini'
+        ? '✓ ' + attachments.map(f => f.name).join(', ') + ' ready for AI'
         : '';
       event.target.value = '';
     };
@@ -2720,20 +2702,15 @@ function bindMemberGemini(root) {
     const question = prompt.value.trim();
     if (!question) return;
 
-    if (!firebaseReady || !aiModel) {
-      response.textContent = 'Gemini is not connected. Connect the Firebase Web App and enable Firebase AI Logic. Do not paste a Gemini Developer API key into the website.';
-      return;
-    }
-
     askButton.disabled = true;
-    response.textContent = 'Gemini is reading your question' + (attachments.length ? ' and your attachment…' : '…');
+    response.textContent = 'AI is reading your question' + (attachments.length ? ' and your attachment…' : '…');
 
     try {
-      const answer = await askGemini(
+      const answer = await askAI(
         question,
         title?.textContent || 'Career Navigator',
         attachments,
-        historyForGemini()
+        historyForAI()
       );
       response.textContent = answer;
 
@@ -2750,7 +2727,7 @@ function bindMemberGemini(root) {
         );
       }
     } catch (error) {
-      response.textContent = 'Gemini could not complete the request: ' + friendlyFirebaseError(error);
+      response.textContent = 'AI could not complete the request: ' + friendlyFirebaseError(error);
       console.error(error);
     } finally {
       askButton.disabled = false;
@@ -2767,11 +2744,11 @@ function bindMemberGemini(root) {
   });
 }
 
-const memberGeminiObserver = new MutationObserver(() => {
-  document.querySelectorAll('#memberView .ai-hub-v4').forEach(bindMemberGemini);
+const memberAIObserver = new MutationObserver(() => {
+  document.querySelectorAll('#memberView .ai-hub-v4').forEach(bindMemberAI);
 });
-memberGeminiObserver.observe(document.body, { childList: true, subtree: true });
-document.querySelectorAll('#memberView .ai-hub-v4').forEach(bindMemberGemini);
+memberAIObserver.observe(document.body, { childList: true, subtree: true });
+document.querySelectorAll('#memberView .ai-hub-v4').forEach(bindMemberAI);
 
 /* =========================================================
    7. FIREBASE STORAGE UPLOAD HELPER
@@ -2814,8 +2791,8 @@ window.Elevate360FirebaseStatus = function() {
   return {
     firebaseReady,
     firebaseUser: currentFirebaseUser?.uid || null,
-    geminiReady: !!aiModel,
-    model: GEMINI_MODEL,
+    aiReady: true,
+    model: AI_MODEL,
     error: firebaseError?.message || null
   };
 };
