@@ -2062,6 +2062,12 @@ import {
    If the site is deployed with Firebase Hosting, the code also
    tries /__/firebase/init.json automatically.
    ========================================================= */
+/* IMPORTANT SECURITY NOTE:
+   Do NOT put a Gemini Developer API key in this HTML.
+   Firebase AI Logic now authorizes Gemini Developer API requests through
+   Firebase-managed infrastructure. The Gemini key supplied in chat should
+   be revoked/rotated because it has been exposed.
+*/
 const ELEVATE_FIREBASE_CONFIG = {
   apiKey: "AIzaSyD7nNkr2AWf2EL_W4hCS4l8oVFw43YH4Ow",
   authDomain: "elevate360-6206c.firebaseapp.com",
@@ -2126,7 +2132,7 @@ async function initFirebase() {
       ready: false,
       configured: false,
       error: firebaseError,
-      message: 'Add your Firebase Web App configuration to ELEVATE_FIREBASE_CONFIG.'
+      message: 'Connect this site to your Firebase Web App. Firebase AI Logic supplies the Gemini authorization; do not paste a Gemini Developer API key into this HTML.'
     };
     document.documentElement.dataset.firebase = 'not-configured';
     return;
@@ -2497,7 +2503,7 @@ async function extractOfficeText(file) {
   if (ext === 'pptx') {
     const zip = await JSZip.loadAsync(await file.arrayBuffer());
     const names = Object.keys(zip.files)
-      .filter(n => /^ppt\\/slides\\/slide\\d+\\.xml$/.test(n))
+      .filter(n => /^ppt\/slides\/slide\d+\.xml$/.test(n))
       .sort();
     const output = [];
     for (const name of names) {
@@ -2616,7 +2622,7 @@ async function realAskAI() {
   if (!question) return;
 
   if (!firebaseReady || !aiModel) {
-    addRealAIMessage('ai', 'Gemini is not connected yet. Add your Firebase Web App configuration to this website and enable Firebase AI Logic in the Firebase console.');
+    addRealAIMessage('ai', 'Gemini is not connected yet. Connect this website to your Firebase Web App and enable Firebase AI Logic. Do not paste a Gemini Developer API key into the website.');
     return;
   }
 
@@ -2693,7 +2699,7 @@ function bindMemberGemini(root) {
     if (!question) return;
 
     if (!firebaseReady || !aiModel) {
-      response.textContent = 'Gemini is not connected. Add the Firebase configuration and enable Firebase AI Logic.';
+      response.textContent = 'Gemini is not connected. Connect the Firebase Web App and enable Firebase AI Logic. Do not paste a Gemini Developer API key into the website.';
       return;
     }
 
