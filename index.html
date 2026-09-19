@@ -2135,17 +2135,38 @@ async function getHostingFirebaseConfig() {
   }
 }
 
-window.elevate360AskAI = async function({question,agent='Career Navigator',description='',document=null,history=[]}={}){
+window.elevate360AskAI = async function({question,agent='Career Navigator',description='',document=null,documents=null,history=[]}={}){
   const payload={question,agent,description,history};
-  if(document){
+  if(Array.isArray(documents) && documents.length){
+    payload.documents=documents.slice(0,5).map(d=>({name:d.name||'attachment',text:d.text||'',mimeType:d.mimeType||'',dataBase64:d.dataBase64||''}));
+  } else if(document){
     payload.document={name:document.name||'attachment',text:document.text||'',mimeType:document.mimeType||'',dataBase64:document.dataBase64||''};
   }
-  const response=await fetch('/api/elevate360AI',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-  let data={};
-  try{data=await response.json();}catch(_){data={};}
-  if(!response.ok) throw new Error(data.error||'The AI service could not complete the request.');
-  if(!data.answer) throw new Error('The AI service returned an empty response.');
-  return data.answer;
+
+  const endpoints=[
+    '/api/elevate360AI',
+    'https://us-central1-elevate360-6206c.cloudfunctions.net/elevate360AI'
+  ];
+  let lastError=null;
+
+  for(const endpoint of endpoints){
+    try{
+      const response=await fetch(endpoint,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      let data={};
+      try{data=await response.json();}catch(_){data={};}
+      if(response.ok && data.answer) return data.answer;
+      lastError=new Error(data.error||`AI request failed (${response.status}).`);
+      if(response.status!==404 && response.status!==405) break;
+    }catch(error){
+      lastError=error;
+    }
+  }
+
+  throw new Error(lastError?.message||'The AI service could not complete the request.');
 };
 
 async function initFirebase() {
