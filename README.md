@@ -1,68 +1,76 @@
-# Elevate360 — Firebase + AI deployment
+# CareerOS / Elevate360 — Firebase AI Logic Edition
 
-This package contains the complete website, Firebase configuration, Firestore/Storage rules and the secure Gemini Cloud Function.
+This package uses **Firebase AI Logic + Gemini Developer API** for the AI Career Hub and keeps **Firebase Authentication, Cloud Firestore and Firebase Storage** for cloud data.
 
-## IMPORTANT: deploy the Function, not only Hosting
+## Important: no Cloud Functions are required
 
-The browser errors shown in DevTools (`/api/elevate360AI 404` and the direct `cloudfunctions.net/elevate360AI` CORS failure) mean the Hosting page is live but the `elevate360AI` Cloud Function endpoint is not currently live at the URL the website is calling. The CORS handler in `functions/index.js` is now written to finish `OPTIONS` preflight with HTTP 204 before processing POST.
+The previous `/api/elevate360AI` Cloud Function has been removed from this package. The project no longer contains a `functions` directory and `firebase.json` no longer declares Cloud Functions.
 
-From this folder:
+This means deploying this package will deploy **Firebase Hosting only** from this project configuration. It does not require the Firebase Blaze plan just to deploy the site or use Firestore's no-cost quotas.
 
-```bash
-firebase login
+Firebase AI Logic itself is free. The Gemini Developer API currently provides a free tier for Gemini 3.8 Flash, subject to Google's current free-tier rate limits. Paid Gemini tiers require billing; do not enable billing unless you intentionally want paid usage.
+
+## One-time Firebase Console setup
+
+1. Open Firebase Console and select project `elevate360-6206c`.
+2. Go to **AI Services → AI Logic**.
+3. Click **Get started**.
+4. Select **Gemini Developer API** as the provider.
+5. Complete the guided setup.
+6. Configure **Firebase App Check** for the web app before public production use. Firebase's current AI Logic setup uses App Check to protect direct client access to Gemini.
+7. If Firebase gives you a web App Check site key, place it in `index.html` at:
+
+```js
+const AI_APPCHECK_SITE_KEY = "";
+```
+
+The value is intentionally blank in this package because the site key is project/app-specific and was not available from the source package.
+
+## Firebase project configuration
+
+The existing Firebase Web App configuration for `elevate360-6206c` is retained in `index.html`.
+
+Cloud data continues to use:
+
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Storage
+
+The existing website's cloud-state and AI-history Firestore calls were not removed.
+
+## Deploy
+
+From the project root:
+
+```bat
 firebase use elevate360-6206c
-cd functions
-npm install
-cd ..
+firebase deploy --only hosting
 ```
 
-Set the Gemini key as a Firebase Secret (do not put it in `index.html`):
+Do **not** run `firebase deploy --only functions` — there is no Cloud Function in this edition.
 
-```bash
-firebase functions:secrets:set GEMINI_API_KEY --project elevate360-6206c
+## AI model
+
+The package uses:
+
+```text
+gemini-3.8-flash
 ```
 
-Then deploy **all required pieces together**:
+The model supports text, image and PDF inputs. DOCX/XLS/XLSX/PPTX/TXT/CSV/JSON/MD/RTF attachments are still handled by the website's existing browser-side text extraction and then sent to AI as text.
 
-```bash
-firebase deploy --only functions:elevate360AI,hosting,firestore:rules,storage --project elevate360-6206c
-```
+## What changed
 
-If you want to deploy the function first, use:
+- Removed the Cloud Function AI endpoint.
+- Removed the Gemini API secret requirement.
+- Added Firebase AI Logic Web SDK.
+- Added Gemini Developer API backend initialization.
+- Replaced `/api/elevate360AI` calls with direct Firebase AI Logic model calls.
+- Kept Firestore/Auth/Storage functionality.
+- Kept the existing AI Career Hub UI and attachment workflow.
+- Kept AI history saving to Firestore for signed-in users.
+- Removed the Hosting rewrite to the old Cloud Function.
 
-```bash
-firebase deploy --only functions:elevate360AI --project elevate360-6206c
-```
+## Billing note
 
-Then deploy Hosting/rules:
-
-```bash
-firebase deploy --only hosting,firestore:rules,storage --project elevate360-6206c
-```
-
-## Firebase Authentication
-
-In Firebase Console, enable **Authentication → Sign-in method → Email/Password**. The member registration code uses Firebase Authentication and then creates the member profile in Firestore.
-
-## Test the AI
-
-After deployment, open:
-
-`https://elevate360-6206c.web.app`
-
-Ask:
-
-`How can I improve my CV for a software developer role?`
-
-In DevTools → Network, the request should now show:
-
-- `OPTIONS /api/elevate360AI` → **204**
-- `POST /api/elevate360AI` → **200** when the Gemini secret is configured
-
-The direct Cloud Function fallback should also answer OPTIONS with CORS headers.
-
-## Database
-
-The package includes Firestore rules. Anonymous users may create booking/enquiry records; authenticated members can read their own profile and AI history. Private aggregate site/member state is restricted to authenticated Firebase users.
-
-The existing visible administrator login (`Elevate360 / 360`) remains the website's legacy UI login. It is not a Firebase Admin credential and should not be treated as production server authentication.
+This package is designed to let you remain on the Firebase Spark plan for the no-cost setup. Gemini's free tier is subject to Google's model-specific quotas. If you later choose a paid Gemini tier or another Firebase/Google Cloud feature that requires billing, billing can be enabled separately.

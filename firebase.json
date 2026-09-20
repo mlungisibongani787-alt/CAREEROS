@@ -1,7 +1,4 @@
 {
-  "functions": {
-    "source": "functions"
-  },
   "hosting": {
     "public": ".",
     "ignore": [
@@ -9,21 +6,6 @@
       "**/.*",
       "**/node_modules/**",
       "functions/**"
-    ],
-    "rewrites": [
-      {
-        "source": "/api/elevate360AI",
-        "function": {
-          "functionId": "elevate360AI",
-          "region": "us-central1"
-        }
-      }
     ]
-  },
-  "firestore": {
-    "rules": "firestore.rules"
-  },
-  "storage": {
-    "rules": "storage.rules"
   }
 }
