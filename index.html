@@ -1893,7 +1893,10 @@ function renderMemberMessages(u){const threads=(v.messageThreads||[]).filter(m=>
 const oldForm=$('bookingForm');
 if(oldForm){
  oldForm.innerHTML=`<div class="advanced-booking"><div><div class="booking-step"><span>01</span><div><b>Choose a programme</b><small>Price and session details are shown before you continue.</small></div></div><div class="programme-grid" id="programCards"></div><div class="booking-step"><span>02</span><div><b>Choose your date and time</b><small>Only available times are offered. Fully booked days are clearly marked.</small></div></div><div class="calendar-nav"><button type="button" id="prevBookDay">‹</button><input id="bookDate" type="date" required><button type="button" id="nextBookDay">›</button></div><div class="date-status" id="dateStatus"></div><div class="slot-grid" id="slotGrid"></div><input id="bookTime" type="hidden" required><div class="booking-step"><span>03</span><div><b>Your details</b><small>Tell us how to contact you and what you want to achieve.</small></div></div><div class="form-grid"><div class="form-field"><label>Full name</label><input id="bookName" required></div><div class="form-field"><label>Email</label><input id="bookEmail" type="email" required></div><div class="form-field full"><label>Main goal</label><select id="bookGoal"></select></div><div class="form-field full"><label>What would you like help with?</label><textarea id="bookMessage" placeholder="Briefly describe your goal or challenge..."></textarea></div><div class="form-field full"><label>Attachments (optional)</label><input id="bookAttachment" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.ppt,.pptx,.jpg,.jpeg,.png,.txt"><small class="payment-help">Attach a CV, Excel file, certificate, supporting document or proof of payment. Maximum 5 MB per file.</small><div id="bookAttachmentList" class="proof-name"></div></div></div><button type="button" class="btn btn-outline" id="addAnotherSession">＋ Add another session</button><div id="extraSessions"></div><div class="payment-panel"><h4>Payment & booking confirmation</h4><p class="payment-help">Choose how you intend to pay. Bank transfer/EFT uses the bank details configured by the administrator. You can attach proof of payment above.</p><div class="form-field" style="margin-bottom:12px"><label for="payerBank">Your bank</label><select id="payerBank"><option value="">Select your bank</option><option>Absa</option><option>African Bank</option><option>Capitec Bank</option><option>Discovery Bank</option><option>FNB</option><option>Nedbank</option><option>Standard Bank</option><option>TymeBank</option><option>Investec</option><option>Other</option></select></div><div class="payment-methods"><label class="payment-method"><input type="radio" name="bookPaymentMethod" value="Bank Transfer / EFT" checked><span><b>Bank Transfer / EFT</b><small>Pay using the bank details provided by Elevate360.</small></span></label><label class="payment-method"><input type="radio" name="bookPaymentMethod" value="Pay Online"><span><b>Pay Online</b><small>Use the configured online payment gateway when enabled.</small></span></label></div><div id="bankPaymentDetails" class="bank-details"></div><div class="payment-assist" id="paymentAssist">Payment assistant: your booking will be created with payment status <b>Pending</b> until the administrator verifies the payment.</div></div></div><aside class="booking-summary"><div class="eyebrow">Booking Summary</div><h3 id="sumProgram">Select a programme</h3><p id="sumIncludes"></p><div class="summary-price" id="sumPrice"></div><div id="sumSessions"></div><div class="summary-note">Your selected slot is checked again when you confirm.</div><button class="btn btn-gold" type="submit" style="width:100%;margin-top:15px">Confirm Booking →</button><button class="btn btn-outline" type="button" data-close="bookingModal" style="width:100%;margin-top:8px">Cancel</button></aside></div>`;
- const formHandler=async e=>{e.preventDefault();e.stopImmediatePropagation();const name=$('bookName').value.trim(),email=$('bookEmail').value.trim(),all=[{date:$('bookDate').value,time:$('bookTime').value},...extras],message=$('bookMessage').value.trim(),paymentMethod=document.querySelector('input[name="bookPaymentMethod"]:checked')?.value||'Bank Transfer / EFT',payerBank=$('payerBank')?.value||'Not specified';if(!name||!email||!all[0].date||!all[0].time)return alert('Complete your name, email, date and time.');if(paymentMethod==='Bank Transfer / EFT'&&db.bankPayment?.enabled===false)return alert('Bank transfer/EFT is currently disabled. Please choose another payment method.');if(all.some(s=>isBooked(s.date,s.time)))return alert('One of the selected slots was just booked. Please choose another time.');const files=await readBookingAttachments();if(!files)return;const p=selected;const priceTotal=(Number(p.price)||0)*all.length;const price=p.priceLabel||fmtMoney(p.price);const bookingGroup='BG'+Date.now();const proof=files.map(f=>({name:f.name,type:f.type,size:f.size,data:f.data}));all.forEach((s,i)=>db.bookings.push({id:'b'+(Date.now()+i),bookingGroup,name,email,pkg:p.name,date:s.date,time:s.time,goal:$('bookGoal').value,message,paymentMethod,payerBank,paymentStatus:'Pending',paymentProof:proof,status:'Pending',price,priceAmount:Number(p.price)||0,totalAmount:priceTotal,created:new Date().toISOString()}));const firstBooking=db.bookings.find(x=>x.bookingGroup===bookingGroup);db.messages.push({id:'m'+Date.now(),name,email,pkg:p.name,message:message||'Booking request',date:new Date().toLocaleString(),type:'Booking',read:false,attachments:proof,bookingId:firstBooking?.id,paymentMethod,payerBank,paymentStatus:'Pending'});saveDB();sv();const ref=firstBooking?.id||bookingGroup;const bank=db.bankPayment||{};const bankText=paymentMethod==='Bank Transfer / EFT'?`\n\nPAYMENT DETAILS\nBank: ${bank.bankName||'Administrator will provide bank details'}\nAccount holder: ${bank.accountHolder||'—'}\nAccount number: ${bank.accountNumber||'—'}\nBranch code: ${bank.branchCode||'—'}\nAccount type: ${bank.accountType||'—'}\nReference: ${(bank.referencePrefix||'ELEVATE360')}-${ref}\n`:'';const subject=encodeURIComponent('Elevate360 Booking - '+p.name);const body=encodeURIComponent(`Hello Elevate360,\n\nA new booking has been submitted.\n\nBooking ID: ${ref}\nName: ${name}\nEmail: ${email}\nProgramme: ${p.name}\nSessions: ${all.length}\nMain goal: ${$('bookGoal').value}\nPayment method: ${paymentMethod}\nCustomer bank: ${payerBank}\nPayment status: Pending verification\n${bankText}\nMessage:\n${message||'No additional message.'}\n\nAttachments: ${files.length?files.map(f=>f.name).join(', '):'None'}\n\nElevate360`);closeModal('bookingModal');extras=[];renderAdmin();populateSlots();alert('Booking submitted. Your booking ID is '+ref+'. Payment remains pending until verified by the administrator.');window.location.href=`mailto:${encodeURIComponent(db.ownerEmail)}?subject=${subject}&body=${body}`;if(paymentMethod==='Pay Online'&&db.bankPayment?.onlinePaymentUrl){const payUrl=db.bankPayment.onlinePaymentUrl.replaceAll('{amount}',String(priceTotal)).replaceAll('{reference}',encodeURIComponent(ref)).replaceAll('{email}',encodeURIComponent(email));setTimeout(()=>window.open(payUrl,'_blank','noopener,noreferrer'),250)} };
+ const formHandler=async e=>{e.preventDefault();e.stopImmediatePropagation();const name=$('bookName').value.trim(),email=$('bookEmail').value.trim(),all=[{date:$('bookDate').value,time:$('bookTime').value},...extras],message=$('bookMessage').value.trim(),paymentMethod=document.querySelector('input[name="bookPaymentMethod"]:checked')?.value||'Bank Transfer / EFT',payerBank=$('payerBank')?.value||'Not specified';if(!name||!email||!all[0].date||!all[0].time)return alert('Complete your name, email, date and time.');if(paymentMethod==='Bank Transfer / EFT'&&db.bankPayment?.enabled===false)return alert('Bank transfer/EFT is currently disabled. Please choose another payment method.');if(all.some(s=>isBooked(s.date,s.time)))return alert('One of the selected slots was just booked. Please choose another time.');const files=await readBookingAttachments();if(!files)return;const p=selected;const priceTotal=(Number(p.price)||0)*all.length;const price=p.priceLabel||fmtMoney(p.price);const bookingGroup='BG'+Date.now();const proof=files.map(f=>({name:f.name,type:f.type,size:f.size,data:f.data}));all.forEach((s,i)=>db.bookings.push({id:'b'+(Date.now()+i),bookingGroup,name,email,pkg:p.name,date:s.date,time:s.time,goal:$('bookGoal').value,message,paymentMethod,payerBank,paymentStatus:'Pending',paymentProof:proof,status:'Pending',price,priceAmount:Number(p.price)||0,totalAmount:priceTotal,created:new Date().toISOString()}));const firstBooking=db.bookings.find(x=>x.bookingGroup===bookingGroup);const cloudMessage={id:'m'+Date.now(),name,email,pkg:p.name,message:message||'Booking request',date:new Date().toLocaleString(),type:'Booking',read:false,attachments:proof,bookingId:firstBooking?.id,paymentMethod,payerBank,paymentStatus:'Pending'};db.messages.push(cloudMessage);saveDB();sv();
+if(window.elevate360CloudWriteBooking){ Promise.all(db.bookings.filter(b=>b.bookingGroup===bookingGroup).map(b=>window.elevate360CloudWriteBooking(b))).catch(()=>{}); }
+if(window.elevate360CloudWriteMessage){ window.elevate360CloudWriteMessage(cloudMessage).catch(()=>{}); }
+const ref=firstBooking?.id||bookingGroup;const bank=db.bankPayment||{};const bankText=paymentMethod==='Bank Transfer / EFT'?`\n\nPAYMENT DETAILS\nBank: ${bank.bankName||'Administrator will provide bank details'}\nAccount holder: ${bank.accountHolder||'—'}\nAccount number: ${bank.accountNumber||'—'}\nBranch code: ${bank.branchCode||'—'}\nAccount type: ${bank.accountType||'—'}\nReference: ${(bank.referencePrefix||'ELEVATE360')}-${ref}\n`:'';const subject=encodeURIComponent('Elevate360 Booking - '+p.name);const body=encodeURIComponent(`Hello Elevate360,\n\nA new booking has been submitted.\n\nBooking ID: ${ref}\nName: ${name}\nEmail: ${email}\nProgramme: ${p.name}\nSessions: ${all.length}\nMain goal: ${$('bookGoal').value}\nPayment method: ${paymentMethod}\nCustomer bank: ${payerBank}\nPayment status: Pending verification\n${bankText}\nMessage:\n${message||'No additional message.'}\n\nAttachments: ${files.length?files.map(f=>f.name).join(', '):'None'}\n\nElevate360`);closeModal('bookingModal');extras=[];renderAdmin();populateSlots();alert('Booking submitted. Your booking ID is '+ref+'. Payment remains pending until verified by the administrator.');window.location.href=`mailto:${encodeURIComponent(db.ownerEmail)}?subject=${subject}&body=${body}`;if(paymentMethod==='Pay Online'&&db.bankPayment?.onlinePaymentUrl){const payUrl=db.bankPayment.onlinePaymentUrl.replaceAll('{amount}',String(priceTotal)).replaceAll('{reference}',encodeURIComponent(ref)).replaceAll('{email}',encodeURIComponent(email));setTimeout(()=>window.open(payUrl,'_blank','noopener,noreferrer'),250)} };
  function readBookingAttachments(){const input=$('bookAttachment');if(!input?.files?.length)return Promise.resolve([]);const files=[...input.files];if(files.some(f=>f.size>5*1024*1024)){alert('Each attachment must be 5 MB or smaller.');return Promise.resolve(null)}return Promise.all(files.map(f=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve({name:f.name,type:f.type,size:f.size,data:r.result});r.onerror=()=>reject(new Error('Could not read '+f.name));r.readAsDataURL(f)}))).catch(err=>{alert(err.message||'Could not read attachment.');return null})}
  function renderPaymentPanel(){const bank=db.bankPayment||{};const box=$('bankPaymentDetails'),assist=$('paymentAssist');if(!box)return;const method=document.querySelector('input[name="bookPaymentMethod"]:checked')?.value||'Bank Transfer / EFT';box.classList.toggle('open',method==='Bank Transfer / EFT');if(method==='Bank Transfer / EFT'){if(bank.enabled===false){box.innerHTML=`<div class="payment-help">Bank transfer/EFT has been disabled by the administrator.</div>`;assist.innerHTML='Payment assistant: choose another payment method.';return}box.innerHTML=`<div class="bank-details-grid"><div><b>Bank</b><br>${esc(bank.bankName||'Not configured yet')}</div><div><b>Account holder</b><br>${esc(bank.accountHolder||'—')}</div><div><b>Account number</b><br>${esc(bank.accountNumber||'—')}</div><div><b>Branch code</b><br>${esc(bank.branchCode||'—')}</div><div><b>Account type</b><br>${esc(bank.accountType||'—')}</div><div><b>Reference</b><br>${esc((bank.referencePrefix||'ELEVATE360')+'-Booking ID')}</div></div><div class="payment-help" style="margin:10px 0 0">${esc(bank.paymentNote||'Use your booking ID as the payment reference. Attach proof of payment before submitting.')}</div>`;assist.innerHTML='Payment assistant: after transfer, attach your proof of payment. Your booking stays <b>Pending</b> until the administrator verifies it.'}else{box.innerHTML=`<div class="payment-help">Online payment is selected. A real payment window will only appear after the administrator connects a supported payment gateway. This page never asks for or stores online-banking passwords.</div>`;assist.innerHTML='Payment assistant: online payment is selected. Complete the secure gateway payment when it is connected.'}document.querySelectorAll('input[name="bookPaymentMethod"]').forEach(r=>r.onchange=renderPaymentPanel)}
  oldForm.addEventListener('submit',formHandler,true);
@@ -2223,10 +2226,13 @@ async function initFirebase() {
     onAuthStateChanged(auth, async user => {
       currentFirebaseUser = user || null;
       window.Elevate360Firebase.user = currentFirebaseUser;
-      if (user) await loadCloudState();
+      // The aggregate cloud documents are private. Never attempt to read them
+      // anonymously on page load; doing so causes the console
+      // "Missing or insufficient permissions" error seen in production.
+      if (user) {
+        loadCloudState().catch(error => console.warn('Authenticated cloud state load failed:', error));
+      }
     });
-
-    loadCloudState().catch(error => console.warn('Initial cloud state load failed:', error));
 
   } catch (error) {
     firebaseError = error;
@@ -2245,7 +2251,7 @@ async function initFirebase() {
    2. CLOUD STATE
    ========================================================= */
 async function loadCloudState() {
-  if (!firebaseReady || !firestore) return;
+  if (!firebaseReady || !firestore || !currentFirebaseUser) return;
 
   try {
     const siteSnap = await getDoc(doc(firestore, FIRESTORE_SITE_DOC));
@@ -2308,7 +2314,10 @@ async function saveCloudState() {
    public visitor does not need access to the administrator doc.
    ========================================================= */
 async function writeBookingToCloud(booking) {
-  if (!firebaseReady || !firestore || !booking) return;
+  if (firebaseInitPromise && !firebaseReady) {
+    try { await Promise.race([firebaseInitPromise, new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase connection timed out.')), 10000))]); } catch (_) {}
+  }
+  if (!firebaseReady || !firestore || !booking) return false;
   try {
     const safe = { ...booking };
     delete safe.paymentProof;
@@ -2317,13 +2326,18 @@ async function writeBookingToCloud(booking) {
       ...safe,
       createdAt: serverTimestamp()
     }, { merge: true });
+    return true;
   } catch (error) {
     console.warn('Booking cloud sync failed:', error);
+    return false;
   }
 }
 
 async function writeMessageToCloud(message) {
-  if (!firebaseReady || !firestore || !message) return;
+  if (firebaseInitPromise && !firebaseReady) {
+    try { await Promise.race([firebaseInitPromise, new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase connection timed out.')), 10000))]); } catch (_) {}
+  }
+  if (!firebaseReady || !firestore || !message) return false;
   try {
     const safe = { ...message };
     delete safe.attachments;
@@ -2331,10 +2345,15 @@ async function writeMessageToCloud(message) {
       ...safe,
       createdAt: serverTimestamp()
     }, { merge: true });
+    return true;
   } catch (error) {
     console.warn('Message cloud sync failed:', error);
+    return false;
   }
 }
+
+window.elevate360CloudWriteBooking = writeBookingToCloud;
+window.elevate360CloudWriteMessage = writeMessageToCloud;
 
 /* =========================================================
    4. FIREBASE AUTHENTICATION

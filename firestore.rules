@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function own(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Each Firebase member can read and maintain only their own profile.
+    // Registration creates the profile; the client cannot approve itself.
+    match /users/{uid} {
+      allow create: if own(uid);
+      allow read: if own(uid);
+      allow update: if own(uid)
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['status'])
+            || request.resource.data.status == resource.data.status);
+      allow delete: if false;
+    }
+
+    match /users/{uid}/aiHistory/{entry} {
+      allow read, create, update, delete: if own(uid);
+    }
+
+    match /users/{uid}/memberAIHistory/{entry} {
+      allow read, create, update, delete: if own(uid);
+    }
+
+    // Booking and enquiry submissions are public writes. Reads/changes are
+    // restricted to authenticated users. Do not expose the whole admin/site
+    // state document to anonymous visitors.
+    match /bookings/{id} {
+      allow create: if true;
+      allow read, update, delete: if signedIn();
+    }
+
+    match /messages/{id} {
+      allow create: if true;
+      allow read, update, delete: if signedIn();
+    }
+
+    // The site/member aggregate documents are private cloud backups.
+    match /elevate360/{document} {
+      allow read, write: if signedIn();
+    }
+  }
+}

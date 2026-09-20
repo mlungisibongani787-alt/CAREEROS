@@ -8,10 +8,25 @@ const MODEL = 'gemini-3.8-flash';
 const MAX_TEXT = 180000;
 const MAX_FILE_BYTES = 7 * 1024 * 1024;
 
-function cors(res) {
-  res.set('Access-Control-Allow-Origin', '*');
+function cors(req, res) {
+  // The AI endpoint is called from Firebase Hosting and may also be called
+  // directly from the deployed web app. The browser sends OPTIONS before
+  // the JSON POST because Content-Type: application/json is a preflighted
+  // request. Always add the CORS headers before handling the method.
+  const origin = req.get('Origin');
+  const allowedOrigins = new Set([
+    'https://elevate360-6206c.web.app',
+    'https://elevate360-6206c.firebaseapp.com',
+    'https://elevate360-6206c.web.app/'
+  ]);
+
+  // Keep wildcard support for development/preview hosts. No credentials
+  // are used by this endpoint, so wildcard CORS is safe for this request.
+  res.set('Access-Control-Allow-Origin', allowedOrigins.has(origin) ? origin : '*');
   res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.set('Access-Control-Max-Age', '86400');
+  res.set('Vary', 'Origin');
 }
 
 function clean(value, max = MAX_TEXT) {
@@ -79,10 +94,17 @@ exports.elevate360AI = onRequest(
     maxInstances: 10
   },
   async (req, res) => {
-    cors(res);
+    cors(req, res);
 
-    if (req.method === 'OPTIONS') return res.status(204).send('');
-    if (req.method !== 'POST') return res.status(405).json({ error: 'POST requests only.' });
+    // IMPORTANT: finish the preflight before reading the body, checking the
+    // secret, or calling Gemini. OPTIONS must never reach the POST handler.
+    if (req.method === 'OPTIONS') {
+      return res.status(204).end();
+    }
+
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'POST requests only.' });
+    }
 
     try {
       const body = req.body || {};
