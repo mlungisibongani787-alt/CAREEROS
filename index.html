@@ -1834,8 +1834,8 @@ const auth=document.getElementById('memberAuth'), body=document.getElementById('
 function showAuth(mode){
  auth.classList.add('open'); title.textContent=mode==='register'?'Register for Elevate360':'Member Login';
  body.innerHTML=mode==='register'?`<form id="regForm"><div class="login-field"><label>Full name</label><input id="rName" required></div><div class="login-field"><label>Email</label><input id="rEmail" type="email" required></div><div class="login-field"><label>Password</label><input id="rPass" type="password" minlength="6" required></div><div class="login-field"><label>Target career / goal</label><input id="rTarget"></div><button class="btn btn-gold" type="submit">Submit Registration →</button><p class="admin-note">Your account remains pending until the administrator approves it.</p></form>`:`<form id="memLogin"><div class="login-field"><label>Email</label><input id="lEmail" type="email" required></div><div class="login-field"><label>Password</label><input id="lPass" type="password" required></div><button class="btn btn-gold" type="submit">Login →</button><button type="button" class="auth-register-link" id="openRegisterFromLogin">New here? Register for Elevate360</button><p class="admin-note" id="memMsg"></p></form>`;
- if(mode==='register') $('regForm').onsubmit=e=>{e.preventDefault();const email=$('rEmail').value.trim().toLowerCase();if(v.users.some(u=>u.email===email))return alert('An account already exists for this email.');v.users.push({id:'u'+Date.now(),name:$('rName').value.trim(),email,password:$('rPass').value,target:$('rTarget').value.trim(),status:'Pending Approval',joined:new Date().toISOString(),progress:0});sv();alert('Registration submitted. The administrator must approve your account.');auth.classList.remove('open');renderAdmin();};
- else {$('openRegisterFromLogin').onclick=()=>showAuth('register');$('memLogin').onsubmit=e=>{e.preventDefault();const u=v.users.find(x=>x.email===$('lEmail').value.trim().toLowerCase()&&x.password===$('lPass').value);if(!u)return $('memMsg').textContent='Incorrect email or password.';if(!['Approved','Active'].includes(u.status))return $('memMsg').textContent='Account status: '+u.status+'. Premium access is not available yet.';sessionStorage.setItem('careerosMember',u.id);auth.classList.remove('open');updateMemberButtons();openMember(u);};}
+ if(mode==='register') $('regForm').onsubmit=async e=>{e.preventDefault();const name=$('rName').value.trim(),email=$('rEmail').value.trim().toLowerCase(),password=$('rPass').value,target=$('rTarget').value.trim();if(!name||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||password.length<6)return alert('Please enter your full name, a valid email address and a password of at least 6 characters.');if(v.users.some(u=>u.email===email))return alert('An account already exists for this email.');const submit=e.currentTarget.querySelector('button[type=submit]');if(submit){submit.disabled=true;submit.textContent='Submitting…';}try{if(typeof window.elevate360RegisterMember==='function'){await window.elevate360RegisterMember({name,email,password,target});}else{v.users.push({id:'u'+Date.now(),name,email,password,target,status:'Pending Approval',joined:new Date().toISOString(),progress:0});sv();}alert('Registration submitted. The administrator must approve your account.');auth.classList.remove('open');renderAdmin();}catch(error){const msg=window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'Registration could not be completed.');alert(msg);}finally{if(submit){submit.disabled=false;submit.textContent='Submit Registration →';}}};
+ else {$('openRegisterFromLogin').onclick=()=>showAuth('register');$('memLogin').onsubmit=async e=>{e.preventDefault();const email=$('lEmail').value.trim().toLowerCase(),password=$('lPass').value;try{if(typeof window.elevate360LoginMember==='function'){const result=await window.elevate360LoginMember({email,password});if(!result)return;}else{const u=v.users.find(x=>x.email===email&&x.password===password);if(!u)throw new Error('Incorrect email or password.');if(!['Approved','Active'].includes(u.status))throw new Error('Account status: '+u.status+'. Premium access is not available yet.');sessionStorage.setItem('careerosMember',u.id);updateMemberButtons();openMember(u);auth.classList.remove('open');}}catch(error){$('memMsg').textContent=window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'Login could not be completed.');}};}
 }
 $('loginBtn')?.addEventListener('click',e=>{if(sessionStorage.getItem('careerosMember')){sessionStorage.removeItem('careerosMember');updateMemberButtons();alert('You have been logged out.');}else showAuth('login')});
 $('closeMemberAuth')?.addEventListener('click',()=>auth.classList.remove('open'));
@@ -2120,6 +2120,7 @@ let syncing = false;
 let currentFirebaseUser = null;
 let unsubscribeSite = null;
 let unsubscribeMembers = null;
+let firebaseInitPromise = null;
 
 function configuredConfig(c) {
   return c && c.apiKey && !String(c.apiKey).startsWith("PASTE_") &&
@@ -2139,6 +2140,7 @@ async function getHostingFirebaseConfig() {
 }
 
 window.elevate360AskAI = async function({question,agent='Career Navigator',description='',document=null,documents=null,history=[]}={}){
+  if (firebaseInitPromise) await firebaseInitPromise;
   const payload={question,agent,description,history};
   if(Array.isArray(documents) && documents.length){
     payload.documents=documents.slice(0,5).map(d=>({name:d.name||'attachment',text:d.text||'',mimeType:d.mimeType||'',dataBase64:d.dataBase64||''}));
@@ -2154,11 +2156,19 @@ window.elevate360AskAI = async function({question,agent='Career Navigator',descr
 
   for(const endpoint of endpoints){
     try{
-      const response=await fetch(endpoint,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload)
-      });
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 25000);
+      let response;
+      try {
+        response=await fetch(endpoint,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload),
+          signal: controller.signal
+        });
+      } finally {
+        clearTimeout(timeout);
+      }
       let data={};
       try{data=await response.json();}catch(_){data={};}
       if(response.ok && data.answer) return data.answer;
@@ -2216,7 +2226,7 @@ async function initFirebase() {
       if (user) await loadCloudState();
     });
 
-    await loadCloudState();
+    loadCloudState().catch(error => console.warn('Initial cloud state load failed:', error));
 
   } catch (error) {
     firebaseError = error;
@@ -2387,48 +2397,34 @@ async function firebaseMemberLogin(email, password) {
   return { user: credential.user, profile };
 }
 
-/* Capture the existing member forms without changing the website layout. */
-document.addEventListener('submit', async event => {
-  const form = event.target;
-  if (!firebaseReady) return;
-
-  if (form.id === 'regForm') {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const name = document.getElementById('rName')?.value.trim();
-    const email = document.getElementById('rEmail')?.value.trim().toLowerCase();
-    const password = document.getElementById('rPass')?.value || '';
-    const target = document.getElementById('rTarget')?.value.trim() || '';
-
-    if (!name || !email || password.length < 6) {
-      alert('Please enter your name, a valid email and a password of at least 6 characters.');
-      return;
-    }
-
-    try {
-      await firebaseMemberRegister(name, email, password, target);
-      alert('Registration submitted. The administrator must approve your account.');
-      document.getElementById('memberAuth')?.classList.remove('open');
-    } catch (error) {
-      document.getElementById('memMsg').textContent = friendlyFirebaseError(error);
-    }
+/* Expose stable member auth functions to the existing UI handlers. */
+window.elevate360RegisterMember = async function({name,email,password,target}={}) {
+  if (firebaseInitPromise) {
+    await Promise.race([firebaseInitPromise, new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase connection timed out. Please refresh the page and try again.')), 15000))]);
   }
-
-  if (form.id === 'memLogin') {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    const email = document.getElementById('lEmail')?.value.trim().toLowerCase();
-    const password = document.getElementById('lPass')?.value || '';
-
-    try {
-      const result = await firebaseMemberLogin(email, password);
-      document.getElementById('memberAuth')?.classList.remove('open');
-      window.dispatchEvent(new CustomEvent('e360:member-login', { detail: result }));
-    } catch (error) {
-      document.getElementById('memMsg').textContent = friendlyFirebaseError(error);
-    }
+  if (!firebaseReady) {
+    throw new Error(firebaseError?.message || 'Firebase is not connected. Please refresh the page and try again.');
   }
-}, true);
+  const user = await firebaseMemberRegister(name,email,password,target);
+  try { await signOut(auth); } catch (_) {}
+  sessionStorage.removeItem('careerosMember');
+  return user;
+};
+
+window.elevate360LoginMember = async function({email,password}={}) {
+  if (firebaseInitPromise) {
+    await Promise.race([firebaseInitPromise, new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase connection timed out. Please refresh the page and try again.')), 15000))]);
+  }
+  if (!firebaseReady) {
+    throw new Error(firebaseError?.message || 'Firebase is not connected. Please refresh the page and try again.');
+  }
+  const result = await firebaseMemberLogin(email,password);
+  sessionStorage.setItem('careerosMember', result.user.uid);
+  document.getElementById('memberAuth')?.classList.remove('open');
+  if (typeof updateMemberButtons === 'function') updateMemberButtons();
+  if (typeof openMember === 'function') openMember(result.profile ? ({...result.profile,id:result.user.uid}) : null);
+  return result;
+};
 
 function friendlyFirebaseError(error) {
   const code = error?.code || '';
@@ -2442,6 +2438,7 @@ function friendlyFirebaseError(error) {
   };
   return map[code] || error?.message || 'Firebase authentication failed.';
 }
+window.elevate360FriendlyError = friendlyFirebaseError;
 
 
 /* =========================================================
@@ -2483,28 +2480,7 @@ window.Elevate360FirebaseAdminLogin = async function(username, password) {
 };
 
 
-document.addEventListener('submit', async event => {
-  const form = event.target;
-  if (form.id !== 'adminLoginForm') return;
-  if (!firebaseReady) return;
-
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  const username = document.getElementById('adminUser')?.value.trim();
-  const password = document.getElementById('adminPass')?.value || '';
-  const message = document.getElementById('adminLoginMsg');
-  const result = await window.Elevate360FirebaseAdminLogin(username, password);
-
-  if (!result.success) {
-    if (message) message.textContent = result.message;
-    return;
-  }
-
-  document.getElementById('adminLogin')?.classList.remove('open');
-  document.getElementById('adminPanel')?.classList.add('open');
-  window.dispatchEvent(new CustomEvent('e360:admin-login', { detail: result }));
-  if (typeof window.renderAdmin === 'function') window.renderAdmin();
-}, true);
+/* Administrator login continues to use the existing Elevate360 admin form. */
 
 /* =========================================================
    5. AI
@@ -2821,7 +2797,8 @@ window.Elevate360FirebaseStatus = function() {
   };
 };
 
-initFirebase();
+firebaseInitPromise = initFirebase();
+window.Elevate360FirebaseReady = firebaseInitPromise;
 </script>
 
 </body>
