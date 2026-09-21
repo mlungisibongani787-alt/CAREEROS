@@ -2041,6 +2041,7 @@ const savedHero=localStorage.getItem('careerosHeroImage'),savedEdu=localStorage.
 <script type="module" id="elevate360-firebase-ai">
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app-check.js";
 import {
   getAuth,
   onAuthStateChanged,
@@ -2107,7 +2108,7 @@ const ELEVATE_ADMIN = {
 };
 
 const AI_MODEL = "gemini-3.8-flash";
-const AI_APPCHECK_SITE_KEY = ""; // Optional: add your Firebase App Check web site key after enabling App Check for this app.
+const AI_APPCHECK_SITE_KEY = "6LdSO8YtAAAAAPmfarHtjrpGXQDaqtYAWUV4Ogr8";
 const FIRESTORE_SITE_DOC = "elevate360/site";
 const FIRESTORE_MEMBER_DOC = "elevate360/memberData";
 
@@ -2182,7 +2183,7 @@ window.elevate360AskAI = async function({question,agent='Career Navigator',descr
       throw new Error('The AI usage limit has been reached temporarily. Please try again later.');
     }
     if (/app check|appcheck|attestation|unauthor/i.test(message)) {
-      throw new Error('Firebase App Check is not configured for this website yet. Complete the App Check setup in Firebase Console.');
+      throw new Error('Firebase App Check rejected the request. Check that the reCAPTCHA Enterprise key allows the exact domain used to open Elevate360, then reload the site.');
     }
     throw error;
   }
@@ -2207,12 +2208,25 @@ async function initFirebase() {
 
   try {
     app = getApps().length ? getApp() : initializeApp(config);
+
+    // Firebase App Check must be initialized before Firebase services such as
+    // Auth, Firestore, Storage, and Firebase AI Logic are used.
+    initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(AI_APPCHECK_SITE_KEY),
+      isTokenAutoRefreshEnabled: true
+    });
+
     auth = getAuth(app);
     firestore = getFirestore(app);
     storage = getStorage(app);
 
     // Firebase AI Logic uses the Gemini Developer API through Firebase's proxy; no Gemini API key is placed in this website.
-    firebaseAI = getAI(app, { backend: new GoogleAIBackend() });
+    firebaseAI = getAI(app, {
+      backend: new GoogleAIBackend(),
+      // Use limited-use App Check tokens so this build is compatible with
+      // Firebase AI Logic replay protection if it is enabled.
+      useLimitedUseAppCheckTokens: true
+    });
     aiModel = getGenerativeModel(firebaseAI, {
       model: AI_MODEL,
       systemInstruction: `You are the Elevate 360 AI Career Hub, a practical professional-development assistant.\n\nGive concise, professional and actionable guidance about career planning, CVs, cover letters, interviews, study habits, leadership, workplace skills and professional growth. For CV requests, help create, improve, restructure and tailor CV content while preserving facts supplied by the user. Never invent employment history, qualifications, dates, employers, achievements or other personal facts. When a document is attached, use it as the primary source for document-specific questions and clearly say when information is not present. AI supports the journey; human judgement and coaching remain important.`
