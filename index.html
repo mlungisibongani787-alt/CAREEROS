@@ -1547,7 +1547,7 @@ button:disabled{opacity:.6;cursor:wait!important;transform:none!important}
     <div class="faq-admin-list" id="adminPopularQuestionsList"></div>
   </div>
 </div>
-<div id="adminAppearance" class="admin-view" style="display:none"><div class="admin-card"><h3>Choose an Elevate360 theme</h3><div class="theme-options" id="themeOptions"><div class="theme-option" data-theme="classic"><div class="theme-swatch" style="background:linear-gradient(135deg,#071a2f,#c9a04a)"></div><b>Classic Navy & Gold</b></div><div class="theme-option" data-theme="blue"><div class="theme-swatch" style="background:linear-gradient(135deg,#063b66,#4da3d9)"></div><b>Executive Blue</b></div><div class="theme-option" data-theme="sage"><div class="theme-swatch" style="background:linear-gradient(135deg,#25483f,#8da58e)"></div><b>Sage Leadership</b></div><div class="theme-option" data-theme="slate"><div class="theme-swatch" style="background:linear-gradient(135deg,#27384d,#bca46a)"></div><b>Slate Executive</b></div></div></div><div class="admin-card"><h3>Website pictures</h3><div class="admin-form"><div><label>Hero / profile picture</label><input type="file" id="heroImageUpload" accept="image/*"><img class="image-preview" id="heroPreview"></div><div><label>Education picture</label><input type="file" id="eduImageUpload" accept="image/*"><img class="image-preview" id="eduPreview"></div></div><p class="admin-note">Images are stored in this browser using local storage. For a public multi-device website, connect this to cloud storage.</p></div></div>
+<div id="adminAppearance" class="admin-view" style="display:none"><div class="admin-card"><h3>Choose an Elevate360 theme</h3><div class="theme-options theme-options-8" id="themeOptions"></div><p class="admin-note">Themes change the public pages, AI Career Hub, member dashboard, login screens and administrator centre while leaving all website logic and data intact.</p></div><div class="admin-card"><h3>Website pictures</h3><div class="admin-form"><div><label>Hero / profile picture</label><input type="file" id="heroImageUpload" accept="image/*"><img class="image-preview" id="heroPreview"></div><div><label>Education picture</label><input type="file" id="eduImageUpload" accept="image/*"><img class="image-preview" id="eduPreview"></div></div><p class="admin-note">Images are stored in this browser using local storage. For a public multi-device website, connect this to cloud storage.</p></div></div>
       <div id="adminSettings" class="admin-view" style="display:none"><div class="admin-card"><h3>Owner email & booking control</h3><div class="admin-form"><div class="full"><label>Email that receives messages and bookings</label><input id="ownerEmail" type="email"></div><div><label>New administrator username</label><input id="newAdminUser"></div><div><label>New administrator password</label><input id="newAdminPass" type="password"></div></div><div class="admin-actions"><button class="btn btn-gold" id="saveSettings">Save Settings</button></div><p class="admin-note">Changing the email changes the destination used by the website's enquiry mail composer.</p></div><div class="admin-card"><h3>Manage booking slots</h3><div class="admin-form"><div><label>Date</label><input id="slotDate" type="date"></div><div><label>Time</label><input id="slotTime" type="time"></div></div><div class="admin-actions"><button class="btn btn-gold" id="addSlot">Add Available Slot</button></div><div style="overflow:auto;margin-top:15px"><table class="admin-table"><thead><tr><th>Date</th><th>Time</th><th>Status</th><th>Action</th></tr></thead><tbody id="slotTable"></tbody></table></div></div><div class="admin-card"><h3>Data controls</h3><button class="btn danger" id="clearBookings">Delete All Booking Records</button> <button class="btn danger" id="clearMessages">Delete All Message Records</button></div></div>
     </main>
   </div>
@@ -1558,7 +1558,7 @@ button:disabled{opacity:.6;cursor:wait!important;transform:none!important}
 const $ = id => document.getElementById(id);
 const STORAGE_KEY = 'careeros_v3';
 const defaults = {
-  ownerEmail:'masenamelatebogo@gmail.com', contactPhone:'076 052 2694', contactWhatsapp:'', contactLocation:'Johannesburg Metropolitan Area, Gauteng, South Africa', adminUser:'Elevate360', adminPass:'360', theme:'classic', bankPayment:{enabled:true,bankName:'',accountHolder:'',accountNumber:'',branchCode:'',accountType:'',referencePrefix:'ELEVATE360',paymentNote:'Use your booking ID as the payment reference. Attach proof of payment before submitting.',onlinePaymentUrl:''},
+  ownerEmail:'masenamelatebogo@gmail.com', contactPhone:'076 052 2694', contactWhatsapp:'', contactLocation:'Johannesburg Metropolitan Area, Gauteng, South Africa', adminUser:'Elevate360', adminPass:'360', theme:'classic', cloudAdminEmails:[], bankPayment:{enabled:true,bankName:'',accountHolder:'',accountNumber:'',branchCode:'',accountType:'',referencePrefix:'ELEVATE360',paymentNote:'Use your booking ID as the payment reference. Attach proof of payment before submitting.',onlinePaymentUrl:''},
   heroTitle:'Build the career', heroLead:'Practical career development, academic success and leadership growth combining real-world experience, structured coaching and AI-powered tools.',
   bookings:[], messages:[], slots:[], tracking:{home:0,about:0,journey:0,education:0,ai:0,coaching:0,academy:0,resources:0}, activity:[],
   popularQuestions:[
@@ -1582,7 +1582,7 @@ const defaults = {
   ]
 };
 let db = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || structuredClone(defaults);
-db.bankPayment={...defaults.bankPayment,...(db.bankPayment||{})};db.contactPhone=db.contactPhone||defaults.contactPhone;db.contactWhatsapp=db.contactWhatsapp||defaults.contactWhatsapp;db.contactLocation=db.contactLocation||defaults.contactLocation;
+db.cloudAdminEmails=Array.isArray(db.cloudAdminEmails)?db.cloudAdminEmails.filter(x=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(x||'').trim())).map(x=>String(x).trim().toLowerCase()).slice(0,2):[];db.bankPayment={...defaults.bankPayment,...(db.bankPayment||{})};db.contactPhone=db.contactPhone||defaults.contactPhone;db.contactWhatsapp=db.contactWhatsapp||defaults.contactWhatsapp;db.contactLocation=db.contactLocation||defaults.contactLocation;
 db.faqs=Array.isArray(db.faqs)&&db.faqs.length?db.faqs:structuredClone(defaults.faqs);
 db.popularQuestions=Array.isArray(db.popularQuestions)?db.popularQuestions:structuredClone(defaults.popularQuestions);
 // Ensure the required Elevate360 FAQ set is present even for visitors with older saved browser data.
@@ -1773,6 +1773,54 @@ body.theme-blue{background:linear-gradient(180deg,#f7fbff,#edf6fb)}body.theme-sa
 @media(max-width:900px){.ai-user-guide{grid-template-columns:1fr 1fr}.public-ai-shell{grid-template-columns:1fr}.public-ai-menu{border-right:0;border-bottom:1px solid var(--line)}}
 @media(max-width:560px){.ai-user-guide{grid-template-columns:1fr}.public-ai-work{padding:22px}}
 </style>
+<style id="e360-multi-theme-system">
+/* Elevate360 multi-theme visual system: changes presentation only; application logic stays untouched. */
+body{--theme-text:#26313d;--theme-muted:#667486;--theme-surface:#ffffff;--theme-surface-2:var(--soft);--theme-border:#d9e0e7;--theme-nav:var(--navy);--theme-nav-text:#ffffff;--theme-hero:var(--cream);--theme-footer:#071a2f;--theme-shadow:0 18px 50px rgba(20,35,50,.08);background:var(--theme-bg)!important;color:var(--theme-text)!important}
+body::before{background:radial-gradient(circle at 8% 8%,color-mix(in srgb,var(--gold) 8%,transparent),transparent 32%),radial-gradient(circle at 92% 86%,color-mix(in srgb,var(--navy) 7%,transparent),transparent 34%)!important}
+body .nav{background:color-mix(in srgb,var(--theme-surface) 94%,var(--gold) 6%)!important;border-bottom:1px solid var(--theme-border)!important}
+body .nav-links a,body .brand-name{color:var(--navy)!important}body .brand-sub{color:var(--theme-muted)!important}
+body .hero,body .section{background:var(--theme-hero)!important;color:var(--theme-text)!important}
+body .section.soft{background:var(--soft)!important}.credibility,body .navy{background:linear-gradient(135deg,var(--navy),var(--navy2))!important;color:#fff!important}
+body .site-footer{background:var(--theme-footer)!important}
+body .about-card,body .edu-item,body .expertise,body .challenge,body .pricing,body .quote-card,body .ai-card,body .ai-reference-card,body .dash-card,body .member-panel-card,body .member-kpi,body .member-alert,body .admin-card,body .admin-stat,body .modal-card,body .login-box,body .booking-summary{background:var(--theme-surface)!important;border-color:var(--theme-border)!important;color:var(--theme-text)!important;box-shadow:var(--theme-shadow)}
+body .admin-panel{background:var(--theme-bg)!important;color:var(--theme-text)!important}body .admin-side{background:linear-gradient(180deg,var(--navy),var(--navy2))!important}body .admin-top h1,body .admin-card h3,body .admin-stat b,body h1,body h2,body h3,body h4{color:var(--navy)}
+body .admin-nav button{color:color-mix(in srgb,#fff 82%,var(--gold) 18%)}body .admin-nav button:hover,body .admin-nav button.active{background:color-mix(in srgb,var(--gold) 18%,transparent);color:var(--gold2)}
+body .admin-table th{background:var(--soft)!important;color:var(--navy)!important}body .admin-table td{border-color:var(--theme-border)!important}
+body .admin-form input,body .admin-form select,body .admin-form textarea,body .login-field input,body .form-field input,body .form-field select,body .form-field textarea{background:var(--theme-surface)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+body .btn-dark,body .nav-cta{background:var(--navy)!important;color:#fff!important}body .btn-gold{background:var(--gold)!important;color:var(--navy)!important}body .btn-outline{background:var(--theme-surface)!important;color:var(--navy)!important;border-color:var(--gold)!important}
+body .admin-fab{background:var(--navy)!important;color:var(--gold2)!important;border-color:var(--gold)!important}
+body .login-overlay,body .modal{background:color-mix(in srgb,var(--navy) 76%,#000 24%)!important}body .close-modal{background:var(--theme-surface)!important;color:var(--navy)!important;border-color:var(--theme-border)!important}
+body .theme-option{background:var(--theme-surface)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}body .theme-option:hover{border-color:var(--gold)!important;transform:translateY(-2px)}body .theme-option.selected{border-color:var(--gold)!important}
+body .soft-card,body .tool-list div,body .member-empty,body .chat-box{background:var(--soft)!important;border-color:var(--theme-border)!important}
+body .hero-title,body .section-head h2,body .page-title{color:var(--navy)!important}body .hero-lead,body .section-head p,body .about-copy p,body .admin-note,body .member-panel-head span{color:var(--theme-muted)!important}
+body .footer-bottom{border-color:color-mix(in srgb,var(--gold) 30%,transparent)!important}
+/* Classic Navy & Gold */
+body.theme-classic{--theme-bg:#f8f5ed;--theme-surface:#fffdf8;--theme-surface-2:#f1eee5;--theme-border:#ddd5c6;--theme-hero:#fbf8f1;--theme-footer:#071a2f}
+/* Executive Blue */
+body.theme-blue{--theme-bg:#eaf5fc;--theme-surface:#ffffff;--theme-surface-2:#e0eef8;--theme-border:#c5dceb;--theme-hero:#f4faff;--theme-footer:#052f52}body.theme-blue .nav{background:#f4fbff!important}body.theme-blue .hero{background:linear-gradient(135deg,#f7fcff 0%,#e6f3fb 100%)!important}body.theme-blue .credibility{background:linear-gradient(135deg,#063b66,#176b99)!important}
+/* Sage Leadership */
+body.theme-sage{--theme-bg:#edf3ec;--theme-surface:#fbfcf8;--theme-surface-2:#e3ebe2;--theme-border:#ccd9cd;--theme-hero:#f7faf5;--theme-footer:#203f36}body.theme-sage .hero{background:linear-gradient(135deg,#f8fbf6,#e5eee4)!important}body.theme-sage .credibility{background:linear-gradient(135deg,#25483f,#4e7d6d)!important}
+/* Slate Executive */
+body.theme-slate{--theme-bg:#e9edf2;--theme-surface:#ffffff;--theme-surface-2:#e1e6ed;--theme-border:#cbd3dd;--theme-hero:#f6f8fa;--theme-footer:#1d2a3a}body.theme-slate .hero{background:linear-gradient(135deg,#fafbfd,#e7ebf1)!important}body.theme-slate .credibility{background:linear-gradient(135deg,#27384d,#496580)!important}
+/* Royal Burgundy */
+body.theme-burgundy{--theme-bg:#f5e8e6;--theme-surface:#fffaf8;--theme-surface-2:#efddda;--theme-border:#dfc5c0;--theme-hero:#fff8f6;--theme-footer:#351722}body.theme-burgundy .hero{background:linear-gradient(135deg,#fffaf8,#f1dfdc)!important}body.theme-burgundy .credibility{background:linear-gradient(135deg,#491f2c,#7d3a4d)!important}body.theme-burgundy .section.soft{background:#eedfdb!important}
+/* Teal & Copper */
+body.theme-teal{--theme-bg:#e5f2f0;--theme-surface:#fbfffe;--theme-surface-2:#dcece9;--theme-border:#bfd8d4;--theme-hero:#f4fbfa;--theme-footer:#063238}body.theme-teal .hero{background:linear-gradient(135deg,#f8fdfc,#dff0ed)!important}body.theme-teal .credibility{background:linear-gradient(135deg,#073f46,#14737a)!important}
+/* Midnight & Platinum */
+body.theme-midnight{--theme-bg:#0c1422;--theme-text:#edf2f7;--theme-muted:#aeb8c5;--theme-surface:#172235;--theme-surface-2:#202d42;--theme-border:#3a4a5f;--theme-hero:#101a2a;--theme-footer:#080d16;--theme-nav:#101827}body.theme-midnight::before{background:radial-gradient(circle at 12% 10%,rgba(170,179,191,.12),transparent 32%),radial-gradient(circle at 90% 80%,rgba(16,90,110,.12),transparent 34%)!important}body.theme-midnight .nav{background:#101827!important;border-bottom-color:#34465d!important}body.theme-midnight .nav-links a,body.theme-midnight .brand-name{color:#edf2f7!important}body.theme-midnight .brand-sub{color:#aeb8c5!important}body.theme-midnight .hero,body.theme-midnight .section{background:#101a2a!important;color:#edf2f7!important}body.theme-midnight .section.soft{background:#151f30!important}body.theme-midnight .about-copy p,body.theme-midnight .hero-lead,body.theme-midnight .section-head p,body.theme-midnight .admin-note{color:#aeb8c5!important}body.theme-midnight h1,body.theme-midnight h2,body.theme-midnight h3,body.theme-midnight h4{color:#edf2f7!important}body.theme-midnight .admin-panel{background:#0c1422!important}body.theme-midnight .admin-card,body.theme-midnight .admin-stat,body.theme-midnight .login-box,body.theme-midnight .modal-card,body.theme-midnight .member-panel-card,body.theme-midnight .member-kpi,body.theme-midnight .dash-card,body.theme-midnight .pricing,body.theme-midnight .challenge,body.theme-midnight .edu-item,body.theme-midnight .expertise,body.theme-midnight .quote-card{background:#172235!important;color:#edf2f7!important}body.theme-midnight input,body.theme-midnight select,body.theme-midnight textarea{background:#101a2a!important;color:#edf2f7!important;border-color:#3a4a5f!important}body.theme-midnight .admin-table th{background:#202d42!important;color:#edf2f7!important}body.theme-midnight .admin-table td{color:#d8e0e8!important}
+/* Emerald & Sand */
+body.theme-emerald{--theme-bg:#edf0df;--theme-surface:#fffdf5;--theme-surface-2:#e1e7d6;--theme-border:#cbd5c0;--theme-hero:#f8f7ed;--theme-footer:#0a382b}body.theme-emerald .hero{background:linear-gradient(135deg,#fcfbf4,#e7ebdb)!important}body.theme-emerald .credibility{background:linear-gradient(135deg,#0d4938,#1c755a)!important}
+/* Standard 01 */
+body.theme-standard01{--theme-bg:#f3f0e8;--theme-surface:#fffdf9;--theme-surface-2:#eae6dc;--theme-border:#d8d0c1;--theme-hero:#faf8f2;--theme-footer:#13243a}body.theme-standard01 .hero{background:linear-gradient(135deg,#fdfbf6,#eeeae0)!important}body.theme-standard01 .credibility{background:linear-gradient(135deg,#172b45,#243b57)!important}
+/* Standard 02 */
+body.theme-standard02{--theme-bg:#f0f1ea;--theme-surface:#fffefa;--theme-surface-2:#e5e9e3;--theme-border:#d0d8cf;--theme-hero:#f8f9f4;--theme-footer:#182d3f}body.theme-standard02 .hero{background:linear-gradient(135deg,#fbfcf8,#e8ece6)!important}body.theme-standard02 .credibility{background:linear-gradient(135deg,#1b304b,#29435f)!important}
+/* Make member and AI surfaces inherit the selected theme rather than fixed white. */
+body [class*="ai-"] .ai-message,body [class*="ai-"] .ai-chat-card,body .public-ai-shell,body .ai-chat-card,body .ai-popular-grid button,body .ai-reference-conversation,body .ai-reference-composer,body .ai-prompt-v4,body .member-shell,body .member-nav,body .member-content{background-color:var(--theme-surface)!important;border-color:var(--theme-border)!important;color:var(--theme-text)!important}
+body .ai-popular-grid button:hover{background:var(--soft)!important}
+body.theme-midnight .ai-message,body.theme-midnight .ai-chat-card,body.theme-midnight .public-ai-shell,body.theme-midnight .ai-reference-conversation,body.theme-midnight .ai-reference-composer,body.theme-midnight .ai-prompt-v4,body.theme-midnight .member-shell,body.theme-midnight .member-nav,body.theme-midnight .member-content{background:#172235!important;color:#edf2f7!important}
+@media(max-width:900px){.theme-options-8{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:600px){.theme-options-8{grid-template-columns:1fr!important}}
+</style>
 
 <!-- Registered user access -->
 <div class="login-overlay" id="memberAuth"><div class="login-box"><button class="close-modal" id="closeMemberAuth">×</button><div class="eyebrow">Elevate360 Member</div><h2 id="memberAuthTitle">Login</h2><div id="memberAuthBody"></div></div></div>
@@ -1861,7 +1909,7 @@ function showAuth(mode){
  auth.classList.add('open'); title.textContent=mode==='register'?'Register for Elevate360':'Member Login';
  body.innerHTML=mode==='register'?`<form id="regForm"><div class="login-field"><label>Full name</label><input id="rName" autocomplete="name" required></div><div class="login-field"><label>Email</label><input id="rEmail" type="email" autocomplete="email" required></div><div class="login-field"><label>Password</label><input id="rPass" type="password" minlength="6" autocomplete="new-password" required></div><div class="login-field"><label>Confirm password</label><input id="rPassConfirm" type="password" minlength="6" autocomplete="new-password" required></div><div class="login-field"><label>Target career / goal</label><input id="rTarget"></div><button class="btn btn-gold" type="submit">Submit Registration →</button><p class="admin-note">Your account remains pending until the administrator approves it.</p></form>`:`<form id="memLogin"><div class="login-field"><label>Email</label><input id="lEmail" type="email" autocomplete="email" required></div><div class="login-field"><label>Password</label><input id="lPass" type="password" autocomplete="current-password" required></div><button class="btn btn-gold" type="submit">Login →</button><button type="button" class="auth-register-link auth-forgot-link" id="forgotPasswordBtn">Forgot password?</button><button type="button" class="auth-register-link" id="openRegisterFromLogin">New here? Register for Elevate360</button><p class="admin-note" id="memMsg"></p></form>`;
  if(mode==='register') {
-   $('regForm').onsubmit=async e=>{e.preventDefault();const name=$('rName').value.trim(),email=$('rEmail').value.trim().toLowerCase(),password=$('rPass').value,confirmPassword=$('rPassConfirm').value,target=$('rTarget').value.trim();if(!name||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||password.length<6)return alert('Please enter your full name, a valid email address and a password of at least 6 characters.');if(password!==confirmPassword)return alert('The two passwords do not match.');if(v.users.some(u=>u.email===email))return alert('An account already exists for this email.');const submit=e.currentTarget.querySelector('button[type=submit]');if(submit){submit.disabled=true;submit.textContent='Submitting…';}try{if(typeof window.elevate360RegisterMember==='function'){await window.elevate360RegisterMember({name,email,password,target});}else{v.users.push({id:'u'+Date.now(),name,email,target,status:'Pending Approval',joined:new Date().toISOString(),progress:0});sv();}alert('Registration submitted. The administrator must approve your account.');auth.classList.remove('open');renderAdmin();}catch(error){const msg=window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'Registration could not be completed.');alert(msg);}finally{if(submit){submit.disabled=false;submit.textContent='Submit Registration →';}}};
+   $('regForm').onsubmit=async e=>{e.preventDefault();const name=$('rName').value.trim(),email=$('rEmail').value.trim().toLowerCase(),password=$('rPass').value,confirmPassword=$('rPassConfirm').value,target=$('rTarget').value.trim();if(!name||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||password.length<6)return alert('Please enter your full name, a valid email address and a password of at least 6 characters.');if(password!==confirmPassword)return alert('The two passwords do not match.');const submit=e.currentTarget.querySelector('button[type=submit]');if(submit){submit.disabled=true;submit.textContent='Submitting…';}try{if(typeof window.elevate360RegisterMember==='function'){await window.elevate360RegisterMember({name,email,password,target});}else{v.users.push({id:'u'+Date.now(),name,email,target,status:'Pending Approval',joined:new Date().toISOString(),progress:0});sv();}alert('Registration submitted. The administrator must approve your account.');auth.classList.remove('open');renderAdmin();}catch(error){const msg=window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'Registration could not be completed.');alert(msg);}finally{if(submit){submit.disabled=false;submit.textContent='Submit Registration →';}}};
  } else {
    $('openRegisterFromLogin').onclick=()=>showAuth('register');
    $('forgotPasswordBtn').onclick=async()=>{const email=$('lEmail').value.trim().toLowerCase()||prompt('Enter the email address used for your Elevate360 account:','');if(!email)return;if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ $('memMsg').textContent='Enter a valid email address.'; return; } try { if(typeof window.elevate360ResetMemberPassword!=='function')throw new Error('Password recovery is temporarily unavailable.'); $('memMsg').textContent='Sending your password recovery email…'; await window.elevate360ResetMemberPassword(email); $('memMsg').textContent='If an account uses that email address, a password recovery email has been sent. Check your inbox and spam folder.'; } catch(error){$('memMsg').textContent=window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'Password recovery could not be completed.');}};
@@ -2027,12 +2075,101 @@ function renderAIAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><h3>AI 
 function renderTrackingAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><div class="section-toolbar"><h3>Member development intelligence</h3><select id="trackFilter"><option value="">All users</option>${v.users.map(u=>`<option value="${esc(u.id)}">${esc(u.name)}</option>`).join('')}</select></div><div id="trackingRows"></div></div>`;const render=()=>{const uid=$('trackFilter').value;const us=v.users.filter(u=>!uid||u.id===uid);$('trackingRows').innerHTML=us.map(u=>{const g=v.goalsData.filter(x=>x.userId===u.id),p=v.pdca.filter(x=>x.userId===u.id),over=[...g,...p].filter(x=>memberStatus(x)==='Overdue').length;return `<div class="tracking-user"><div><b>${esc(u.name)}</b><span>${esc(u.status)} · ${u.progress||0}% progress</span></div><div><strong>${g.length}</strong> goals · <strong>${p.length}</strong> PDCA · <strong>${over}</strong> overdue</div><button onclick="careerosOpenUser('${u.id}')">View improvement areas</button></div>`}).join('')||'<p class="admin-note">No users match.</p>'};$('trackFilter').onchange=render;render()}
 function renderContentAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><h3>Website Content</h3><div class="admin-form"><div class="full"><label>Hero headline line 1</label><input id="mh1" value="${esc(v.monthly.line1)}"></div><div><label>Line 2</label><input id="mh2" value="${esc(v.monthly.line2)}"></div><div><label>Line 3</label><input id="mh3" value="${esc(v.monthly.line3)}"></div><div><label>Line 4</label><input id="mh4" value="${esc(v.monthly.line4)}"></div><div class="full"><label>Hero supporting text</label><textarea id="heroLeadAdmin">${esc(db.heroLead)}</textarea></div><div class="full"><label>Photo quote</label><textarea id="quoteAdmin">${esc(document.querySelector('.photo-label .quote')?.textContent.replace(/[“”]/g,'')||'')}</textarea></div><div class="full"><label>Quote author</label><input id="quoteAuthorAdmin" value="${esc(document.querySelector('.photo-label small')?.textContent||'— TEBOGO MASENAMELA')}"></div></div><button class="btn btn-gold" id="saveContentAdmin">Save Website Content</button></div>`;$('saveContentAdmin').onclick=()=>{v.monthly={...v.monthly,line1:$('mh1').value,line2:$('mh2').value,line3:$('mh3').value,line4:$('mh4').value};db.heroLead=$('heroLeadAdmin').value.trim()||db.heroLead;const titleEl=document.querySelector('.hero-title');if(titleEl){titleEl.innerHTML=`${esc(v.monthly.line1)} <span>${esc(v.monthly.line2)}</span><span style="display:block">${esc(v.monthly.line3)} ${esc(v.monthly.line4)}</span>`}const q=document.querySelector('.photo-label .quote');if(q)q.textContent='“'+$('quoteAdmin').value.trim()+'”';const a=document.querySelector('.photo-label small');if(a)a.textContent=$('quoteAuthorAdmin').value.trim();saveDB();sv();alert('Website content saved.')}}
 const themes={classic:{name:'Classic Navy & Gold',navy:'#071a2f',navy2:'#0d2947',accent:'#c9a04a',accent2:'#ead8a8',bg:'#f8f5ed',soft:'#f1eee5',card:'#ffffff'},blue:{name:'Executive Blue',navy:'#063b66',navy2:'#0b527f',accent:'#4da3d9',accent2:'#a8dcf5',bg:'#eef7fc',soft:'#e4f0f8',card:'#ffffff'},sage:{name:'Sage Leadership',navy:'#25483f',navy2:'#376458',accent:'#8da58e',accent2:'#c7d6c5',bg:'#f2f5ef',soft:'#e6ece3',card:'#ffffff'},slate:{name:'Slate Executive',navy:'#27384d',navy2:'#344c66',accent:'#bca46a',accent2:'#e0cf9a',bg:'#eef1f5',soft:'#e3e8ef',card:'#ffffff'},burgundy:{name:'Royal Burgundy',navy:'#491f2c',navy2:'#642b3c',accent:'#c7a56b',accent2:'#ead7aa',bg:'#f7eeeb',soft:'#f0e1dd',card:'#ffffff'},teal:{name:'Teal & Copper',navy:'#073f46',navy2:'#0d5b62',accent:'#b8734c',accent2:'#e0b08e',bg:'#eaf5f3',soft:'#dfedeb',card:'#ffffff'},midnight:{name:'Midnight & Platinum',navy:'#101827',navy2:'#1b273a',accent:'#aab3bf',accent2:'#e2e6eb',bg:'#e9edf2',soft:'#dfe4ea',card:'#ffffff'},emerald:{name:'Emerald & Sand',navy:'#0d4938',navy2:'#14604a',accent:'#c7aa72',accent2:'#ead9b2',bg:'#f2f0e5',soft:'#e6eadb',card:'#ffffff'},standard01:{name:'Standard 01 · Warm Navy & Gold',navy:'#172b45',navy2:'#243b57',accent:'#b49a62',accent2:'#d7c89f',bg:'#f7f5f0',soft:'#eceae5',card:'#fffdfa'},standard02:{name:'Standard 02 · Warm Navy & Sage',navy:'#1b304b',navy2:'#29435f',accent:'#718b78',accent2:'#b8c8bb',bg:'#f5f4ef',soft:'#e8ece8',card:'#fffefa'}};
-function applyTheme(theme){const t=themes[theme]||themes.classic;document.body.classList.remove(...Object.keys(themes).filter(x=>x!=='classic').map(x=>'theme-'+x));if(theme!=='classic')document.body.classList.add('theme-'+theme);for(const [k,val] of Object.entries({'--navy':t.navy,'--navy2':t.navy2,'--navy3':t.navy2,'--gold':t.accent,'--gold2':t.accent2,'--cream':t.bg,'--soft':t.soft,'--theme-card':t.card,'--theme-bg':t.bg}))document.documentElement.style.setProperty(k,val);document.body.dataset.theme=theme}
+function applyTheme(theme){const t=themes[theme]||themes.classic;document.body.classList.remove(...Object.keys(themes).map(x=>'theme-'+x));document.body.classList.add('theme-'+theme);for(const [k,val] of Object.entries({'--navy':t.navy,'--navy2':t.navy2,'--navy3':t.navy2,'--gold':t.accent,'--gold2':t.accent2,'--cream':t.bg,'--soft':t.soft,'--theme-card':t.card,'--theme-bg':t.bg}))document.documentElement.style.setProperty(k,val);document.body.dataset.theme=theme}
 applyTheme(db.theme||'classic');
-function renderAppearanceAdmin(){adminDynamic.innerHTML=`<div class="admin-card"><h3>Choose an Elevate360 theme</h3><div class="theme-options theme-options-8">${Object.entries(themes).map(([k,t])=>`<button type="button" class="theme-option ${db.theme===k?'selected':''}" data-theme="${k}"><div class="theme-swatch" style="background:linear-gradient(135deg,${t.navy},${t.accent})"></div><b>${esc(t.name)}</b><small>Preview & apply</small></button>`).join('')}</div></div><div class="admin-card"><h3>Website pictures</h3><div class="admin-form"><div><label>Hero / profile picture</label><input type="file" id="heroImageUpload2" accept="image/*"><img class="image-preview" id="heroPreview2"></div><div><label>Education picture</label><input type="file" id="eduImageUpload2" accept="image/*"><img class="image-preview" id="eduPreview2"></div></div><p class="admin-note">Image files and layout settings are kept separate. Replacing an image does not change its crop or position.</p></div>`;document.querySelectorAll('.theme-option').forEach(o=>o.onclick=()=>{db.theme=o.dataset.theme;applyTheme(db.theme);saveDB();document.querySelectorAll('.theme-option').forEach(x=>x.classList.toggle('selected',x.dataset.theme===db.theme))});$('heroPreview2').src=document.querySelector('.hero-photo-frame img')?.src||'';$('eduPreview2').src=document.querySelector('.edu-photo img')?.src||'';const upload=(input,selector,preview,key)=>input.onchange=()=>{const f=input.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{localStorage.setItem(key,r.result);document.querySelector(selector).src=r.result;$(preview).src=r.result;saveDB();};r.readAsDataURL(f)};upload($('heroImageUpload2'),'.hero-photo-frame img','heroPreview2','careerosHeroImage');upload($('eduImageUpload2'),'.edu-photo img','eduPreview2','careerosEduImage')}
+function renderAppearanceAdmin(){
+  adminDynamic.innerHTML=`<div class="admin-card"><h3>Choose an Elevate360 theme</h3><div class="theme-options theme-options-8">${Object.entries(themes).map(([k,t])=>`<button type="button" class="theme-option ${db.theme===k?'selected':''}" data-theme="${k}"><div class="theme-swatch" style="background:linear-gradient(135deg,${t.navy},${t.accent})"></div><b>${esc(t.name)}</b><small>Preview & apply</small></button>`).join('')}</div><p class="admin-note">Each theme changes the visual system across the public website, AI Career Hub, member login/dashboard and administrator centre. Website logic, AI, database and content remain unchanged.</p></div><div class="admin-card"><h3>Website pictures</h3><div class="admin-form"><div><label>Hero / profile picture</label><input type="file" id="heroImageUpload2" accept="image/*"><img class="image-preview" id="heroPreview2"></div><div><label>Education picture</label><input type="file" id="eduImageUpload2" accept="image/*"><img class="image-preview" id="eduPreview2"></div></div><p class="admin-note">Image files and layout settings are kept separate. Replacing an image does not change its crop or position.</p></div>`;
+  document.querySelectorAll('.theme-option').forEach(o=>o.onclick=async()=>{
+    const selected=o.dataset.theme;db.theme=selected;applyTheme(selected);saveDB();
+    document.querySelectorAll('.theme-option').forEach(x=>x.classList.toggle('selected',x.dataset.theme===selected));
+    if(currentFirebaseUser) await savePublicTheme(selected);
+  });
+  $('heroPreview2').src=document.querySelector('.hero-photo-frame img')?.src||'';
+  $('eduPreview2').src=document.querySelector('.edu-photo img')?.src||'';
+  const upload=(input,selector,preview,key)=>input.onchange=()=>{const f=input.files?.[0];if(!f)return;const r=new FileReader();r.onload=()=>{localStorage.setItem(key,r.result);document.querySelector(selector).src=r.result;$(preview).src=r.result;saveDB();};r.readAsDataURL(f)};
+  upload($('heroImageUpload2'),'.hero-photo-frame img','heroPreview2','careerosHeroImage');
+  upload($('eduImageUpload2'),'.edu-photo img','eduPreview2','careerosEduImage')
+}
 function applyContactDetails(){const phone=db.contactPhone||defaults.contactPhone,email=db.ownerEmail||defaults.ownerEmail,location=db.contactLocation||defaults.contactLocation,wa=db.contactWhatsapp||'';document.querySelectorAll('.contact-info .detail').forEach((d,i)=>{const a=d.querySelector('a'),p=d.querySelector('p');if(i===0&&a){a.textContent=phone;a.href='tel:'+phone.replace(/[^0-9+]/g,'')}if(i===1&&a){a.textContent=email;a.href='mailto:'+email}if(i===2&&p)p.textContent=location});const waLink=document.querySelector('[data-contact-whatsapp]');if(waLink){waLink.style.display=wa?'inline-flex':'none';waLink.href=wa?'https://wa.me/'+wa.replace(/[^0-9]/g,''): '#'}}
 applyContactDetails();
-function renderSettingsAdmin(){const bank=db.bankPayment||defaults.bankPayment;adminDynamic.innerHTML=`<div class="admin-card"><h3>Owner, administrator & contact settings</h3><div class="admin-form"><div class="full"><label>Email receiving bookings and messages</label><input id="ownerEmail2" type="email" value="${esc(db.ownerEmail)}"></div><div><label>Public phone number</label><input id="contactPhone2" value="${esc(db.contactPhone||'')}" placeholder="e.g. 076 052 2694"></div><div><label>WhatsApp number (optional)</label><input id="contactWhatsapp2" value="${esc(db.contactWhatsapp||'')}" placeholder="e.g. 27760522694"></div><div class="full"><label>Public location</label><input id="contactLocation2" value="${esc(db.contactLocation||'')}" placeholder="City / region"></div><div><label>Administrator username</label><input id="adminUser2" value="${esc(db.adminUser)}"></div><div><label>Administrator password</label><input id="adminPass2" type="password" value="${esc(db.adminPass)}"></div></div><button class="btn btn-gold" id="saveAdminSettings">Save Owner & Contact Settings</button><p class="admin-note">The administrator can update the public contact details shown on the website. For production security, do not store internet-banking passwords or card PINs here.</p></div><div class="admin-card"><h3>Payment / bank connection</h3><p class="admin-note">Configure the business bank account for EFT payments or connect a secure payment-provider checkout link. This website does not request or store internet-banking passwords, PINs or card CVVs.</p><div class="admin-bank-grid"><div><label>Bank name</label><input id="bankNameAdmin" value="${esc(bank.bankName)}" placeholder="e.g. FNB"></div><div><label>Account holder</label><input id="bankHolderAdmin" value="${esc(bank.accountHolder)}"></div><div><label>Account number</label><input id="bankNumberAdmin" value="${esc(bank.accountNumber)}"></div><div><label>Branch code</label><input id="bankBranchAdmin" value="${esc(bank.branchCode)}"></div><div><label>Account type</label><input id="bankTypeAdmin" value="${esc(bank.accountType)}" placeholder="Cheque / Current / Savings"></div><div><label>Reference prefix</label><input id="bankRefAdmin" value="${esc(bank.referencePrefix||'ELEVATE360')}"></div><div><label>Payment provider</label><select id="paymentProviderAdmin"><option value="">Bank / EFT only</option><option value="PayFast">PayFast</option><option value="Yoco">Yoco</option><option value="Paystack">Paystack</option><option value="Other">Other provider</option></select></div><div><label>Online payment link</label><input id="onlinePaymentUrlAdmin" type="url" value="${esc(bank.onlinePaymentUrl||'')}" placeholder="https://secure-provider.example/..." /></div><div class="full"><label>Payment instructions</label><textarea id="bankNoteAdmin">${esc(bank.paymentNote)}</textarea></div><div class="full"><label><input id="bankEnabledAdmin" type="checkbox" ${bank.enabled!==false?'checked':''}> Enable Bank Transfer / EFT option</label></div></div><div class="admin-actions"><button class="btn btn-gold" id="saveBankSettings">Save Payment Settings</button><button class="btn btn-outline" id="testPaymentLink">Test Payment Link</button></div><div class="payment-assist">Use a secure payment provider account that is connected to the business bank account. The site will send customers to that provider for the actual payment.</div></div><div class="admin-card"><h3>Administrator data controls</h3><p class="admin-note">The administrator has full control of website content, programmes, pricing, users, bookings, availability, messages, themes, AI settings and payments through the administration menu.</p><button class="btn danger" id="clearAllBookings2">Delete All Bookings</button> <button class="btn danger" id="clearAllMessages2">Delete All Messages</button> <button class="btn danger" id="clearAllUsers2">Delete All Users</button></div>`;$('paymentProviderAdmin').value=bank.provider||'';$('saveAdminSettings').onclick=()=>{if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('ownerEmail2').value.trim()))return alert('Enter a valid email.');db.ownerEmail=$('ownerEmail2').value.trim();db.contactPhone=$('contactPhone2').value.trim()||defaults.contactPhone;db.contactWhatsapp=$('contactWhatsapp2').value.trim();db.contactLocation=$('contactLocation2').value.trim()||defaults.contactLocation;db.adminUser=$('adminUser2').value.trim()||'Elevate360';db.adminPass=$('adminPass2').value||'360';saveDB();applyContactDetails();alert('Owner, contact and administrator settings saved.')};$('saveBankSettings').onclick=()=>{db.bankPayment={enabled:$('bankEnabledAdmin').checked,provider:$('paymentProviderAdmin').value,bankName:$('bankNameAdmin').value.trim(),accountHolder:$('bankHolderAdmin').value.trim(),accountNumber:$('bankNumberAdmin').value.trim(),branchCode:$('bankBranchAdmin').value.trim(),accountType:$('bankTypeAdmin').value.trim(),referencePrefix:$('bankRefAdmin').value.trim()||'ELEVATE360',paymentNote:$('bankNoteAdmin').value.trim()||'Use your booking ID as the payment reference. Attach proof of payment before submitting.',onlinePaymentUrl:$('onlinePaymentUrlAdmin').value.trim()};saveDB();alert('Payment settings saved.');renderSettingsAdmin()};$('testPaymentLink').onclick=()=>{const url=$('onlinePaymentUrlAdmin').value.trim();if(!url)return alert('Add the secure payment-provider URL first.');const test=url.replaceAll('{amount}','1').replaceAll('{reference}','TEST-ELEVATE360').replaceAll('{email}',encodeURIComponent(db.ownerEmail));window.open(test,'_blank','noopener,noreferrer')};$('clearAllBookings2').onclick=()=>{if(confirm('Delete all bookings?')){db.bookings=[];saveDB();renderSettingsAdmin()}};$('clearAllMessages2').onclick=()=>{if(confirm('Delete all messages?')){db.messages=[];v.messageThreads=[];sv();renderSettingsAdmin()}};$('clearAllUsers2').onclick=()=>{if(confirm('Delete all registered users?')){v.users=[];v.goalsData=[];v.pdca=[];v.schedules=[];v.portfolio=[];v.messageThreads=[];sv();renderSettingsAdmin()}}}
+function renderSettingsAdmin(){
+  const bank=db.bankPayment||defaults.bankPayment;
+  const cloudEmails=[...(db.cloudAdminEmails||[])];
+  const cloud1=esc(cloudEmails[0]||'');
+  const cloud2=esc(cloudEmails[1]||'');
+  adminDynamic.innerHTML=`
+    <div class="admin-card">
+      <h3>Owner, administrator & contact settings</h3>
+      <div class="admin-form">
+        <div class="full"><label>Email receiving bookings and messages</label><input id="ownerEmail2" type="email" value="${esc(db.ownerEmail)}"></div>
+        <div><label>Public phone number</label><input id="contactPhone2" value="${esc(db.contactPhone||'')}" placeholder="e.g. 076 052 2694"></div>
+        <div><label>WhatsApp number (optional)</label><input id="contactWhatsapp2" value="${esc(db.contactWhatsapp||'')}" placeholder="e.g. 27760522694"></div>
+        <div class="full"><label>Public location</label><input id="contactLocation2" value="${esc(db.contactLocation||'')}" placeholder="City / region"></div>
+        <div><label>Administrator username</label><input id="adminUser2" value="${esc(db.adminUser)}"></div>
+        <div><label>Administrator password</label><input id="adminPass2" type="password" value="${esc(db.adminPass)}"></div>
+      </div>
+      <button class="btn btn-gold" id="saveAdminSettings">Save Owner & Contact Settings</button>
+      <p class="admin-note">The administrator can update the public contact details shown on the website. For production security, do not store internet-banking passwords or card PINs here.</p>
+    </div>
+    <div class="admin-card">
+      <h3>Cloud administrator & backup access</h3>
+      <p class="admin-note">Add up to two administrator email addresses for secure cloud administration. Both addresses can be used to sign into the cloud administrator account and work with the same Elevate360 cloud data. These addresses do not create a second database; they authorize additional administrator accounts to the same cloud data.</p>
+      <div class="admin-form">
+        <div><label>Primary cloud administrator email</label><input id="cloudAdminEmail1" type="email" value="${cloud1}" placeholder="primary@example.com"></div>
+        <div><label>Second cloud administrator / backup email (optional)</label><input id="cloudAdminEmail2" type="email" value="${cloud2}" placeholder="backup@example.com"></div>
+      </div>
+      <div class="admin-actions">
+        <button class="btn btn-gold" id="saveCloudAdminEmails">Save Cloud Administrator Emails</button>
+        <button class="btn btn-outline" id="setupCloudAdminAccount">Set Up / Sign In Cloud Account</button>
+      </div>
+      <p class="admin-note">After saving an email, use “Set Up / Sign In Cloud Account” to create or connect its secure administrator account. Passwords are handled by the secure account service and are not stored in the website database.</p>
+    </div>
+    <div class="admin-card">
+      <h3>Payment / bank connection</h3>
+      <p class="admin-note">Configure the business bank account for EFT payments or connect a secure payment-provider checkout link. This website does not request or store internet-banking passwords, PINs or card CVVs.</p>
+      <div class="admin-bank-grid">
+        <div><label>Bank name</label><input id="bankNameAdmin" value="${esc(bank.bankName)}" placeholder="e.g. FNB"></div>
+        <div><label>Account holder</label><input id="bankHolderAdmin" value="${esc(bank.accountHolder)}"></div>
+        <div><label>Account number</label><input id="bankNumberAdmin" value="${esc(bank.accountNumber)}"></div>
+        <div><label>Branch code</label><input id="bankBranchAdmin" value="${esc(bank.branchCode)}"></div>
+        <div><label>Account type</label><input id="bankTypeAdmin" value="${esc(bank.accountType)}" placeholder="Cheque / Current / Savings"></div>
+        <div><label>Reference prefix</label><input id="bankRefAdmin" value="${esc(bank.referencePrefix||'ELEVATE360')}"></div>
+        <div><label>Payment provider</label><select id="paymentProviderAdmin"><option value="">Bank / EFT only</option><option value="PayFast">PayFast</option><option value="Yoco">Yoco</option><option value="Paystack">Paystack</option><option value="Other">Other provider</option></select></div>
+        <div><label>Online payment link</label><input id="onlinePaymentUrlAdmin" type="url" value="${esc(bank.onlinePaymentUrl||'')}" placeholder="https://secure-provider.example/..." /></div>
+        <div class="full"><label>Payment instructions</label><textarea id="bankNoteAdmin">${esc(bank.paymentNote)}</textarea></div>
+        <div class="full"><label><input id="bankEnabledAdmin" type="checkbox" ${bank.enabled!==false?'checked':''}> Enable Bank Transfer / EFT option</label></div>
+      </div>
+      <div class="admin-actions"><button class="btn btn-gold" id="saveBankSettings">Save Payment Settings</button><button class="btn btn-outline" id="testPaymentLink">Test Payment Link</button></div>
+      <div class="payment-assist">Use a secure payment provider account that is connected to the business bank account. The site will send customers to that provider for the actual payment.</div>
+    </div>
+    <div class="admin-card">
+      <h3>Administrator data controls</h3>
+      <p class="admin-note">The administrator has full control of website content, programmes, pricing, users, bookings, availability, messages, themes, AI settings and payments through the administration menu.</p>
+      <button class="btn danger" id="clearAllBookings2">Delete All Bookings</button> <button class="btn danger" id="clearAllMessages2">Delete All Messages</button> <button class="btn danger" id="clearAllUsers2">Delete All Users</button>
+    </div>`;
+  $('paymentProviderAdmin').value=bank.provider||'';
+  $('saveAdminSettings').onclick=()=>{
+    const email=$('ownerEmail2').value.trim().toLowerCase();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return alert('Enter a valid email.');
+    db.ownerEmail=email;db.contactPhone=$('contactPhone2').value.trim()||defaults.contactPhone;db.contactWhatsapp=$('contactWhatsapp2').value.trim();db.contactLocation=$('contactLocation2').value.trim()||defaults.contactLocation;db.adminUser=$('adminUser2').value.trim()||'Elevate360';db.adminPass=$('adminPass2').value||'360';saveDB();applyContactDetails();alert('Owner, contact and administrator settings saved.')
+  };
+  $('saveCloudAdminEmails').onclick=()=>{
+    const a=$('cloudAdminEmail1').value.trim().toLowerCase(), b=$('cloudAdminEmail2').value.trim().toLowerCase();
+    if(a&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(a))return alert('Enter a valid primary cloud administrator email.');
+    if(b&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b))return alert('Enter a valid second cloud administrator email.');
+    db.cloudAdminEmails=[a,b].filter(Boolean).filter((x,i,arr)=>arr.indexOf(x)===i).slice(0,2);
+    saveDB();
+    alert('Cloud administrator emails saved. Both addresses can use the same Elevate360 cloud data once their secure administrator accounts are connected.');
+  };
+  $('setupCloudAdminAccount').onclick=async()=>{
+    try{if(typeof window.elevate360CloudAdminSignIn!=='function')throw new Error('Cloud administrator setup is temporarily unavailable.');await window.elevate360CloudAdminSignIn();alert('Secure cloud administrator access is connected.');}catch(error){alert(window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'Cloud administrator setup could not be completed.'));}
+  };
+  $('saveBankSettings').onclick=()=>{db.bankPayment={enabled:$('bankEnabledAdmin').checked,provider:$('paymentProviderAdmin').value,bankName:$('bankNameAdmin').value.trim(),accountHolder:$('bankHolderAdmin').value.trim(),accountNumber:$('bankNumberAdmin').value.trim(),branchCode:$('bankBranchAdmin').value.trim(),accountType:$('bankTypeAdmin').value.trim(),referencePrefix:$('bankRefAdmin').value.trim()||'ELEVATE360',paymentNote:$('bankNoteAdmin').value.trim()||'Use your booking ID as the payment reference. Attach proof of payment before submitting.',onlinePaymentUrl:$('onlinePaymentUrlAdmin').value.trim()};saveDB();alert('Payment settings saved.');renderSettingsAdmin()};
+  $('testPaymentLink').onclick=()=>{const url=$('onlinePaymentUrlAdmin').value.trim();if(!url)return alert('Add the secure payment-provider URL first.');const test=url.replaceAll('{amount}','1').replaceAll('{reference}','TEST-ELEVATE360').replaceAll('{email}',encodeURIComponent(db.ownerEmail));window.open(test,'_blank','noopener,noreferrer')};
+  $('clearAllBookings2').onclick=()=>{if(confirm('Delete all bookings?')){db.bookings=[];saveDB();renderSettingsAdmin()}};
+  $('clearAllMessages2').onclick=()=>{if(confirm('Delete all messages?')){db.messages=[];v.messageThreads=[];sv();renderSettingsAdmin()}};
+  $('clearAllUsers2').onclick=()=>{if(confirm('Delete all registered users?')){v.users=[];v.goalsData=[];v.pdca=[];v.schedules=[];v.portfolio=[];v.messageThreads=[];sv();renderSettingsAdmin()}}
+}
 /* Admin actions */
 window.careerosUserStatus=async(id,status)=>{const u=v.users.find(x=>x.id===id);if(!u)return;try{if(window.elevate360CloudAdminSignIn){await window.elevate360CloudAdminSignIn();}if(!currentFirebaseUser||!firestore)throw new Error('Cloud administrator access is not connected.');await setDoc(doc(firestore,'users',String(id)),{status,updatedAt:serverTimestamp(),updatedBy:currentFirebaseUser.uid},{merge:true});u.status=status;sv();renderUsersAdmin();updateAdminHeaderStats();alert(status==='Approved'?'Member approved successfully.':'Member status updated successfully.');}catch(error){alert(window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'The member status could not be updated.'));}};
 window.careerosDeleteUser=id=>{if(confirm('Delete this user and their member records?')){v.users=v.users.filter(x=>x.id!==id);v.goalsData=v.goalsData.filter(x=>x.userId!==id);v.pdca=v.pdca.filter(x=>x.userId!==id);v.schedules=v.schedules.filter(x=>x.userId!==id);v.portfolio=v.portfolio.filter(x=>x.userId!==id);v.messageThreads=v.messageThreads.filter(x=>x.userId!==id);sv();renderUsersAdmin()}};
@@ -2300,8 +2437,9 @@ async function initFirebase() {
     onAuthStateChanged(auth, async user => {
       currentFirebaseUser = user || null;
       window.Elevate360Firebase.user = currentFirebaseUser;
-      if (!user) return;
       try {
+        await loadPublicTheme();
+        if (!user) return;
         const profileSnap = await getDoc(doc(firestore, 'users', user.uid));
         const profile = profileSnap.exists() ? profileSnap.data() : null;
         if (profile?.role === 'Admin') await loadCloudState();
@@ -2326,6 +2464,25 @@ async function initFirebase() {
 /* =========================================================
    2. CLOUD STATE
    ========================================================= */
+async function loadPublicTheme(){
+  if(!firebaseReady||!firestore)return;
+  try{
+    const snap=await getDoc(doc(firestore,'elevate360','publicTheme'));
+    if(snap.exists()&&themes[snap.data().theme]){
+      db.theme=snap.data().theme;
+      applyTheme(db.theme);
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(db));
+    }
+  }catch(error){ console.warn('Elevate360 public theme could not be loaded:',error); }
+}
+async function savePublicTheme(theme){
+  if(!firebaseReady||!firestore||!currentFirebaseUser||!themes[theme])return false;
+  try{
+    await setDoc(doc(firestore,'elevate360','publicTheme'),{theme,updatedAt:serverTimestamp(),updatedBy:currentFirebaseUser.uid},{merge:true});
+    return true;
+  }catch(error){ console.warn('Elevate360 public theme could not be saved:',error); return false; }
+}
+
 async function loadCloudState() {
   if (!firebaseReady || !firestore) return;
 
@@ -2425,7 +2582,13 @@ async function writeMessageToCloud(message) {
 async function firebaseMemberRegister(name, email, password, target) {
   if (!firebaseReady) throw new Error('The secure Elevate360 service is not connected yet.');
 
-  const credential = await createUserWithEmailAndPassword(auth, email, password);
+  let credential;
+  try {
+    credential = await createUserWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    if (error?.code === 'auth/email-already-in-use') throw new Error('An Elevate360 account already exists for this email. Use Forgot password if you need to recover access.');
+    throw error;
+  }
   await updateProfile(credential.user, { displayName: name });
 
   const userRecord = {
@@ -2545,51 +2708,42 @@ window.elevate360FriendlyError = friendlyFirebaseError;
 
 window.elevate360CloudAdminSignIn = async function(){
   if (!firebaseReady || !auth) throw new Error('The secure cloud service is not ready yet.');
+  const configuredEmails=(db.cloudAdminEmails||[]).filter(Boolean).map(x=>String(x).trim().toLowerCase()).slice(0,2);
   if (currentFirebaseUser) {
     const activeProfile = await getDoc(doc(firestore,'users',currentFirebaseUser.uid));
     if (activeProfile.exists() && activeProfile.data().role === 'Admin') { await loadCloudState(); return currentFirebaseUser; }
     try { await signOut(auth); } catch (_) {}
     currentFirebaseUser = null;
   }
-  const email = (db.ownerEmail || '').trim().toLowerCase();
-  const cloudEmail = prompt('Enter the administrator email used for the secure cloud account:', email);
+  const fallback=(configuredEmails[0]||db.ownerEmail||'').trim().toLowerCase();
+  const cloudEmail=(prompt('Enter the cloud administrator email:',fallback)||'').trim().toLowerCase();
   if (!cloudEmail) throw new Error('Administrator email is required.');
-  const password = prompt('Enter the secure cloud administrator password:');
+  if (configuredEmails.length && !configuredEmails.includes(cloudEmail)) throw new Error('Use one of the cloud administrator emails configured in Owner Settings.');
+  const password=prompt('Enter the secure cloud administrator password:');
   if (!password) throw new Error('Administrator password is required.');
   let credential;
   try {
-    credential = await signInWithEmailAndPassword(auth, cloudEmail, password);
+    credential=await signInWithEmailAndPassword(auth,cloudEmail,password);
   } catch (error) {
-    if (error?.code === 'auth/user-not-found' || error?.code === 'auth/invalid-credential') {
-      const create = confirm('The secure cloud administrator account could not be signed in. If this is the first setup, create the administrator account now using this email and password?');
-      if (!create) throw new Error('Cloud administrator account was not connected.');
-      credential = await createUserWithEmailAndPassword(auth, cloudEmail, password);
-      await updateProfile(credential.user, { displayName: 'Elevate360 Administrator' });
-      await setDoc(doc(firestore,'users',credential.user.uid), {
-        id: credential.user.uid,
-        uid: credential.user.uid,
-        name: 'Elevate360 Administrator',
-        email: cloudEmail,
-        role: 'Admin',
-        status: 'Approved',
-        joined: new Date().toISOString(),
-        progress: 0,
-        createdAt: serverTimestamp()
-      }, { merge: true });
-    } else {
-      throw error;
-    }
+    if (error?.code==='auth/user-not-found' || error?.code==='auth/invalid-credential') {
+      const create=confirm('This cloud administrator account does not exist yet. Create it now for '+cloudEmail+'?');
+      if(!create) throw new Error('Cloud administrator account was not connected.');
+      credential=await createUserWithEmailAndPassword(auth,cloudEmail,password);
+      await updateProfile(credential.user,{displayName:'Elevate360 Administrator'});
+      await setDoc(doc(firestore,'users',credential.user.uid),{
+        id:credential.user.uid,uid:credential.user.uid,name:'Elevate360 Administrator',email:cloudEmail,role:'Admin',status:'Approved',joined:new Date().toISOString(),progress:0,createdAt:serverTimestamp()
+      },{merge:true});
+    } else throw error;
   }
-  const profileSnap = await getDoc(doc(firestore,'users',credential.user.uid));
-  if (!profileSnap.exists() || profileSnap.data().role !== 'Admin') {
+  const profileSnap=await getDoc(doc(firestore,'users',credential.user.uid));
+  if(!profileSnap.exists()||profileSnap.data().role!=='Admin'){
     await signOut(auth);
     throw new Error('This secure cloud account is not configured as an Elevate360 administrator yet.');
   }
-  currentFirebaseUser = credential.user;
+  currentFirebaseUser=credential.user;
   await loadCloudState();
   return currentFirebaseUser;
 };
-
 
 
 /* =========================================================

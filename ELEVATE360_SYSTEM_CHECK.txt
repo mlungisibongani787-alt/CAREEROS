@@ -1,0 +1,27 @@
+ELEVATE360 SYSTEM CHECK – 22 September 2026
+
+STATIC CHECKS
+PASS – JavaScript syntax: 6 inline script blocks checked with Node.js; 0 syntax errors.
+PASS – Registration: password and confirm-password fields are present and mismatch is blocked.
+PASS – Registration: Firebase Auth duplicate-email handling is present.
+PASS – Password recovery: secure reset-email function and Forgot password control are present.
+PASS – AI streaming: generateContentStream and streamed chunk handling are present.
+PASS – AI App Check: existing Elevate360 reCAPTCHA Enterprise key and limited-use App Check configuration are preserved.
+PASS – AI provider migration: no old Cloud Functions URL is present in the build.
+PASS – AI user-facing errors: known raw provider error phrases are absent from visible error messages.
+PASS – Member approval: administrator approval writes the member status to the cloud user profile.
+PASS – Themes: 10 themes are available: Classic, Executive Blue, Sage Leadership, Slate Executive, Royal Burgundy, Teal & Copper, Midnight & Platinum, Emerald & Sand, Standard 01 and Standard 02.
+PASS – Themes: the theme system applies to public pages, AI surfaces, member workspace/login and administrator centre without changing application logic.
+PASS – Cloud administrator emails: up to two addresses can be configured in Owner Settings.
+PASS – Cloud administrator accounts: either configured address can be connected/created as an administrator account.
+PASS – Public theme sync: selected theme can be stored in elevate360/publicTheme for multi-device loading.
+PASS – Firestore rules: publicTheme is readable by visitors; protected site/member administration data remains administrator-only.
+PASS – Original assets: CNAME, logo.png and Google verification file are preserved.
+PASS – Firebase hosting/firestore/storage configuration is included.
+
+KNOWN LIMITATION
+A real browser/cloud smoke test could not be completed in this container because the available headless Chromium process did not return before the execution timeout. The live Firebase AI/App Check 401 previously observed therefore remains a cloud-side verification item and is not falsely marked as passed here.
+
+DEPLOYMENT NOTE
+Use the included firebase.json, firestore.rules and storage.rules. Keep the existing CNAME, logo.png and Google verification file. Deploy with:
+firebase deploy --only hosting,firestore,storage

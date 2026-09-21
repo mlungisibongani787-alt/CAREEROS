@@ -43,9 +43,13 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
-    match /elevate360/{document} {
+    match /elevate360/publicTheme {
       allow read: if true;
       allow write: if isAdmin();
+    }
+
+    match /elevate360/{document} {
+      allow read, write: if isAdmin();
     }
   }
 }
