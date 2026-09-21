@@ -802,6 +802,92 @@ img,video{max-width:100%;height:auto}
 button:disabled{opacity:.6;cursor:wait!important;transform:none!important}
 @media(max-width:760px){.ai-page-intro p{font-size:.92rem!important}.ai-popular-grid button{font-size:.8rem!important}.ai-reference-conversation .ai-message{font-size:.86rem!important}.ai-prompt-v4{font-size:.9rem!important}}
 </style>
+
+<style id="elevate360-final-ai-layout-and-theme-contrast">
+/* FINAL LAYOUT: keep the AI chat as the main focus and move Popular Questions to the side. */
+.ai-reference-main{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) 286px!important;
+  grid-template-areas:"chat popularHead" "chat popularList";
+  gap:18px!important;
+  align-items:start!important;
+  padding:18px!important;
+}
+.ai-reference-main .ai-chat-card{grid-area:chat!important;min-width:0!important;margin:0!important;min-height:620px!important}
+.ai-reference-main .ai-popular-head{grid-area:popularHead!important;margin:0!important;padding:4px 2px 0!important}
+.ai-reference-main .ai-popular-grid{grid-area:popularList!important;display:grid!important;grid-template-columns:1fr!important;gap:7px!important;margin:0!important;align-self:start!important}
+.ai-reference-main .ai-popular-grid button{min-height:42px!important;padding:9px 11px!important;font-size:.76rem!important}
+.ai-reference-main .ai-reference-conversation{min-height:390px!important;max-height:520px!important}
+.ai-reference-main .ai-reference-composer textarea{min-height:105px!important}
+.ai-reference-main .ai-result-actions{margin-top:10px!important}
+@media(max-width:900px){
+  .ai-reference-main{
+    grid-template-columns:1fr!important;
+    grid-template-areas:"chat" "popularHead" "popularList";
+  }
+  .ai-reference-main .ai-chat-card{min-height:560px!important}
+  .ai-reference-main .ai-popular-grid{grid-template-columns:1fr 1fr!important}
+}
+@media(max-width:600px){
+  .ai-reference-main{padding:12px!important}
+  .ai-reference-main .ai-popular-grid{grid-template-columns:1fr!important}
+  .ai-reference-main .ai-reference-conversation{min-height:260px!important;max-height:none!important}
+  .ai-reference-main .ai-reference-composer textarea{min-height:88px!important}
+}
+
+/* FINAL COLOUR ALIGNMENT: every edited theme gets readable foreground/background pairs. */
+body.theme-classic{--theme-text:#26313d;--theme-muted:#667486;--theme-surface:#fffdf8;--theme-border:#ddd5c6;--theme-nav:#071a2f;--theme-nav-text:#fff;--theme-accent:#c9a04a;--theme-accent-text:#071a2f}
+body.theme-blue{--theme-text:#17324a;--theme-muted:#5e7488;--theme-surface:#fff;--theme-border:#c5dceb;--theme-nav:#063b66;--theme-nav-text:#fff;--theme-accent:#4da3d9;--theme-accent-text:#063b66}
+body.theme-sage{--theme-text:#263c35;--theme-muted:#66766d;--theme-surface:#fbfcf8;--theme-border:#ccd9cd;--theme-nav:#25483f;--theme-nav-text:#fff;--theme-accent:#8da58e;--theme-accent-text:#17332c}
+body.theme-slate{--theme-text:#283647;--theme-muted:#68788a;--theme-surface:#fff;--theme-border:#cbd3dd;--theme-nav:#27384d;--theme-nav-text:#fff;--theme-accent:#bca46a;--theme-accent-text:#27384d}
+body.theme-burgundy{--theme-text:#3d2730;--theme-muted:#76616a;--theme-surface:#fffaf8;--theme-border:#e3cbc5;--theme-nav:#491f2c;--theme-nav-text:#fff;--theme-accent:#c7a56b;--theme-accent-text:#491f2c}
+body.theme-teal{--theme-text:#173b3e;--theme-muted:#5f7779;--theme-surface:#fdfefe;--theme-border:#c9ddda;--theme-nav:#073f46;--theme-nav-text:#fff;--theme-accent:#b8734c;--theme-accent-text:#073f46}
+body.theme-midnight{--theme-text:#edf2f7;--theme-muted:#aeb8c5;--theme-surface:#172235;--theme-border:#3a4a5f;--theme-nav:#101827;--theme-nav-text:#edf2f7;--theme-accent:#aab3bf;--theme-accent-text:#101827}
+body.theme-emerald{--theme-text:#20392f;--theme-muted:#68756b;--theme-surface:#fffdf5;--theme-border:#cbd5c0;--theme-nav:#0d4938;--theme-nav-text:#fff;--theme-accent:#c7aa72;--theme-accent-text:#0d4938}
+
+/* Protect Standard 01 and Standard 02: these two keep their original warm presentation. */
+body.theme-standard01{
+  --navy:#172b45;--navy2:#243b57;--navy3:#334a63;--gold:#b49a62;--gold2:#d7c89f;
+  --cream:#f7f5f0;--soft:#eceae5;--green:#667f6b;--charcoal:#34383d;
+  --theme-bg:#f7f5f0;--theme-surface:#fffdf9;--theme-surface-2:#eceae5;--theme-border:#d8d0c1;
+  --theme-hero:#faf8f2;--theme-footer:#13243a;--theme-text:#34383d;--theme-muted:#687587;
+  --theme-nav:#172b45;--theme-nav-text:#fff;--theme-accent:#b49a62;--theme-accent-text:#172b45;
+  background:#f7f5f0!important;color:#34383d!important;
+}
+body.theme-standard02{
+  --navy:#1b304b;--navy2:#29435f;--navy3:#3a5670;--gold:#718b78;--gold2:#b8c8bb;
+  --cream:#f5f4ef;--soft:#e8ece8;--green:#718b78;--charcoal:#353a40;
+  --theme-bg:#f5f4ef;--theme-surface:#fffefa;--theme-surface-2:#e8ece8;--theme-border:#d0d8cf;
+  --theme-hero:#f8f9f4;--theme-footer:#182d3f;--theme-text:#353a40;--theme-muted:#687587;
+  --theme-nav:#1b304b;--theme-nav-text:#fff;--theme-accent:#718b78;--theme-accent-text:#17332c;
+  background:#f5f4ef!important;color:#353a40!important;
+}
+body.theme-standard01 .nav,body.theme-standard02 .nav{background:rgba(250,249,246,.96)!important;border-bottom-color:var(--theme-border)!important}
+body.theme-standard01 .nav-links a,body.theme-standard01 .brand-name,
+body.theme-standard02 .nav-links a,body.theme-standard02 .brand-name{color:var(--navy)!important}
+body.theme-standard01 .nav-cta,body.theme-standard01 .btn-dark,
+body.theme-standard02 .nav-cta,body.theme-standard02 .btn-dark{background:var(--navy)!important;color:#fff!important}
+body.theme-standard01 .btn-gold{background:#b49a62!important;color:#172b45!important}
+body.theme-standard02 .btn-gold{background:#718b78!important;color:#17332c!important}
+body.theme-standard01 .btn-outline,body.theme-standard02 .btn-outline{background:#fffefa!important;color:var(--navy)!important;border-color:var(--gold)!important}
+body.theme-standard01 .hero{background:linear-gradient(135deg,#fdfbf6,#eeeae0)!important}
+body.theme-standard02 .hero{background:linear-gradient(135deg,#fbfcf8,#e8ece6)!important}
+body.theme-standard01 .credibility{background:linear-gradient(135deg,#172b45,#243b57)!important;color:#fff!important}
+body.theme-standard02 .credibility{background:linear-gradient(135deg,#1b304b,#29435f)!important;color:#fff!important}
+body.theme-standard01 .section.soft,body.theme-standard02 .section.soft{background:var(--soft)!important}
+body.theme-standard01 .contact-info,body.theme-standard02 .contact-info{background:var(--navy)!important;color:#fff!important}
+body.theme-standard01 .theme-option,body.theme-standard02 .theme-option{background:var(--theme-surface)!important;color:var(--theme-text)!important}
+
+/* Keep text readable inside every themed surface. */
+body .theme-option b,body .admin-card h3,body .admin-stat b,body .login-box h2{color:var(--navy)!important}
+body .theme-option small,body .admin-note{color:var(--theme-muted)!important}
+body .ai-reference-main,body .ai-chat-card,body .ai-reference-conversation,body .ai-reference-composer{color:var(--theme-text)!important}
+body .ai-chat-card-head h3,body .ai-popular-head h3{color:var(--navy)!important}
+body .ai-reference-composer textarea{background:var(--theme-surface)!important;color:var(--theme-text)!important;border-color:var(--theme-border)!important}
+body .ai-popular-grid button{background:var(--theme-surface)!important;color:var(--navy)!important;border-color:var(--theme-border)!important}
+body .ai-popular-grid button:hover{background:var(--soft)!important;color:var(--navy)!important;border-color:var(--gold)!important}
+body .ai-reference-send{background:var(--navy)!important;color:#fff!important}
+</style>
 </head>
 
 <body>
