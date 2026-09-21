@@ -778,6 +778,30 @@ body.theme-standard01 .contact-info,body.theme-standard02 .contact-info{backgrou
 button,a,input,select,textarea{max-width:100%}
 img,video{max-width:100%;height:auto}
 </style>
+
+<style id="elevate360-readability-ai-final">
+/* Readability pass: preserve the Elevate360 theme while increasing small UI text. */
+.ai-page-container, .ai-hub-page{font-size:16px}
+.ai-page-intro p{font-size:1rem!important}
+.ai-popular-head h3{font-size:1rem!important}.ai-popular-head button{font-size:.78rem!important}
+.ai-popular-grid button{font-size:.82rem!important;padding:11px 13px!important}
+.ai-category-bar button{font-size:.72rem!important;padding:8px 11px!important}
+.ai-chat-card-head h3{font-size:1rem!important}.ai-chat-card-head p{font-size:.78rem!important}.ai-chat-status{font-size:.62rem!important}
+.ai-reference-conversation .ai-message{font-size:.82rem!important;line-height:1.65!important}.ai-reference-conversation .ai-message-label{font-size:.62rem!important}
+.ai-reference-welcome{font-size:.8rem!important}.ai-reference-welcome strong{font-size:.95rem!important}
+.ai-reference-composer textarea{font-size:.85rem!important;min-height:78px!important}.ai-composer-tools button{font-size:.68rem!important}.ai-reference-right,.ai-support-card>small,.ai-check,.ai-recent-item{font-size:.72rem!important}
+.ai-message{font-size:.9rem!important;line-height:1.7!important}.ai-message-label{font-size:.66rem!important}
+.ai-quick-title{font-size:.7rem!important}.ai-quick button{font-size:.74rem!important;padding:9px 12px!important}
+.ai-input-label{font-size:.72rem!important}.ai-prompt-v4{font-size:.9rem!important;line-height:1.55!important}.ai-composer-footer{font-size:.68rem!important}.ai-text-btn{font-size:.7rem!important}.ai-disclaimer{font-size:.64rem!important;line-height:1.5!important}
+.auth-forgot-link{margin-top:9px!important}.login-field label{font-size:.72rem!important}.login-field input{font-size:.95rem!important;padding:13px!important}.login-box p,.admin-note{font-size:.78rem!important;line-height:1.5}
+.e360-ai-loader{display:inline-flex;align-items:center;gap:10px;font-weight:700;color:var(--navy)}
+.e360-ai-orb{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--gold);color:var(--navy);font-size:.62rem;font-weight:900;box-shadow:0 0 0 0 rgba(201,160,74,.35);animation:e360Pulse 1.4s infinite}
+.e360-ai-dots{display:inline-block;min-width:18px;animation:e360Dots 1.1s steps(3,end) infinite}
+@keyframes e360Pulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(201,160,74,.25)}50%{transform:scale(1.08);box-shadow:0 0 0 9px rgba(201,160,74,0)}}
+@keyframes e360Dots{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
+button:disabled{opacity:.6;cursor:wait!important;transform:none!important}
+@media(max-width:760px){.ai-page-intro p{font-size:.92rem!important}.ai-popular-grid button{font-size:.8rem!important}.ai-reference-conversation .ai-message{font-size:.86rem!important}.ai-prompt-v4{font-size:.9rem!important}}
+</style>
 </head>
 
 <body>
@@ -1786,6 +1810,8 @@ const old=JSON.parse(localStorage.getItem(V4)||'null')||{};
 const defaultsV={programs:basePrograms,goals:baseGoals,dayStatus:{},availabilityRules:[],users:[],pdca:[],goalsData:[],schedules:[],portfolio:[],aiAgents:agents,monthly:{kicker:'PEOPLE · PROGRESS · POSSIBILITIES',line1:'Build the',line2:'career',line3:'you are',line4:'capable of.'},messages:[],messageThreads:[]};
 const v={...defaultsV,...old};
 for(const k of ['programs','goals','users','pdca','goalsData','schedules','portfolio','aiAgents','availabilityRules','messages','messageThreads']) if(!Array.isArray(v[k])) v[k]=defaultsV[k];
+// Never retain member passwords in browser data. Authentication passwords are handled by the secure account service.
+v.users.forEach(u=>{if(u&&Object.prototype.hasOwnProperty.call(u,'password'))delete u.password;if(u&&Object.prototype.hasOwnProperty.call(u,'pass'))delete u.pass;});
 const sv=()=>localStorage.setItem(V4,JSON.stringify(v));
 window.db=db;window.saveDB=saveDB;window.careerosV=v;
 // Elevate360 administrator credentials. Migrate the original demo credentials once, while preserving any later admin changes.
@@ -1833,9 +1859,14 @@ if(book){
 const auth=document.getElementById('memberAuth'), body=document.getElementById('memberAuthBody'), title=document.getElementById('memberAuthTitle');
 function showAuth(mode){
  auth.classList.add('open'); title.textContent=mode==='register'?'Register for Elevate360':'Member Login';
- body.innerHTML=mode==='register'?`<form id="regForm"><div class="login-field"><label>Full name</label><input id="rName" required></div><div class="login-field"><label>Email</label><input id="rEmail" type="email" required></div><div class="login-field"><label>Password</label><input id="rPass" type="password" minlength="6" required></div><div class="login-field"><label>Target career / goal</label><input id="rTarget"></div><button class="btn btn-gold" type="submit">Submit Registration →</button><p class="admin-note">Your account remains pending until the administrator approves it.</p></form>`:`<form id="memLogin"><div class="login-field"><label>Email</label><input id="lEmail" type="email" required></div><div class="login-field"><label>Password</label><input id="lPass" type="password" required></div><button class="btn btn-gold" type="submit">Login →</button><button type="button" class="auth-register-link" id="openRegisterFromLogin">New here? Register for Elevate360</button><p class="admin-note" id="memMsg"></p></form>`;
- if(mode==='register') $('regForm').onsubmit=async e=>{e.preventDefault();const name=$('rName').value.trim(),email=$('rEmail').value.trim().toLowerCase(),password=$('rPass').value,target=$('rTarget').value.trim();if(!name||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||password.length<6)return alert('Please enter your full name, a valid email address and a password of at least 6 characters.');if(v.users.some(u=>u.email===email))return alert('An account already exists for this email.');const submit=e.currentTarget.querySelector('button[type=submit]');if(submit){submit.disabled=true;submit.textContent='Submitting…';}try{if(typeof window.elevate360RegisterMember==='function'){await window.elevate360RegisterMember({name,email,password,target});}else{v.users.push({id:'u'+Date.now(),name,email,password,target,status:'Pending Approval',joined:new Date().toISOString(),progress:0});sv();}alert('Registration submitted. The administrator must approve your account.');auth.classList.remove('open');renderAdmin();}catch(error){const msg=window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'Registration could not be completed.');alert(msg);}finally{if(submit){submit.disabled=false;submit.textContent='Submit Registration →';}}};
- else {$('openRegisterFromLogin').onclick=()=>showAuth('register');$('memLogin').onsubmit=async e=>{e.preventDefault();const email=$('lEmail').value.trim().toLowerCase(),password=$('lPass').value;try{if(typeof window.elevate360LoginMember==='function'){const result=await window.elevate360LoginMember({email,password});if(!result)return;}else{const u=v.users.find(x=>x.email===email&&x.password===password);if(!u)throw new Error('Incorrect email or password.');if(!['Approved','Active'].includes(u.status))throw new Error('Account status: '+u.status+'. Premium access is not available yet.');sessionStorage.setItem('careerosMember',u.id);updateMemberButtons();openMember(u);auth.classList.remove('open');}}catch(error){$('memMsg').textContent=window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'Login could not be completed.');}};}
+ body.innerHTML=mode==='register'?`<form id="regForm"><div class="login-field"><label>Full name</label><input id="rName" autocomplete="name" required></div><div class="login-field"><label>Email</label><input id="rEmail" type="email" autocomplete="email" required></div><div class="login-field"><label>Password</label><input id="rPass" type="password" minlength="6" autocomplete="new-password" required></div><div class="login-field"><label>Confirm password</label><input id="rPassConfirm" type="password" minlength="6" autocomplete="new-password" required></div><div class="login-field"><label>Target career / goal</label><input id="rTarget"></div><button class="btn btn-gold" type="submit">Submit Registration →</button><p class="admin-note">Your account remains pending until the administrator approves it.</p></form>`:`<form id="memLogin"><div class="login-field"><label>Email</label><input id="lEmail" type="email" autocomplete="email" required></div><div class="login-field"><label>Password</label><input id="lPass" type="password" autocomplete="current-password" required></div><button class="btn btn-gold" type="submit">Login →</button><button type="button" class="auth-register-link auth-forgot-link" id="forgotPasswordBtn">Forgot password?</button><button type="button" class="auth-register-link" id="openRegisterFromLogin">New here? Register for Elevate360</button><p class="admin-note" id="memMsg"></p></form>`;
+ if(mode==='register') {
+   $('regForm').onsubmit=async e=>{e.preventDefault();const name=$('rName').value.trim(),email=$('rEmail').value.trim().toLowerCase(),password=$('rPass').value,confirmPassword=$('rPassConfirm').value,target=$('rTarget').value.trim();if(!name||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||password.length<6)return alert('Please enter your full name, a valid email address and a password of at least 6 characters.');if(password!==confirmPassword)return alert('The two passwords do not match.');if(v.users.some(u=>u.email===email))return alert('An account already exists for this email.');const submit=e.currentTarget.querySelector('button[type=submit]');if(submit){submit.disabled=true;submit.textContent='Submitting…';}try{if(typeof window.elevate360RegisterMember==='function'){await window.elevate360RegisterMember({name,email,password,target});}else{v.users.push({id:'u'+Date.now(),name,email,target,status:'Pending Approval',joined:new Date().toISOString(),progress:0});sv();}alert('Registration submitted. The administrator must approve your account.');auth.classList.remove('open');renderAdmin();}catch(error){const msg=window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'Registration could not be completed.');alert(msg);}finally{if(submit){submit.disabled=false;submit.textContent='Submit Registration →';}}};
+ } else {
+   $('openRegisterFromLogin').onclick=()=>showAuth('register');
+   $('forgotPasswordBtn').onclick=async()=>{const email=$('lEmail').value.trim().toLowerCase()||prompt('Enter the email address used for your Elevate360 account:','');if(!email)return;if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ $('memMsg').textContent='Enter a valid email address.'; return; } try { if(typeof window.elevate360ResetMemberPassword!=='function')throw new Error('Password recovery is temporarily unavailable.'); $('memMsg').textContent='Sending your password recovery email…'; await window.elevate360ResetMemberPassword(email); $('memMsg').textContent='If an account uses that email address, a password recovery email has been sent. Check your inbox and spam folder.'; } catch(error){$('memMsg').textContent=window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'Password recovery could not be completed.');}};
+   $('memLogin').onsubmit=async e=>{e.preventDefault();const email=$('lEmail').value.trim().toLowerCase(),password=$('lPass').value;try{if(typeof window.elevate360LoginMember==='function'){const result=await window.elevate360LoginMember({email,password});if(!result)return;}else{const u=v.users.find(x=>x.email===email&&x.password===password);if(!u)throw new Error('Incorrect email or password.');if(!['Approved','Active'].includes(u.status))throw new Error('Account status: '+u.status+'. Premium access is not available yet.');sessionStorage.setItem('careerosMember',u.id);updateMemberButtons();openMember(u);auth.classList.remove('open');}}catch(error){$('memMsg').textContent=window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'Login could not be completed.');}};
+ }
 }
 $('loginBtn')?.addEventListener('click',e=>{if(sessionStorage.getItem('careerosMember')){sessionStorage.removeItem('careerosMember');updateMemberButtons();alert('You have been logged out.');}else showAuth('login')});
 $('closeMemberAuth')?.addEventListener('click',()=>auth.classList.remove('open'));
@@ -1868,7 +1899,7 @@ function renderMember(u,view){
  if($('addSchedule'))$('addSchedule').onclick=()=>{if(!$('sTitle').value.trim()||!$('sDate').value)return;v.schedules.push({id:'s'+Date.now(),userId:u.id,title:$('sTitle').value.trim(),date:$('sDate').value,time:$('sTime').value,status:$('sStatus').value});sv();renderMember(u,'My Schedule')};
 }
 function careerPlanText(q,u){return `CAREER DEVELOPMENT PLAN\n\nTarget: ${q||'Define your target career'}\n\n90-DAY ROADMAP\n1. Clarify the target role and success measures.\n2. Identify the three highest-value skills or experiences to develop.\n3. Create weekly actions and add them to Goals and Schedule.\n4. Record evidence of progress and feedback.\n5. Review using PDCA at the end of each month.\n\nNEXT STEP\nChoose one action you can complete in the next 7 days.`}
-function renderAI(root,u){let a=v.aiAgents||agents;root.innerHTML=`<div class="ai-hub-v4"><aside class="ai-menu-v4"><h3>AI Career Hub</h3>${a.map((x,i)=>`<button class="ai-agent-btn ${i?'':'active'}" data-ai="${i}"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></button>`).join('')}</aside><div class="ai-work-v4"><div class="admin-badge">● AI Career Hub Online</div><h2 id="aiTitle4">${esc(a[0][0])}</h2><p id="aiDesc4">${esc(a[0][1])}</p><div class="ai-quick" id="aiQuick4"></div><textarea class="ai-prompt-v4" id="aiPrompt4" placeholder="Tell the AI Career Hub what you need help with..."></textarea><div class="admin-actions"><button class="btn btn-gold" id="askAI4">Ask AI Career Hub →</button><button class="btn btn-outline" id="attachAI4">⌕ Attach File</button><input id="memberAIFile4" type="file" hidden accept=".pdf,.doc,.docx,.xlsx,.xls,.ppt,.pptx,.txt,.csv,.json,.md,.rtf,image/*"><button class="btn btn-outline" id="clearAI4">Clear</button></div><div id="memberAIFileStatus4" class="ai-attachment-status"></div><div class="ai-response-v4" id="aiResponse4">Your AI Career Hub response will appear here.</div><div class="admin-actions"><button class="btn btn-gold" id="saveAI4">Save to Career Portfolio</button><button class="btn btn-outline" id="copyAI4">Copy Response</button></div><p class="admin-note">AI guidance is developmental and should be reviewed with your own judgement.</p></div></div>`;let idx=0,doc=null;const set=i=>{idx=i;root.querySelectorAll('.ai-agent-btn').forEach((b,j)=>b.classList.toggle('active',j===i));root.querySelector('#aiTitle4').textContent=a[i][0];root.querySelector('#aiDesc4').textContent=a[i][1];root.querySelector('#aiQuick4').innerHTML=(a[i][2]||[]).map(q=>`<button>${esc(q)}</button>`).join('');root.querySelectorAll('#aiQuick4 button').forEach(b=>b.onclick=()=>root.querySelector('#aiPrompt4').value=b.textContent)};set(0);root.querySelectorAll('.ai-agent-btn').forEach((b,i)=>b.onclick=()=>set(i));root.querySelector('#attachAI4').onclick=()=>root.querySelector('#memberAIFile4').click();root.querySelector('#memberAIFile4').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const status=root.querySelector('#memberAIFileStatus4');status.textContent='Reading '+f.name+'…';try{const ext=(f.name.split('.').pop()||'').toLowerCase();let text='';if(['txt','csv','json','md','rtf'].includes(ext))text=await f.text();else if(ext==='pdf'&&window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;let pages=[];for(let n=1;n<=pdf.numPages;n++){const c=await (await pdf.getPage(n)).getTextContent();pages.push(c.items.map(x=>x.str).join(' '));if(pages.join('\n').length>120000)break}text=pages.join('\n')}else if((ext==='docx'||ext==='xlsx'||ext==='xls'||ext==='pptx')&&window.JSZip){if(ext==='docx'){const z=await JSZip.loadAsync(await f.arrayBuffer());const xml=await z.file('word/document.xml').async('text');const d=new DOMParser().parseFromString(xml,'application/xml');text=[...d.getElementsByTagName('w:t')].map(n=>n.textContent).join(' ')}else if((ext==='xlsx'||ext==='xls')&&window.XLSX){const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});text=wb.SheetNames.map(n=>n+'\n'+XLSX.utils.sheet_to_csv(wb.Sheets[n])).join('\n\n')}else{const z=await JSZip.loadAsync(await f.arrayBuffer());const names=Object.keys(z.files).filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n)).sort();for(const n of names){const d=new DOMParser().parseFromString(await z.file(n).async('text'),'application/xml');text+=[...d.getElementsByTagName('a:t')].map(x=>x.textContent).join(' ')+'\n'}}}else throw new Error('Supported files: PDF, DOCX, XLS/XLSX, PPTX, TXT, CSV, JSON, MD and RTF.');doc={name:f.name,text:String(text).slice(0,180000)};status.textContent='✓ '+f.name+' ready for AI questions'}catch(err){doc=null;status.textContent='Could not read file: '+(err.message||'unsupported file')}};root.querySelector('#askAI4').onclick=async()=>{let q=root.querySelector('#aiPrompt4').value.trim();if(!q)return;const response=root.querySelector('#aiResponse4');response.textContent='AI is preparing your career guidance…';try{const answer=window.elevate360AskAI?await window.elevate360AskAI({question:q,agent:a[idx][0],description:a[idx][1],document:doc}):aiDemo(a[idx][0],q,u);response.textContent=answer}catch(err){response.textContent='AI could not answer right now. Please check your the secure AI service connection and try again.\n\nTechnical detail: '+(err.message||err)}};root.querySelector('#clearAI4').onclick=()=>{root.querySelector('#aiPrompt4').value='';root.querySelector('#aiResponse4').textContent='Your AI Career Hub response will appear here';doc=null;root.querySelector('#memberAIFileStatus4').textContent=''};root.querySelector('#copyAI4').onclick=()=>navigator.clipboard?.writeText(root.querySelector('#aiResponse4').textContent);root.querySelector('#saveAI4').onclick=()=>{v.portfolio.push({id:Date.now(),userId:u.id,agent:a[idx][0],text:root.querySelector('#aiResponse4').textContent,date:new Date().toLocaleString()});sv();alert('Saved to Career Portfolio.')}}
+function renderAI(root,u){let a=v.aiAgents||agents;root.innerHTML=`<div class="ai-hub-v4"><aside class="ai-menu-v4"><h3>AI Career Hub</h3>${a.map((x,i)=>`<button class="ai-agent-btn ${i?'':'active'}" data-ai="${i}"><b>${esc(x[0])}</b><small>${esc(x[1])}</small></button>`).join('')}</aside><div class="ai-work-v4"><div class="admin-badge">● AI Career Hub Online</div><h2 id="aiTitle4">${esc(a[0][0])}</h2><p id="aiDesc4">${esc(a[0][1])}</p><div class="ai-quick" id="aiQuick4"></div><textarea class="ai-prompt-v4" id="aiPrompt4" placeholder="Tell the AI Career Hub what you need help with..."></textarea><div class="admin-actions"><button class="btn btn-gold" id="askAI4">Ask AI Career Hub →</button><button class="btn btn-outline" id="attachAI4">⌕ Attach File</button><input id="memberAIFile4" type="file" hidden accept=".pdf,.doc,.docx,.xlsx,.xls,.ppt,.pptx,.txt,.csv,.json,.md,.rtf,image/*"><button class="btn btn-outline" id="clearAI4">Clear</button></div><div id="memberAIFileStatus4" class="ai-attachment-status"></div><div class="ai-response-v4" id="aiResponse4">Your AI Career Hub response will appear here.</div><div class="admin-actions"><button class="btn btn-gold" id="saveAI4">Save to Career Portfolio</button><button class="btn btn-outline" id="copyAI4">Copy Response</button></div><p class="admin-note">AI guidance is developmental and should be reviewed with your own judgement.</p></div></div>`;let idx=0,doc=null;const set=i=>{idx=i;root.querySelectorAll('.ai-agent-btn').forEach((b,j)=>b.classList.toggle('active',j===i));root.querySelector('#aiTitle4').textContent=a[i][0];root.querySelector('#aiDesc4').textContent=a[i][1];root.querySelector('#aiQuick4').innerHTML=(a[i][2]||[]).map(q=>`<button>${esc(q)}</button>`).join('');root.querySelectorAll('#aiQuick4 button').forEach(b=>b.onclick=()=>root.querySelector('#aiPrompt4').value=b.textContent)};set(0);root.querySelectorAll('.ai-agent-btn').forEach((b,i)=>b.onclick=()=>set(i));root.querySelector('#attachAI4').onclick=()=>root.querySelector('#memberAIFile4').click();root.querySelector('#memberAIFile4').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;const status=root.querySelector('#memberAIFileStatus4');status.textContent='Reading '+f.name+'…';try{const ext=(f.name.split('.').pop()||'').toLowerCase();let text='';if(['txt','csv','json','md','rtf'].includes(ext))text=await f.text();else if(ext==='pdf'&&window.pdfjsLib){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;let pages=[];for(let n=1;n<=pdf.numPages;n++){const c=await (await pdf.getPage(n)).getTextContent();pages.push(c.items.map(x=>x.str).join(' '));if(pages.join('\n').length>120000)break}text=pages.join('\n')}else if((ext==='docx'||ext==='xlsx'||ext==='xls'||ext==='pptx')&&window.JSZip){if(ext==='docx'){const z=await JSZip.loadAsync(await f.arrayBuffer());const xml=await z.file('word/document.xml').async('text');const d=new DOMParser().parseFromString(xml,'application/xml');text=[...d.getElementsByTagName('w:t')].map(n=>n.textContent).join(' ')}else if((ext==='xlsx'||ext==='xls')&&window.XLSX){const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});text=wb.SheetNames.map(n=>n+'\n'+XLSX.utils.sheet_to_csv(wb.Sheets[n])).join('\n\n')}else{const z=await JSZip.loadAsync(await f.arrayBuffer());const names=Object.keys(z.files).filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n)).sort();for(const n of names){const d=new DOMParser().parseFromString(await z.file(n).async('text'),'application/xml');text+=[...d.getElementsByTagName('a:t')].map(x=>x.textContent).join(' ')+'\n'}}}else throw new Error('Supported files: PDF, DOCX, XLS/XLSX, PPTX, TXT, CSV, JSON, MD and RTF.');doc={name:f.name,text:String(text).slice(0,180000)};status.textContent='✓ '+f.name+' ready for AI questions'}catch(err){doc=null;status.textContent='Could not read file: '+(err.message||'unsupported file')}};root.querySelector('#askAI4').onclick=async()=>{let q=root.querySelector('#aiPrompt4').value.trim();if(!q)return;const response=root.querySelector('#aiResponse4'),button=root.querySelector('#askAI4');response.innerHTML='<span class="e360-ai-loader"><span class="e360-ai-orb">E360</span><span>Elevate360 AI is preparing your answer<span class="e360-ai-dots">…</span></span></span>';button.disabled=true;try{const answer=window.elevate360AskAI?await window.elevate360AskAI({question:q,agent:a[idx][0],description:a[idx][1],document:doc,onChunk:(full)=>{response.textContent=full}}):aiDemo(a[idx][0],q,u);response.textContent=answer}catch(err){response.textContent=window.elevate360FriendlyError?window.elevate360FriendlyError(err):'Elevate360 AI could not answer right now. Please try again.'}finally{button.disabled=false}};root.querySelector('#clearAI4').onclick=()=>{root.querySelector('#aiPrompt4').value='';root.querySelector('#aiResponse4').textContent='Your AI Career Hub response will appear here';doc=null;root.querySelector('#memberAIFileStatus4').textContent=''};root.querySelector('#copyAI4').onclick=()=>navigator.clipboard?.writeText(root.querySelector('#aiResponse4').textContent);root.querySelector('#saveAI4').onclick=()=>{v.portfolio.push({id:Date.now(),userId:u.id,agent:a[idx][0],text:root.querySelector('#aiResponse4').textContent,date:new Date().toLocaleString()});sv();alert('Saved to Career Portfolio.')}}
 function aiDemo(agent,q,u){
  const guidance={
   'Career Navigator':['CLARIFY','What role, industry or direction are you targeting?','GAP CHECK','What experience, skills or exposure are you missing?','NEXT STEP','Choose one practical action you can complete within 7 days.'],
@@ -1929,7 +1960,7 @@ if(publicAIQuick){
  const readPptx=async file=>{if(!window.JSZip)throw new Error('PPTX reader is unavailable.');const zip=await JSZip.loadAsync(await file.arrayBuffer());const names=Object.keys(zip.files).filter(n=>/^ppt\/slides\/slide\d+\.xml$/.test(n)).sort();let out=[];for(const name of names){const xml=await zip.file(name).async('text');const doc=new DOMParser().parseFromString(xml,'application/xml');out.push([...doc.getElementsByTagName('a:t')].map(n=>n.textContent).join(' '))}return cleanText(out.join('\n\n'))};
  const readFileText=async file=>{const ext=(file.name.split('.').pop()||'').toLowerCase();if(file.size>12*1024*1024)throw new Error('File is larger than 12 MB. Please upload a smaller file.');if(['txt','csv','json','md','rtf'].includes(ext))return cleanText(await file.text());if(ext==='pdf')return readPdf(file);if(ext==='docx')return readDocx(file);if(['xlsx','xls'].includes(ext))return readXlsx(file);if(ext==='pptx')return readPptx(file);if(file.type.startsWith('text/'))return cleanText(await file.text());throw new Error('Supported AI document types are PDF, DOCX, XLS/XLSX, PPTX, TXT, CSV, JSON, MD and RTF.');};
  const bestDocumentAnswer=(q,text)=>{if(!text)return '';const words=[...new Set((q.toLowerCase().match(/[a-z0-9]{3,}/g)||[]).filter(w=>!['the','and','for','what','how','can','you','with','this','that','from','about','does','are','was','why'].includes(w)))];const paras=text.split(/\n{2,}|(?<=[.!?])\s+(?=[A-Z])/).map(x=>x.trim()).filter(x=>x.length>25);const scored=paras.map(p=>({p,score:words.reduce((n,w)=>n+(p.toLowerCase().includes(w)?1:0),0)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,4);if(!scored.length)return `I read “${attachedDocument.name}”, but I could not find a passage closely matching your question. Try using a specific name, heading, topic, number or phrase from the file.`;return `DOCUMENT ANSWER — ${attachedDocument.name}\n\n${scored.map((x,i)=>`${i+1}. ${x.p.slice(0,700)}`).join('\n\n')}\n\nThe answer above is grounded in the text extracted from your attachment. Ask a follow-up question if you want me to focus on a specific section.`};
- const ask=async()=>{const q=$('publicAIPrompt').value.trim();if(!q)return;const u=currentMember();addMessage('user',q);const typing=addMessage('ai','AI is preparing your career guidance…');$('publicAIPrompt').value='';$('publicAIPrompt').classList.remove('ai-prompt-active');try{let answer=window.elevate360AskAI?await window.elevate360AskAI({question:q,agent:pa[pi]?.[0]||'Career Navigator',description:pa[pi]?.[1]||'',document:attachedDocument}):aiDemo(pa[pi][0],q,u);typing.querySelector('div:last-child').textContent=answer;addHistory(q,answer,pa[pi][0])}catch(err){typing.querySelector('div:last-child').textContent='AI could not answer right now. Please check your the secure AI service connection and try again.\n\nTechnical detail: '+(err.message||err)}};
+ const ask=async()=>{const q=$('publicAIPrompt').value.trim();if(!q)return;const u=currentMember();addMessage('user',q);const typing=addMessage('ai','');const output=typing.querySelector('div:last-child');output.innerHTML='<span class="e360-ai-loader"><span class="e360-ai-orb">E360</span><span>Elevate360 AI is preparing your answer<span class="e360-ai-dots">…</span></span></span>';$('publicAIPrompt').value='';$('publicAIPrompt').classList.remove('ai-prompt-active');$('publicAskAI').disabled=true;try{let answer=window.elevate360AskAI?await window.elevate360AskAI({question:q,agent:pa[pi]?.[0]||'Career Navigator',description:pa[pi]?.[1]||'',document:attachedDocument,onChunk:(full)=>{output.textContent=full}}):aiDemo(pa[pi][0],q,u);output.textContent=answer;addHistory(q,answer,pa[pi][0])}catch(err){output.textContent=window.elevate360FriendlyError?window.elevate360FriendlyError(err):'Elevate360 AI could not answer right now. Please try again.'}finally{$('publicAskAI').disabled=false}};
  $('publicAskAI').onclick=ask;$('publicAIPrompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask()}});$('publicClearAI').onclick=()=>{resetConversation();$('publicAIPrompt').value='';$('publicAIPrompt').classList.remove('ai-prompt-active');attachedDocument=null;status('')};$('publicCopyAI').onclick=()=>{const msgs=[...conversation.querySelectorAll('.ai-message')].map(x=>x.innerText).join('\n\n');if(msgs)navigator.clipboard?.writeText(msgs)};$('publicSaveAI').onclick=()=>{const u=currentMember();if(!u){showAuth('login');return}const msgs=[...conversation.querySelectorAll('.ai-message')].slice(-2).map(x=>x.innerText).join('\n\n');if(!msgs)return;v.portfolio.push({id:Date.now(),userId:u.id,agent:pa[pi][0],text:msgs,date:new Date().toLocaleString()});sv();alert('Saved to Career Portfolio.')};$('publicHistory')?.addEventListener('click',()=>{renderHistory();openModal('aiHistoryModal')});$('clearAIHistory')?.addEventListener('click',()=>{if(confirm('Clear your AI conversation history?')){localStorage.removeItem(historyKey);renderHistory()}});
  $('publicAttachAI')?.addEventListener('click',()=>$('publicAIFileInput')?.click());$('publicAIFileInput')?.addEventListener('change',async e=>{const files=[...e.target.files||[]];if(!files.length)return;const file=files[0];status('Reading '+file.name+'…');try{const text=await readFileText(file);attachedDocument={name:file.name,text:text.slice(0,180000)};status('✓ '+file.name+' attached · '+Math.round(text.length/1000)+' KB of text ready');let chip=document.querySelector('#publicAIConversation .ai-file-card');if(!chip){chip=document.createElement('div');chip.className='ai-file-card';conversation.appendChild(chip)}chip.innerHTML=`<b>Attached file: ${esc(file.name)}</b><small>The AI can now answer questions using the extracted document text. Attach another file to replace it.</small>`}catch(err){attachedDocument=null;status('Could not read '+file.name+': '+(err.message||'unsupported file'),true)}e.target.value=''});
  renderHistory();
@@ -2003,7 +2034,7 @@ function applyContactDetails(){const phone=db.contactPhone||defaults.contactPhon
 applyContactDetails();
 function renderSettingsAdmin(){const bank=db.bankPayment||defaults.bankPayment;adminDynamic.innerHTML=`<div class="admin-card"><h3>Owner, administrator & contact settings</h3><div class="admin-form"><div class="full"><label>Email receiving bookings and messages</label><input id="ownerEmail2" type="email" value="${esc(db.ownerEmail)}"></div><div><label>Public phone number</label><input id="contactPhone2" value="${esc(db.contactPhone||'')}" placeholder="e.g. 076 052 2694"></div><div><label>WhatsApp number (optional)</label><input id="contactWhatsapp2" value="${esc(db.contactWhatsapp||'')}" placeholder="e.g. 27760522694"></div><div class="full"><label>Public location</label><input id="contactLocation2" value="${esc(db.contactLocation||'')}" placeholder="City / region"></div><div><label>Administrator username</label><input id="adminUser2" value="${esc(db.adminUser)}"></div><div><label>Administrator password</label><input id="adminPass2" type="password" value="${esc(db.adminPass)}"></div></div><button class="btn btn-gold" id="saveAdminSettings">Save Owner & Contact Settings</button><p class="admin-note">The administrator can update the public contact details shown on the website. For production security, do not store internet-banking passwords or card PINs here.</p></div><div class="admin-card"><h3>Payment / bank connection</h3><p class="admin-note">Configure the business bank account for EFT payments or connect a secure payment-provider checkout link. This website does not request or store internet-banking passwords, PINs or card CVVs.</p><div class="admin-bank-grid"><div><label>Bank name</label><input id="bankNameAdmin" value="${esc(bank.bankName)}" placeholder="e.g. FNB"></div><div><label>Account holder</label><input id="bankHolderAdmin" value="${esc(bank.accountHolder)}"></div><div><label>Account number</label><input id="bankNumberAdmin" value="${esc(bank.accountNumber)}"></div><div><label>Branch code</label><input id="bankBranchAdmin" value="${esc(bank.branchCode)}"></div><div><label>Account type</label><input id="bankTypeAdmin" value="${esc(bank.accountType)}" placeholder="Cheque / Current / Savings"></div><div><label>Reference prefix</label><input id="bankRefAdmin" value="${esc(bank.referencePrefix||'ELEVATE360')}"></div><div><label>Payment provider</label><select id="paymentProviderAdmin"><option value="">Bank / EFT only</option><option value="PayFast">PayFast</option><option value="Yoco">Yoco</option><option value="Paystack">Paystack</option><option value="Other">Other provider</option></select></div><div><label>Online payment link</label><input id="onlinePaymentUrlAdmin" type="url" value="${esc(bank.onlinePaymentUrl||'')}" placeholder="https://secure-provider.example/..." /></div><div class="full"><label>Payment instructions</label><textarea id="bankNoteAdmin">${esc(bank.paymentNote)}</textarea></div><div class="full"><label><input id="bankEnabledAdmin" type="checkbox" ${bank.enabled!==false?'checked':''}> Enable Bank Transfer / EFT option</label></div></div><div class="admin-actions"><button class="btn btn-gold" id="saveBankSettings">Save Payment Settings</button><button class="btn btn-outline" id="testPaymentLink">Test Payment Link</button></div><div class="payment-assist">Use a secure payment provider account that is connected to the business bank account. The site will send customers to that provider for the actual payment.</div></div><div class="admin-card"><h3>Administrator data controls</h3><p class="admin-note">The administrator has full control of website content, programmes, pricing, users, bookings, availability, messages, themes, AI settings and payments through the administration menu.</p><button class="btn danger" id="clearAllBookings2">Delete All Bookings</button> <button class="btn danger" id="clearAllMessages2">Delete All Messages</button> <button class="btn danger" id="clearAllUsers2">Delete All Users</button></div>`;$('paymentProviderAdmin').value=bank.provider||'';$('saveAdminSettings').onclick=()=>{if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('ownerEmail2').value.trim()))return alert('Enter a valid email.');db.ownerEmail=$('ownerEmail2').value.trim();db.contactPhone=$('contactPhone2').value.trim()||defaults.contactPhone;db.contactWhatsapp=$('contactWhatsapp2').value.trim();db.contactLocation=$('contactLocation2').value.trim()||defaults.contactLocation;db.adminUser=$('adminUser2').value.trim()||'Elevate360';db.adminPass=$('adminPass2').value||'360';saveDB();applyContactDetails();alert('Owner, contact and administrator settings saved.')};$('saveBankSettings').onclick=()=>{db.bankPayment={enabled:$('bankEnabledAdmin').checked,provider:$('paymentProviderAdmin').value,bankName:$('bankNameAdmin').value.trim(),accountHolder:$('bankHolderAdmin').value.trim(),accountNumber:$('bankNumberAdmin').value.trim(),branchCode:$('bankBranchAdmin').value.trim(),accountType:$('bankTypeAdmin').value.trim(),referencePrefix:$('bankRefAdmin').value.trim()||'ELEVATE360',paymentNote:$('bankNoteAdmin').value.trim()||'Use your booking ID as the payment reference. Attach proof of payment before submitting.',onlinePaymentUrl:$('onlinePaymentUrlAdmin').value.trim()};saveDB();alert('Payment settings saved.');renderSettingsAdmin()};$('testPaymentLink').onclick=()=>{const url=$('onlinePaymentUrlAdmin').value.trim();if(!url)return alert('Add the secure payment-provider URL first.');const test=url.replaceAll('{amount}','1').replaceAll('{reference}','TEST-ELEVATE360').replaceAll('{email}',encodeURIComponent(db.ownerEmail));window.open(test,'_blank','noopener,noreferrer')};$('clearAllBookings2').onclick=()=>{if(confirm('Delete all bookings?')){db.bookings=[];saveDB();renderSettingsAdmin()}};$('clearAllMessages2').onclick=()=>{if(confirm('Delete all messages?')){db.messages=[];v.messageThreads=[];sv();renderSettingsAdmin()}};$('clearAllUsers2').onclick=()=>{if(confirm('Delete all registered users?')){v.users=[];v.goalsData=[];v.pdca=[];v.schedules=[];v.portfolio=[];v.messageThreads=[];sv();renderSettingsAdmin()}}}
 /* Admin actions */
-window.careerosUserStatus=(id,status)=>{const u=v.users.find(x=>x.id===id);if(u){u.status=status;sv();renderUsersAdmin();}};
+window.careerosUserStatus=async(id,status)=>{const u=v.users.find(x=>x.id===id);if(!u)return;try{if(window.elevate360CloudAdminSignIn){await window.elevate360CloudAdminSignIn();}if(!currentFirebaseUser||!firestore)throw new Error('Cloud administrator access is not connected.');await setDoc(doc(firestore,'users',String(id)),{status,updatedAt:serverTimestamp(),updatedBy:currentFirebaseUser.uid},{merge:true});u.status=status;sv();renderUsersAdmin();updateAdminHeaderStats();alert(status==='Approved'?'Member approved successfully.':'Member status updated successfully.');}catch(error){alert(window.elevate360FriendlyError?window.elevate360FriendlyError(error):(error?.message||'The member status could not be updated.'));}};
 window.careerosDeleteUser=id=>{if(confirm('Delete this user and their member records?')){v.users=v.users.filter(x=>x.id!==id);v.goalsData=v.goalsData.filter(x=>x.userId!==id);v.pdca=v.pdca.filter(x=>x.userId!==id);v.schedules=v.schedules.filter(x=>x.userId!==id);v.portfolio=v.portfolio.filter(x=>x.userId!==id);v.messageThreads=v.messageThreads.filter(x=>x.userId!==id);sv();renderUsersAdmin()}};
 window.careerosOpenUser=id=>{if(document.getElementById('selectedUserCard'))openAdminUser(id);else{const b=[...document.querySelectorAll('.admin-nav button')].find(x=>x.textContent.trim()==='Users & Approvals');openAdminView('Users & Approvals',b);setTimeout(()=>openAdminUser(id),0)}};
 window.careerosSaveUserProgress=id=>{const u=v.users.find(x=>x.id===id);if(u){u.progress=Math.max(0,Math.min(100,Number($('editUP').value)||0));sv();openAdminUser(id)}};
@@ -2047,6 +2078,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut,
   updateProfile,
   setPersistence,
@@ -2143,15 +2175,15 @@ async function getHostingFirebaseConfig() {
   }
 }
 
-window.elevate360AskAI = async function({question,agent='Career Navigator',description='',document=null,documents=null,history=[]}={}){
+window.elevate360AskAI = async function({question,agent='Career Navigator',description='',document=null,documents=null,history=[],onChunk=null}={}){
   if (firebaseInitPromise) await firebaseInitPromise;
-  if (!firebaseReady || !aiModel) throw new Error('Firebase AI Logic is not ready yet. Open Firebase Console → AI Services → AI Logic and complete the Gemini Developer API setup.');
+  if (!firebaseReady || !aiModel) throw new Error('Elevate360 AI is not ready yet. Please refresh the page and try again.');
 
   const cleanText = (value, max=12000) => String(value ?? '').slice(0, max);
   const specialist = cleanText(agent || 'Career Navigator', 120);
   const specialistDescription = cleanText(description || '', 1200);
-  const recentHistory = Array.isArray(history) ? history.slice(-8) : [];
-  const userQuestion = cleanText(question || '', 12000).trim();
+  const recentHistory = Array.isArray(history) ? history.slice(-4) : [];
+  const userQuestion = cleanText(question || '', 8000).trim();
   if (!userQuestion) throw new Error('Please enter a question.');
 
   let prompt = `SPECIALIST: ${specialist}\n${specialistDescription}\n\n` +
@@ -2165,7 +2197,7 @@ window.elevate360AskAI = async function({question,agent='Career Navigator',descr
     parts.push(`ATTACHED FILE: ${name}`);
     if (d?.dataBase64) {
       const raw = String(d.dataBase64);
-      if (raw.length > 67 * 1024 * 1024) throw new Error(`${name} is too large. Please use a smaller file.`);
+      if (raw.length > 15 * 1024 * 1024) throw new Error(`${name} is too large. Please use a smaller file.`);
       parts.push({ inlineData: { data: raw, mimeType: cleanText(d.mimeType || 'application/octet-stream', 120) } });
     } else if (d?.text) {
       parts.push(cleanText(d.text, 180000));
@@ -2173,8 +2205,23 @@ window.elevate360AskAI = async function({question,agent='Career Navigator',descr
   }
 
   try {
-    const result = await aiModel.generateContent(parts);
-    const answer = String(result?.response?.text?.() || '').trim();
+    let answer = '';
+    if (typeof aiModel.generateContentStream === 'function') {
+      const streamed = await aiModel.generateContentStream(parts);
+      if (streamed?.stream && streamed.stream[Symbol.asyncIterator]) {
+        for await (const chunk of streamed.stream) {
+          const chunkText = String(chunk?.text?.() || '');
+          if (!chunkText) continue;
+          answer += chunkText;
+          if (typeof onChunk === 'function') onChunk(answer, chunkText);
+        }
+      }
+      if (!answer && streamed?.response) answer = String((await streamed.response)?.text?.() || '');
+    } else {
+      const result = await aiModel.generateContent(parts);
+      answer = String(result?.response?.text?.() || '');
+    }
+    answer = answer.trim();
     if (!answer) throw new Error('The AI service returned an empty response.');
     return answer;
   } catch (error) {
@@ -2183,7 +2230,7 @@ window.elevate360AskAI = async function({question,agent='Career Navigator',descr
       throw new Error('The AI usage limit has been reached temporarily. Please try again later.');
     }
     if (/app check|appcheck|attestation|unauthor/i.test(message)) {
-      throw new Error('Firebase App Check rejected the request. Check that the reCAPTCHA Enterprise key allows the exact domain used to open Elevate360, then reload the site.');
+      throw new Error('Secure AI verification could not be completed. Please refresh the page and try again.');
     }
     throw error;
   }
@@ -2229,6 +2276,7 @@ async function initFirebase() {
     });
     aiModel = getGenerativeModel(firebaseAI, {
       model: AI_MODEL,
+      generationConfig: { maxOutputTokens: 1200, temperature: 0.35 },
       systemInstruction: `You are the Elevate 360 AI Career Hub, a practical professional-development assistant.\n\nGive concise, professional and actionable guidance about career planning, CVs, cover letters, interviews, study habits, leadership, workplace skills and professional growth. For CV requests, help create, improve, restructure and tailor CV content while preserving facts supplied by the user. Never invent employment history, qualifications, dates, employers, achievements or other personal facts. When a document is attached, use it as the primary source for document-specific questions and clearly say when information is not present. AI supports the journey; human judgement and coaching remain important.`
     });
 
@@ -2252,10 +2300,15 @@ async function initFirebase() {
     onAuthStateChanged(auth, async user => {
       currentFirebaseUser = user || null;
       window.Elevate360Firebase.user = currentFirebaseUser;
-      if (user) await loadCloudState();
+      if (!user) return;
+      try {
+        const profileSnap = await getDoc(doc(firestore, 'users', user.uid));
+        const profile = profileSnap.exists() ? profileSnap.data() : null;
+        if (profile?.role === 'Admin') await loadCloudState();
+      } catch (error) {
+        console.warn('Elevate360 cloud profile check failed:', error);
+      }
     });
-
-    loadCloudState().catch(error => console.warn('Initial cloud state load failed:', error));
 
   } catch (error) {
     firebaseError = error;
@@ -2292,6 +2345,7 @@ async function loadCloudState() {
       const cloud = memberSnap.data();
       if (cloud.data) {
         Object.assign(window.careerosV, cloud.data);
+        (window.careerosV.users || []).forEach(u=>{if(u&&Object.prototype.hasOwnProperty.call(u,'password'))delete u.password;if(u&&Object.prototype.hasOwnProperty.call(u,'pass'))delete u.pass;});
         localStorage.setItem('careeros_v4', JSON.stringify(window.careerosV));
         window.dispatchEvent(new CustomEvent('e360:cloud-members-loaded'));
       }
@@ -2369,7 +2423,7 @@ async function writeMessageToCloud(message) {
    4. FIREBASE AUTHENTICATION
    ========================================================= */
 async function firebaseMemberRegister(name, email, password, target) {
-  if (!firebaseReady) throw new Error('Firebase is not connected yet.');
+  if (!firebaseReady) throw new Error('The secure Elevate360 service is not connected yet.');
 
   const credential = await createUserWithEmailAndPassword(auth, email, password);
   await updateProfile(credential.user, { displayName: name });
@@ -2401,13 +2455,13 @@ async function firebaseMemberRegister(name, email, password, target) {
 }
 
 async function firebaseMemberLogin(email, password) {
-  if (!firebaseReady) throw new Error('Firebase is not connected yet.');
+  if (!firebaseReady) throw new Error('The secure Elevate360 service is not connected yet.');
   const credential = await signInWithEmailAndPassword(auth, email, password);
   const snap = await getDoc(doc(firestore, 'users', credential.user.uid));
   const profile = snap.exists() ? snap.data() : null;
 
   if (!profile) {
-    throw new Error('Your Firebase account exists, but your Elevate360 member profile is missing.');
+    throw new Error('Your Elevate360 account exists, but the member profile is missing. Please contact Elevate360.');
   }
 
   if (!['Approved', 'Active'].includes(profile.status)) {
@@ -2429,10 +2483,10 @@ async function firebaseMemberLogin(email, password) {
 /* Expose stable member auth functions to the existing UI handlers. */
 window.elevate360RegisterMember = async function({name,email,password,target}={}) {
   if (firebaseInitPromise) {
-    await Promise.race([firebaseInitPromise, new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase connection timed out. Please refresh the page and try again.')), 15000))]);
+    await Promise.race([firebaseInitPromise, new Promise((_, reject) => setTimeout(() => reject(new Error('The secure Elevate360 service took too long to respond. Please refresh the page and try again.')), 15000))]);
   }
   if (!firebaseReady) {
-    throw new Error(firebaseError?.message || 'Firebase is not connected. Please refresh the page and try again.');
+    throw new Error('The secure Elevate360 service is not connected. Please refresh the page and try again.');
   }
   const user = await firebaseMemberRegister(name,email,password,target);
   try { await signOut(auth); } catch (_) {}
@@ -2442,10 +2496,10 @@ window.elevate360RegisterMember = async function({name,email,password,target}={}
 
 window.elevate360LoginMember = async function({email,password}={}) {
   if (firebaseInitPromise) {
-    await Promise.race([firebaseInitPromise, new Promise((_, reject) => setTimeout(() => reject(new Error('Firebase connection timed out. Please refresh the page and try again.')), 15000))]);
+    await Promise.race([firebaseInitPromise, new Promise((_, reject) => setTimeout(() => reject(new Error('The secure Elevate360 service took too long to respond. Please refresh the page and try again.')), 15000))]);
   }
   if (!firebaseReady) {
-    throw new Error(firebaseError?.message || 'Firebase is not connected. Please refresh the page and try again.');
+    throw new Error('The secure Elevate360 service is not connected. Please refresh the page and try again.');
   }
   const result = await firebaseMemberLogin(email,password);
   sessionStorage.setItem('careerosMember', result.user.uid);
@@ -2455,19 +2509,87 @@ window.elevate360LoginMember = async function({email,password}={}) {
   return result;
 };
 
+async function elevate360ResetPassword(email) {
+  if (firebaseInitPromise) {
+    await Promise.race([firebaseInitPromise, new Promise((_, reject) => setTimeout(() => reject(new Error('The secure account service took too long to respond. Please refresh and try again.')), 15000))]);
+  }
+  if (!firebaseReady || !auth) throw new Error('Password recovery is temporarily unavailable. Please try again shortly.');
+  await sendPasswordResetEmail(auth, email, {
+    url: window.location.origin + window.location.pathname + '?passwordRecovery=1',
+    handleCodeInApp: false
+  });
+}
+window.elevate360ResetMemberPassword = elevate360ResetPassword;
+
 function friendlyFirebaseError(error) {
   const code = error?.code || '';
+  const raw = String(error?.message || '');
   const map = {
     'auth/invalid-credential': 'The email or password is incorrect.',
     'auth/invalid-email': 'Enter a valid email address.',
     'auth/email-already-in-use': 'An account already exists for this email.',
     'auth/weak-password': 'Choose a stronger password with at least 6 characters.',
     'auth/network-request-failed': 'Network error. Check your internet connection.',
-    'permission-denied': 'Firebase security rules denied this operation.'
+    'auth/too-many-requests': 'Too many attempts were made. Please wait a little and try again.',
+    'auth/user-disabled': 'This account has been disabled. Please contact Elevate360.',
+    'auth/operation-not-allowed': 'Email and password sign-in is not available yet. Please contact Elevate360.',
+    'permission-denied': 'Your account does not have permission to complete this action.'
   };
-  return map[code] || error?.message || 'Firebase authentication failed.';
+  if (map[code]) return map[code];
+  if (/app check|appcheck|attestation|invalid token/i.test(raw)) return 'Secure AI verification could not be completed. Please refresh the page and try again.';
+  if (/quota|rate limit|resource exhausted|429/i.test(raw)) return 'Elevate360 AI is temporarily busy. Please try again in a moment.';
+  if (/firebase|gemini/i.test(raw)) return 'The secure Elevate360 service is temporarily unavailable. Please try again shortly.';
+  return raw || 'The request could not be completed. Please try again.';
 }
 window.elevate360FriendlyError = friendlyFirebaseError;
+
+window.elevate360CloudAdminSignIn = async function(){
+  if (!firebaseReady || !auth) throw new Error('The secure cloud service is not ready yet.');
+  if (currentFirebaseUser) {
+    const activeProfile = await getDoc(doc(firestore,'users',currentFirebaseUser.uid));
+    if (activeProfile.exists() && activeProfile.data().role === 'Admin') { await loadCloudState(); return currentFirebaseUser; }
+    try { await signOut(auth); } catch (_) {}
+    currentFirebaseUser = null;
+  }
+  const email = (db.ownerEmail || '').trim().toLowerCase();
+  const cloudEmail = prompt('Enter the administrator email used for the secure cloud account:', email);
+  if (!cloudEmail) throw new Error('Administrator email is required.');
+  const password = prompt('Enter the secure cloud administrator password:');
+  if (!password) throw new Error('Administrator password is required.');
+  let credential;
+  try {
+    credential = await signInWithEmailAndPassword(auth, cloudEmail, password);
+  } catch (error) {
+    if (error?.code === 'auth/user-not-found' || error?.code === 'auth/invalid-credential') {
+      const create = confirm('The secure cloud administrator account could not be signed in. If this is the first setup, create the administrator account now using this email and password?');
+      if (!create) throw new Error('Cloud administrator account was not connected.');
+      credential = await createUserWithEmailAndPassword(auth, cloudEmail, password);
+      await updateProfile(credential.user, { displayName: 'Elevate360 Administrator' });
+      await setDoc(doc(firestore,'users',credential.user.uid), {
+        id: credential.user.uid,
+        uid: credential.user.uid,
+        name: 'Elevate360 Administrator',
+        email: cloudEmail,
+        role: 'Admin',
+        status: 'Approved',
+        joined: new Date().toISOString(),
+        progress: 0,
+        createdAt: serverTimestamp()
+      }, { merge: true });
+    } else {
+      throw error;
+    }
+  }
+  const profileSnap = await getDoc(doc(firestore,'users',credential.user.uid));
+  if (!profileSnap.exists() || profileSnap.data().role !== 'Admin') {
+    await signOut(auth);
+    throw new Error('This secure cloud account is not configured as an Elevate360 administrator yet.');
+  }
+  currentFirebaseUser = credential.user;
+  await loadCloudState();
+  return currentFirebaseUser;
+};
+
 
 
 /* =========================================================
@@ -2487,11 +2609,11 @@ window.Elevate360FirebaseAdminLogin = async function(username, password) {
   }
 
   if (!firebaseReady || !auth) {
-    return { success: true, legacyOnly: true, message: 'Administrator login accepted. Firebase cloud administration is not configured yet.' };
+    return { success: true, legacyOnly: true, message: 'Administrator login accepted. Secure cloud administration is not connected yet.' };
   }
 
   if (!ELEVATE_ADMIN.firebaseEmail || !ELEVATE_ADMIN.firebasePassword) {
-    return { success: true, legacyOnly: true, message: 'Administrator login accepted. Add the Firebase administrator Auth account to enable protected cloud writes.' };
+    return { success: true, legacyOnly: true, message: 'Administrator login accepted. Connect the secure cloud administrator account to enable protected cloud writes.' };
   }
 
   try {
@@ -2670,7 +2792,7 @@ async function realAskAI() {
     if (loading) loading.querySelector('div:last-child').textContent = answer;
     saveAIHistory(question, answer, agent);
   } catch (error) {
-    if (loading) loading.querySelector('div:last-child').textContent = 'AI could not complete the request: ' + friendlyFirebaseError(error);
+    if (loading) loading.querySelector('div:last-child').textContent = 'Elevate360 AI could not complete the request: ' + friendlyFirebaseError(error);
     console.error(error);
   } finally {
     if (publicSend) publicSend.disabled = false;
@@ -2756,7 +2878,7 @@ function bindMemberAI(root) {
         );
       }
     } catch (error) {
-      response.textContent = 'AI could not complete the request: ' + friendlyFirebaseError(error);
+      response.textContent = 'Elevate360 AI could not complete the request: ' + friendlyFirebaseError(error);
       console.error(error);
     } finally {
       askButton.disabled = false;
@@ -2785,7 +2907,7 @@ document.querySelectorAll('#memberView .ai-hub-v4').forEach(bindMemberAI);
 window.Elevate360Firebase = window.Elevate360Firebase || {};
 window.Elevate360Firebase.uploadFile = async function(file, folder = 'uploads') {
   if (!firebaseReady || !storage || !currentFirebaseUser) {
-    throw new Error('Sign in to Firebase before uploading cloud files.');
+    throw new Error('Sign in to your Elevate360 account before uploading cloud files.');
   }
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
   const path = `${folder}/${currentFirebaseUser.uid}/${Date.now()}_${safeName}`;

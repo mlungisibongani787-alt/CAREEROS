@@ -4,10 +4,8 @@ service firebase.storage {
     match /uploads/{uid}/{allPaths=**} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
-
-    // No anonymous uploads and no public bucket browsing.
     match /{allPaths=**} {
-      allow read: if false;
+      allow read: if true;
       allow write: if false;
     }
   }

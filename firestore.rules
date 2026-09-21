@@ -5,45 +5,47 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function own(uid) {
-      return signedIn() && request.auth.uid == uid;
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'Admin';
     }
 
-    // Each Firebase member can read and maintain only their own profile.
-    // Registration creates the profile; the client cannot approve itself.
     match /users/{uid} {
-      allow create: if own(uid);
-      allow read: if own(uid);
-      allow update: if own(uid)
-        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['status'])
-            || request.resource.data.status == resource.data.status);
-      allow delete: if false;
+      allow create: if signedIn() && request.auth.uid == uid;
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow update: if signedIn() && (
+        isAdmin() ||
+        (
+          request.auth.uid == uid &&
+          request.resource.data.get('status', 'Pending Approval') == resource.data.get('status', 'Pending Approval') &&
+          request.resource.data.get('role', '') == resource.data.get('role', '')
+        )
+      );
+      allow delete: if isAdmin();
     }
 
     match /users/{uid}/aiHistory/{entry} {
-      allow read, create, update, delete: if own(uid);
+      allow read, create, update, delete: if signedIn() && request.auth.uid == uid;
     }
 
     match /users/{uid}/memberAIHistory/{entry} {
-      allow read, create, update, delete: if own(uid);
+      allow read, create, update, delete: if signedIn() && request.auth.uid == uid;
     }
 
-    // Booking and enquiry submissions are public writes. Reads/changes are
-    // restricted to authenticated users. Do not expose the whole admin/site
-    // state document to anonymous visitors.
     match /bookings/{id} {
       allow create: if true;
-      allow read, update, delete: if signedIn();
+      allow read, update, delete: if isAdmin();
     }
 
     match /messages/{id} {
       allow create: if true;
-      allow read, update, delete: if signedIn();
+      allow read, update, delete: if isAdmin();
     }
 
-    // The site/member aggregate documents are private cloud backups.
     match /elevate360/{document} {
-      allow read, write: if signedIn();
+      allow read: if true;
+      allow write: if isAdmin();
     }
   }
 }
